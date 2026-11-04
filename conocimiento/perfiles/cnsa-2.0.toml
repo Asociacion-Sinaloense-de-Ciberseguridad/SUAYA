@@ -1,0 +1,69 @@
+# Perfil de política: CNSA 2.0 (NSA, Commercial National Security Algorithm Suite 2.0).
+#
+# Algoritmos admitidos: ML-KEM-1024, ML-DSA-87, AES-256, SHA-384/512 y, para
+# firma de software y firmware, LMS o XMSS. Durante la transición se admiten
+# los algoritmos de CNSA 1.0 (P-384, RSA de 3072 bits o más) hasta la fecha
+# de uso exclusivo de cada categoría. Las fechas son metas de planeación de la
+# NSA y pueden cambiar; verifique su guía vigente.
+
+[perfil]
+id = "cnsa-2.0"
+nombre = "CNSA 2.0 (NSA)"
+referencia = "NSA, Commercial National Security Algorithm Suite 2.0 (CNSA 2.0)"
+predeterminado = "no-conforme"
+ignorar_primitivas = ["other", "kdf"]
+
+# Fecha de uso exclusivo de CNSA 2.0 por capacidad tecnológica.
+[plazos]
+"firma-codigo" = 2030
+"vpn-cifrado-red" = 2030
+"servidores-web" = 2033
+"navegadores-web" = 2033
+"conectividad-nube" = 2033
+"predeterminado" = 2033
+
+[[regla]]
+riesgos = ["roto-clasico", "obsoleto"]
+estado = "no-conforme"
+nota = "Inseguro o retirado."
+
+[[regla]]
+algoritmos = ["ml-kem-1024", "ml-dsa-87", "aes-256-gcm", "aes-256-ctr", "aes-256-cbc", "aes-256-xts", "hmac-sha384", "hmac-sha512"]
+estado = "conforme"
+
+[[regla]]
+algoritmos = ["secp384r1-mlkem1024"]
+estado = "conforme"
+nota = "Híbrido con ML-KEM-1024 y P-384."
+
+[[regla]]
+algoritmos = ["ml-kem-512", "ml-kem-768", "x25519-mlkem768", "secp256r1-mlkem768"]
+estado = "no-conforme"
+nota = "CNSA 2.0 exige ML-KEM-1024 para el establecimiento de llaves."
+
+[[regla]]
+algoritmos = ["ml-dsa-44", "ml-dsa-65"]
+estado = "no-conforme"
+nota = "CNSA 2.0 exige ML-DSA-87 para firmas generales."
+
+[[regla]]
+familias = ["SLH-DSA"]
+estado = "no-conforme"
+nota = "SLH-DSA no forma parte de CNSA 2.0; para firma de software y firmware use LMS o XMSS."
+
+# CNSA 1.0, admitido solo durante la transición.
+[[regla]]
+algoritmos = ["ec-p384", "ecdh-p384", "ecdsa-sha384", "rsassa-pkcs1-sha384", "rsassa-pss"]
+estado = "transicion"
+nota = "Algoritmo de CNSA 1.0, admitido hasta la fecha de uso exclusivo de CNSA 2.0 para esta capacidad."
+
+[[regla]]
+algoritmos = ["rsa"]
+tamano_minimo = 3072
+estado = "transicion"
+nota = "RSA de 3072 bits o más (CNSA 1.0), admitido hasta la fecha de uso exclusivo de CNSA 2.0."
+
+[[regla]]
+riesgos = ["vulnerable-cuantico", "debilitado-grover", "hibrido-pq", "resistente-cuantico"]
+estado = "no-conforme"
+nota = "Fuera de CNSA 2.0 y de CNSA 1.0, como P-256, X25519, Ed25519, RSA-2048, AES-128 o SHA-256."

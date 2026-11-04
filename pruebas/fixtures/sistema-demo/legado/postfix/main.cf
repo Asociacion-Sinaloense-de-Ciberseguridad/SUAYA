@@ -1,0 +1,3 @@
+myhostname = viejo.ejemplo.mx
+inet_interfaces = all
+smtpd_tls_security_level = none

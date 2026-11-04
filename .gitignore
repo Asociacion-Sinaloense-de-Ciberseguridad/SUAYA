@@ -1,0 +1,33 @@
+# Compilación
+/target
+
+# Salidas de Suaya generadas en local (pueden revelar la estructura de un sistema)
+suaya-cbom.json
+*.cbom.json
+/reporte-*.md
+empaquetado/generado/
+fuzz/target/
+fuzz/artifacts/
+
+# El fuzzing agrega casos al corpus; solo se versionan las semillas.
+fuzz/corpus/*/*
+!fuzz/corpus/escaneres/configuracion
+!fuzz/corpus/importar_cbom/minimo
+!fuzz/corpus/protocolos/falso-loopback
+!fuzz/corpus/protocolos/realm
+
+# Binarios y paquetes: se generan, no se versionan.
+/bin/
+/build/
+/dist/
+config.json
+tokens.json
+*.db
+*.db-journal
+
+# Versiones anteriores y evidencia conservadas solo en local.
+/_archivo/
+
+# Metadatos de macOS.
+.DS_Store
+__MACOSX/

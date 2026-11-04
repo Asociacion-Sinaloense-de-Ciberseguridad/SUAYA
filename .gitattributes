@@ -1,0 +1,3 @@
+# Sin conversión de fin de línea: los fixtures, los scripts y SHA256SUMS
+# dependen de los bytes exactos, también en clones hechos en Windows.
+* -text

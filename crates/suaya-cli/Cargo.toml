@@ -1,0 +1,61 @@
+[package]
+name = "suaya"
+description = "Suaya: inventario criptográfico abierto (CBOM) en español, con evaluación de preparación poscuántica."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+keywords.workspace = true
+categories.workspace = true
+readme = "../../README.md"
+
+[[bin]]
+name = "suaya"
+path = "src/main.rs"
+
+[dependencies]
+tempfile = "3.23"
+suaya-core.workspace = true
+suaya-escaneo.workspace = true
+suaya-cbom.workspace = true
+suaya-red.workspace = true
+anyhow.workspace = true
+clap.workspace = true
+serde_json.workspace = true
+time.workspace = true
+clap_complete = "4.6"
+clap_mangen = "0.3"
+
+[lints]
+workspace = true
+
+# Paquete Debian (cargo deb -p suaya).
+[package.metadata.deb]
+maintainer = "SUAYA contributors"
+copyright = "2026, José Enrique Rangel Ramírez y colaboradores de Suaya"
+license-file = ["../../LICENSE", "0"]
+extended-description = """\
+Inventario criptográfico abierto en español: algoritmos, llaves, \
+certificados, protocolos, código y bibliotecas exportados como CBOM \
+CycloneDX 1.7, con evaluación de preparación poscuántica."""
+section = "admin"
+priority = "optional"
+assets = [
+    ["target/release/suaya", "usr/bin/", "755"],
+    ["../../README.md", "usr/share/doc/suaya/README.md", "644"],
+    ["../../NOTICE", "usr/share/doc/suaya/NOTICE", "644"],
+    ["../../empaquetado/generado/suaya.1", "usr/share/man/man1/suaya.1", "644"],
+    ["../../empaquetado/generado/suaya.bash", "usr/share/bash-completion/completions/suaya", "644"],
+    ["../../empaquetado/generado/_suaya", "usr/share/zsh/vendor-completions/_suaya", "644"],
+    ["../../empaquetado/generado/suaya.fish", "usr/share/fish/vendor_completions.d/suaya.fish", "644"],
+]
+
+# Paquete RPM (cargo generate-rpm -p crates/suaya-cli).
+[package.metadata.generate-rpm]
+assets = [
+    { source = "target/release/suaya", dest = "/usr/bin/suaya", mode = "755" },
+    { source = "README.md", dest = "/usr/share/doc/suaya/README.md", mode = "644", doc = true },
+    { source = "empaquetado/generado/suaya.1", dest = "/usr/share/man/man1/suaya.1", mode = "644", doc = true },
+    { source = "empaquetado/generado/suaya.bash", dest = "/usr/share/bash-completion/completions/suaya", mode = "644" },
+]

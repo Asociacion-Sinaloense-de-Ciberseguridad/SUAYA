@@ -1,0 +1,32 @@
+[package]
+name = "suaya-red"
+description = "Sondeo de red de Suaya: observa la criptografía que negocian realmente los servicios TLS y SSH."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[dependencies]
+suaya-core.workspace = true
+suaya-escaneo.workspace = true
+rustls = { version = "0.23.46", default-features = false, features = ["aws_lc_rs", "prefer-post-quantum", "std", "tls12"] }
+uuid.workspace = true
+base64 = "0.23.1"
+serde_json.workspace = true
+yaml-rust2 = { version = "0.13.0", default-features = false }
+rustls-native-certs = "0.8.3"
+sha2.workspace = true
+hex.workspace = true
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+tar = { version = "0.4.46", default-features = false }
+rcgen = { version = "0.14.10", default-features = false, features = ["aws_lc_rs", "pem"] }
+serde_json.workspace = true
+base64 = "0.23.1"
+rustls = { version = "0.23.46", default-features = false, features = ["aws_lc_rs", "std"] }

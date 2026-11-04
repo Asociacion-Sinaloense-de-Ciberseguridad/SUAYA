@@ -1,0 +1,19 @@
+[package]
+name = "suaya-core"
+description = "Núcleo de Suaya: modelo de datos, base de conocimiento y clasificación de riesgo poscuántico."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[dependencies]
+serde.workspace = true
+thiserror.workspace = true
+toml.workspace = true
+regex.workspace = true
+
+[lints]
+workspace = true

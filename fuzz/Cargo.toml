@@ -1,0 +1,38 @@
+[package]
+name = "suaya-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2024"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+suaya-core = { path = "../crates/suaya-core" }
+suaya-escaneo = { path = "../crates/suaya-escaneo" }
+suaya-red = { path = "../crates/suaya-red" }
+
+# Fuera del espacio de trabajo principal: requiere el compilador nightly.
+[workspace]
+
+[[bin]]
+name = "escaneres"
+path = "fuzz_targets/escaneres.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "importar_cbom"
+path = "fuzz_targets/importar_cbom.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "protocolos"
+path = "fuzz_targets/protocolos.rs"
+test = false
+doc = false
+bench = false

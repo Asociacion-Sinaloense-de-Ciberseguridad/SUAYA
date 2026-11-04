@@ -1,0 +1,3 @@
+# nombre  dispositivo  llave  opciones
+raiz  UUID=0b1c2d3e-0000-4000-8000-000000000001  none  luks,discard,tpm2-device=auto
+datos UUID=0b1c2d3e-0000-4000-8000-000000000002  /root/datos.key  cipher=aes-xts-plain64,size=256

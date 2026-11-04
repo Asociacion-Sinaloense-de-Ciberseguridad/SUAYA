@@ -1,0 +1,147 @@
+# Suaya: tabla de madurez del ecosistema PQC por capacidad tecnológica.
+#
+# Estos datos se derivan, con atribución, de la metodología y las evaluaciones
+# publicadas por MITRE en el "Post-Quantum Cryptography (PQC) Capability
+# Development Report" (septiembre de 2026, evidencia recolectada en julio de 2026).
+# El reporte es (c) 2026 MITRE, aprobado para difusión pública (Caso 26-2150).
+# Suaya no reproduce su texto: solo registra el nivel asignado a cada capacidad.
+#
+# Criptoagilidad del conocimiento: este archivo es una fotografía fechada.
+# Cuando exista una edición nueva, se actualiza este archivo y Suaya cambia su
+# criterio sin modificar el código. También puede sustituirse con
+# `suaya escanear --base-conocimiento <directorio>`.
+
+[meta]
+version = "2026.09.0"
+fuente = "MITRE, Post-Quantum Cryptography (PQC) Capability Development Report"
+edicion = "2026-09"
+fecha_evidencia = "2026-07"
+caso_difusion = "26-2150"
+
+# Niveles de madurez, de menor a mayor. `rango` ordena la escala.
+[[nivel]]
+id = "no-aplica"
+nombre = "No aplica"
+rango = 0
+definicion = "La capacidad no depende de manera significativa de este tipo de garantía."
+
+[[nivel]]
+id = "bloqueado"
+nombre = "Bloqueado"
+rango = 1
+definicion = "No existen estándares que permitan PQC en esta capacidad para este tipo de garantía."
+
+[[nivel]]
+id = "habilitado"
+nombre = "Habilitado"
+rango = 2
+definicion = "Existen los estándares necesarios para PQC en esta capacidad y este tipo de garantía."
+
+[[nivel]]
+id = "componentes-disponibles"
+nombre = "Componentes disponibles"
+rango = 3
+definicion = "Existen componentes especializados con soporte PQC basado en estándares, aún no integrados en el producto general."
+
+[[nivel]]
+id = "integracion-preliminar"
+nombre = "Integración preliminar"
+rango = 4
+definicion = "Una versión preliminar, limitada o experimental ofrece PQC."
+
+[[nivel]]
+id = "integracion"
+nombre = "Integración"
+rango = 5
+definicion = "Una versión general, disponible al público y lista para usarse, ofrece PQC."
+
+[[nivel]]
+id = "integracion-validada"
+nombre = "Integración validada"
+rango = 6
+definicion = "Una versión general ofrece PQC mediante un módulo validado FIPS 140-3 certificado para esas funciones."
+
+# Capacidades evaluadas y su nivel por tipo de garantía.
+[[capacidad]]
+id = "navegadores-web"
+nombre = "Navegadores web"
+confidencialidad = "integracion"
+autenticacion = "componentes-disponibles"
+
+[[capacidad]]
+id = "servidores-web"
+nombre = "Servidores web"
+confidencialidad = "integracion"
+autenticacion = "componentes-disponibles"
+# Decisión de Suaya (no del reporte): otros servidores que terminan TLS se
+# evalúan con esta capacidad. Editable.
+incluye = ["nginx", "apache", "haproxy", "postgresql"]
+
+[[capacidad]]
+id = "vpn-cifrado-red"
+nombre = "VPN y cifrado de red"
+confidencialidad = "integracion"
+autenticacion = "componentes-disponibles"
+# Decisión de Suaya (no del reporte): SSH se asigna a esta capacidad por ser
+# protección de canales entre extremos privados. Editable.
+incluye = ["ssh", "ipsec", "ikev2", "wireguard", "openvpn"]
+
+[[capacidad]]
+id = "aseguramiento-plataforma"
+nombre = "Aseguramiento de plataforma"
+confidencialidad = "no-aplica"
+autenticacion = "componentes-disponibles"
+
+[[capacidad]]
+id = "firma-codigo"
+nombre = "Firma de código"
+confidencialidad = "no-aplica"
+autenticacion = "integracion"
+
+[[capacidad]]
+id = "pki-ca"
+nombre = "Gestión de PKI y autoridades certificadoras"
+confidencialidad = "integracion"
+autenticacion = "integracion"
+
+[[capacidad]]
+id = "cifrado-volumen"
+nombre = "Cifrado de volumen"
+confidencialidad = "componentes-disponibles"
+autenticacion = "componentes-disponibles"
+
+[[capacidad]]
+id = "conectividad-nube"
+nombre = "Conectividad a servicios en la nube"
+confidencialidad = "integracion"
+autenticacion = "integracion-preliminar"
+
+# Decisión de Suaya (no del reporte): los certificados raíz de un almacén de
+# confianza del sistema no los migra quien opera el sistema, sino las
+# autoridades certificadoras y el proveedor del sistema operativo. Se evalúan
+# como "habilitado" (monitorear) mientras no existan raíces PQC en los
+# programas públicos de confianza.
+[[capacidad]]
+id = "almacen-confianza"
+nombre = "Almacén de confianza del sistema"
+confidencialidad = "no-aplica"
+autenticacion = "habilitado"
+
+# Decisión de Suaya (no del reporte): el uso de criptografía en el código
+# de una aplicación depende de su biblioteca. Las bibliotecas generales de los
+# lenguajes principales ya ofrecen ML-KEM y ML-DSA en versiones estables (por
+# ejemplo, OpenSSL 3.5, Go desde 1.24 para ML-KEM, Java desde JDK 24 y
+# .NET 10), así que se evalúa como "integración". El inventario de bibliotecas
+# indica si la versión concreta lo permite. Editable.
+[[capacidad]]
+id = "codigo-aplicacion"
+nombre = "Código de aplicaciones"
+confidencialidad = "integracion"
+autenticacion = "integracion"
+
+# Capacidad comodín para hallazgos sin contexto suficiente.
+[[capacidad]]
+id = "sin-clasificar"
+nombre = "Sin clasificar"
+confidencialidad = "habilitado"
+autenticacion = "habilitado"

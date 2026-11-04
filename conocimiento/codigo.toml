@@ -1,0 +1,728 @@
+# Suaya: reglas para detectar uso criptográfico en código fuente.
+#
+# El escáner de código elimina los comentarios de cada archivo con un
+# analizador léxico por lenguaje (las cadenas se conservan, porque ahí suelen
+# ir los nombres de algoritmo) y aplica estas expresiones regulares sobre el
+# resultado. Como el resto del criterio de Suaya, las reglas son datos: se
+# agregan o corrigen aquí, sin recompilar (con --base-conocimiento).
+#
+# Lenguajes: python, java (también Kotlin y Scala), go, javascript (también
+# TypeScript), csharp, rust, c (también C++ y Objective-C).
+#
+# [[regla]]: un uso de algoritmo.
+#   lenguajes   lista de lenguajes a los que aplica
+#   patron      expresión regular (sintaxis del paquete regex de Rust)
+#   algoritmo   id fijo de algoritmos.toml, o bien
+#   espacio     tabla de [nombres.<espacio>] para traducir lo capturado
+#   captura     grupo con el nombre del algoritmo (predeterminado: 1)
+#   formato     plantilla del nombre a buscar, con {1}, {2}... (predeterminado: "{n}")
+#   tamano      grupo con el tamaño de llave en bits (opcional)
+#   requiere    otra expresión que debe aparecer en el mismo archivo (opcional)
+#   ignorar     nombres capturados que no identifican un algoritmo
+#   nota        advertencia que se agrega al activo (opcional)
+#
+# El nombre capturado se normaliza: minúsculas y «_» o «.» como «-». En
+# [nombres.java-cifrado] se prueban la transformación completa, sus dos
+# primeros segmentos y el primero («AES/GCM/NoPadding», «aes/gcm», «aes»).
+#
+# [[hallazgo]]: un uso inseguro de TLS en el código (por ejemplo, desactivar
+# la verificación de certificados). Produce un activo de protocolo por archivo.
+#   lenguajes, patron, requiere   como en [[regla]]
+#   riesgo                        riesgo que se fija al protocolo
+#   advertencia                   texto para el reporte
+
+[meta]
+version = "2026.10.0"
+descripcion = "Reglas iniciales de uso criptográfico en código fuente"
+
+# ---------------------------------------------------------------------------
+# Python (hashlib, ssl, cryptography, PyCryptodome)
+# ---------------------------------------------------------------------------
+[[regla]]
+lenguajes = ["python"]
+patron = '''\bhashlib\.(md5|sha1|sha224|sha256|sha384|sha512|sha3_256|sha3_384|sha3_512|blake2b|blake2s)\s*\('''
+espacio = "codigo"
+
+[[regla]]
+lenguajes = ["python"]
+patron = '''\bhashlib\.new\(\s*['"]([A-Za-z0-9_\-]+)['"]'''
+espacio = "codigo"
+
+[[regla]]
+lenguajes = ["python"]
+patron = '''\bhashes\.(MD5|SHA1|SHA224|SHA256|SHA384|SHA512|SHA3_256|SHA3_384|SHA3_512|BLAKE2b|BLAKE2s)\s*\('''
+espacio = "codigo"
+
+[[regla]]
+lenguajes = ["python"]
+patron = '''\balgorithms\.(TripleDES|AES|ChaCha20|Blowfish|ARC4|CAST5|IDEA)\s*\('''
+espacio = "codigo"
+
+[[regla]]
+lenguajes = ["python"]
+patron = '''\bmodes\.ECB\s*\('''
+algoritmo = "modo-ecb"
+
+[[regla]]
+lenguajes = ["python"]
+patron = '''\brsa\.generate_private_key\s*\((?:[^)]*?key_size\s*=\s*(\d+))?'''
+algoritmo = "rsa"
+tamano = 1
+
+[[regla]]
+lenguajes = ["python"]
+patron = '''\bdsa\.generate_private_key\s*\((?:[^)]*?key_size\s*=\s*(\d+))?'''
+algoritmo = "dsa"
+tamano = 1
+
+[[regla]]
+lenguajes = ["python"]
+patron = '''\bec\.(SECP256R1|SECP384R1|SECP521R1|SECP256K1)\s*\('''
+espacio = "codigo"
+
+[[regla]]
+lenguajes = ["python"]
+patron = '''\b(Ed25519|Ed448|X25519|X448)PrivateKey\.generate\s*\('''
+espacio = "codigo"
+
+[[regla]]
+lenguajes = ["python"]
+patron = '''\bdh\.generate_parameters\s*\('''
+algoritmo = "ffdh"
+
+[[regla]]
+lenguajes = ["python"]
+patron = '''\b(DES3|DES|ARC4|ARC2|Blowfish|CAST|AES|ChaCha20_Poly1305|ChaCha20)\.new\s*\('''
+espacio = "codigo"
+
+[[regla]]
+lenguajes = ["python"]
+patron = '''\b(?:AES|DES|DES3|Blowfish)\.MODE_ECB\b'''
+algoritmo = "modo-ecb"
+
+[[regla]]
+lenguajes = ["python"]
+patron = '''\b(MD5|SHA1|SHA256|SHA384|SHA512)\.new\s*\('''
+espacio = "codigo"
+
+[[regla]]
+lenguajes = ["python"]
+patron = '''\bRSA\.generate\s*\(\s*(\d+)'''
+algoritmo = "rsa"
+tamano = 1
+
+[[regla]]
+lenguajes = ["python"]
+patron = '''\bssl\.PROTOCOL_(SSLv2|SSLv3|TLSv1|TLSv1_1|TLSv1_2)\b'''
+espacio = "tls"
+
+[[regla]]
+lenguajes = ["python"]
+patron = '''\bTLSVersion\.(SSLv3|TLSv1|TLSv1_1|TLSv1_2|TLSv1_3)\b'''
+espacio = "tls"
+
+[[hallazgo]]
+lenguajes = ["python"]
+patron = '''\bverify\s*=\s*False\b'''
+requiere = '''\b(?:requests|httpx|urllib3|aiohttp)\b'''
+riesgo = "roto-clasico"
+advertencia = "Desactiva la verificación del certificado TLS (verify=False): cualquiera en la red puede suplantar al servidor."
+
+[[hallazgo]]
+lenguajes = ["python"]
+patron = '''\bssl\._create_unverified_context\s*\(|\bcheck_hostname\s*=\s*False\b|\bverify_mode\s*=\s*ssl\.CERT_NONE\b'''
+riesgo = "roto-clasico"
+advertencia = "Crea un contexto TLS sin verificación de certificado o de nombre: la conexión cifra, pero no autentica al servidor."
+
+# ---------------------------------------------------------------------------
+# Java, Kotlin y Scala (JCA/JCE y JSSE)
+# ---------------------------------------------------------------------------
+[[regla]]
+lenguajes = ["java"]
+patron = '''\bMessageDigest\.getInstance\(\s*"([^"]+)"'''
+espacio = "codigo"
+
+[[regla]]
+lenguajes = ["java"]
+patron = '''\bCipher\.getInstance\(\s*"([^"]+)"'''
+espacio = "java-cifrado"
+
+[[regla]]
+lenguajes = ["java"]
+patron = '''\b(?:KeyPairGenerator|KeyFactory|KeyGenerator|KEM)\.getInstance\(\s*"([^"]+)"'''
+espacio = "codigo"
+
+[[regla]]
+lenguajes = ["java"]
+patron = '''\.initialize\(\s*(\d{3,5})\b'''
+algoritmo = "rsa"
+tamano = 1
+requiere = '''KeyPairGenerator\.getInstance\(\s*"RSA"'''
+
+[[regla]]
+lenguajes = ["java"]
+patron = '''\b(?:Signature|Mac|KeyAgreement)\.getInstance\(\s*"([^"]+)"'''
+espacio = "codigo"
+
+[[regla]]
+lenguajes = ["java"]
+patron = '''\bECGenParameterSpec\(\s*"([^"]+)"'''
+espacio = "codigo"
+
+[[regla]]
+lenguajes = ["java"]
+patron = '''\bSSLContext\.getInstance\(\s*"([^"]+)"'''
+espacio = "tls"
+ignorar = ["ssl", "tls", "default", "dtls"]
+
+[[hallazgo]]
+lenguajes = ["java"]
+patron = '''(?s)checkServerTrusted\s*\([^)]*\)\s*(?:throws\s+[\w.,\s]+)?\{\s*\}'''
+riesgo = "roto-clasico"
+advertencia = "Un X509TrustManager con checkServerTrusted vacío acepta cualquier certificado: la conexión TLS no autentica al servidor."
+
+[[hallazgo]]
+lenguajes = ["java"]
+patron = '''(?s)\bverify\s*\(\s*(?:final\s+)?String\s+\w+\s*,\s*(?:final\s+)?SSLSession\s+\w+\s*\)\s*\{\s*return\s+true\s*;\s*\}|\bNoopHostnameVerifier\b|\bALLOW_ALL_HOSTNAME_VERIFIER\b'''
+riesgo = "roto-clasico"
+advertencia = "Un HostnameVerifier que siempre devuelve true acepta certificados emitidos para otros nombres."
+
+# ---------------------------------------------------------------------------
+# Go (biblioteca estándar)
+# ---------------------------------------------------------------------------
+[[regla]]
+lenguajes = ["go"]
+patron = '''\b(md5|sha1|sha256|sha512)\.(?:New|Sum|Sum256|Sum512)\b'''
+espacio = "codigo"
+
+[[regla]]
+lenguajes = ["go"]
+patron = '''\bdes\.NewCipher\b'''
+algoritmo = "des"
+
+[[regla]]
+lenguajes = ["go"]
+patron = '''\bdes\.NewTripleDESCipher\b'''
+algoritmo = "3des-cbc"
+
+[[regla]]
+lenguajes = ["go"]
+patron = '''\brc4\.NewCipher\b'''
+algoritmo = "rc4"
+
+[[regla]]
+lenguajes = ["go"]
+patron = '''\baes\.NewCipher\b'''
+algoritmo = "aes"
+
+[[regla]]
+lenguajes = ["go"]
+patron = '''\bchacha20poly1305\.NewX?\b'''
+algoritmo = "chacha20-poly1305"
+
+[[regla]]
+lenguajes = ["go"]
+patron = '''\brsa\.GenerateKey\s*\(\s*[^,()]+,\s*(\d+)'''
+algoritmo = "rsa"
+tamano = 1
+
+[[regla]]
+lenguajes = ["go"]
+patron = '''\belliptic\.(P224|P256|P384|P521)\s*\('''
+espacio = "codigo"
+
+[[regla]]
+lenguajes = ["go"]
+patron = '''\becdh\.(P256|P384|P521|X25519)\s*\('''
+espacio = "ecdh"
+
+[[regla]]
+lenguajes = ["go"]
+patron = '''\bed25519\.(?:GenerateKey|NewKeyFromSeed|Sign)\b'''
+algoritmo = "ed25519"
+
+[[regla]]
+lenguajes = ["go"]
+patron = '''\bdsa\.GenerateParameters\b'''
+algoritmo = "dsa"
+
+[[regla]]
+lenguajes = ["go"]
+patron = '''\bmlkem\.(?:GenerateKey|NewDecapsulationKey|NewEncapsulationKey)(768|1024)\b'''
+espacio = "codigo"
+formato = "ml-kem-{1}"
+
+[[regla]]
+lenguajes = ["go"]
+patron = '''\btls\.Version(SSL30|TLS10|TLS11|TLS12|TLS13)\b'''
+espacio = "tls"
+
+[[regla]]
+lenguajes = ["go"]
+patron = '''\btls\.(X25519MLKEM768|SecP256r1MLKEM768|SecP384r1MLKEM1024|X25519|CurveP256|CurveP384|CurveP521)\b'''
+espacio = "ecdh"
+
+[[hallazgo]]
+lenguajes = ["go"]
+patron = '''\bInsecureSkipVerify\s*:\s*true\b'''
+riesgo = "roto-clasico"
+advertencia = "InsecureSkipVerify: true desactiva la verificación del certificado TLS: cualquiera en la red puede suplantar al servidor."
+
+# ---------------------------------------------------------------------------
+# JavaScript y TypeScript (node:crypto, Web Crypto, tls)
+# ---------------------------------------------------------------------------
+[[regla]]
+lenguajes = ["javascript"]
+patron = '''\bcreateHash\(\s*['"`]([A-Za-z0-9\-]+)['"`]'''
+espacio = "codigo"
+
+[[regla]]
+lenguajes = ["javascript"]
+patron = '''\bcreateHmac\(\s*['"`]([A-Za-z0-9\-]+)['"`]'''
+espacio = "codigo"
+formato = "hmac-{1}"
+
+[[regla]]
+lenguajes = ["javascript"]
+patron = '''\bcreate(?:Cipheriv|Decipheriv|Cipher|Decipher)\(\s*['"`]([A-Za-z0-9\-]+)['"`]'''
+espacio = "codigo"
+
+[[regla]]
+lenguajes = ["javascript"]
+patron = '''\bgenerateKeyPair(?:Sync)?\(\s*['"`]([A-Za-z0-9\-]+)['"`](?:[^)]*?modulusLength\s*:\s*(\d+))?'''
+espacio = "codigo"
+tamano = 2
+
+[[regla]]
+lenguajes = ["javascript"]
+patron = '''\bnamedCurve\s*:\s*['"`]([A-Za-z0-9\-]+)['"`]'''
+espacio = "codigo"
+
+[[regla]]
+lenguajes = ["javascript"]
+patron = '''\bname\s*:\s*['"`](RSA-OAEP|RSASSA-PKCS1-v1_5|RSA-PSS|ECDSA|ECDH|AES-GCM|AES-CBC|AES-CTR|AES-KW|Ed25519|X25519)['"`](?:[^}]*?modulusLength\s*:\s*(\d+))?'''
+espacio = "webcrypto"
+tamano = 2
+requiere = '''\bsubtle\.'''
+
+[[regla]]
+lenguajes = ["javascript"]
+patron = '''\b(?:minVersion|maxVersion)\s*:\s*['"`](SSLv3|TLSv1|TLSv1\.1|TLSv1\.2|TLSv1\.3)['"`]'''
+espacio = "tls"
+
+[[regla]]
+lenguajes = ["javascript"]
+patron = '''\bsecureProtocol\s*:\s*['"`](SSLv2|SSLv3|TLSv1|TLSv1_1|TLSv1_2)_(?:client_|server_)?method['"`]'''
+espacio = "tls"
+
+[[hallazgo]]
+lenguajes = ["javascript"]
+patron = '''\brejectUnauthorized\s*:\s*false\b|\bNODE_TLS_REJECT_UNAUTHORIZED\b\s*=\s*['"`]?0'''
+riesgo = "roto-clasico"
+advertencia = "Desactiva la verificación del certificado TLS (rejectUnauthorized: false o NODE_TLS_REJECT_UNAUTHORIZED=0)."
+
+# ---------------------------------------------------------------------------
+# C# (.NET)
+# ---------------------------------------------------------------------------
+[[regla]]
+lenguajes = ["csharp"]
+patron = '''\b(MD5|SHA1|SHA256|SHA384|SHA512|SHA3_256|SHA3_384|SHA3_512)\.(?:Create|HashData)\s*\('''
+espacio = "codigo"
+
+[[regla]]
+lenguajes = ["csharp"]
+patron = '''\bnew\s+(MD5CryptoServiceProvider|SHA1Managed|SHA1CryptoServiceProvider|DESCryptoServiceProvider|TripleDESCryptoServiceProvider|RC2CryptoServiceProvider|AesGcm|AesCcm|ChaCha20Poly1305)\s*\('''
+espacio = "codigo"
+
+[[regla]]
+lenguajes = ["csharp"]
+patron = '''\b(DES|TripleDES|RC2|Aes)\.Create\s*\('''
+espacio = "codigo"
+
+[[regla]]
+lenguajes = ["csharp"]
+patron = '''\bCipherMode\.ECB\b'''
+algoritmo = "modo-ecb"
+
+[[regla]]
+lenguajes = ["csharp"]
+patron = '''\bnew\s+RSACryptoServiceProvider\s*\(\s*(\d+)?'''
+algoritmo = "rsa"
+tamano = 1
+
+[[regla]]
+lenguajes = ["csharp"]
+patron = '''\bRSA\.Create\s*\(\s*(\d+)?'''
+algoritmo = "rsa"
+tamano = 1
+
+[[regla]]
+lenguajes = ["csharp"]
+patron = '''\bDSA\.Create\s*\('''
+algoritmo = "dsa"
+
+[[regla]]
+lenguajes = ["csharp"]
+patron = '''\bECDsa\.Create\s*\(\s*ECCurve\.NamedCurves\.(nistP256|nistP384|nistP521)'''
+espacio = "codigo"
+
+[[regla]]
+lenguajes = ["csharp"]
+patron = '''\bECDiffieHellman\.Create\s*\(\s*ECCurve\.NamedCurves\.(nistP256|nistP384|nistP521)'''
+espacio = "ecdh"
+
+[[regla]]
+lenguajes = ["csharp"]
+patron = '''\bMLKemAlgorithm\.(MLKem512|MLKem768|MLKem1024)\b'''
+espacio = "codigo"
+
+[[regla]]
+lenguajes = ["csharp"]
+patron = '''\bMLDsaAlgorithm\.(MLDsa44|MLDsa65|MLDsa87)\b'''
+espacio = "codigo"
+
+[[regla]]
+lenguajes = ["csharp"]
+patron = '''\bSslProtocols\.Tls\b'''
+algoritmo = "tls-1.0"
+
+[[regla]]
+lenguajes = ["csharp"]
+patron = '''\bSslProtocols\.(Ssl2|Ssl3|Tls11|Tls12|Tls13)\b'''
+espacio = "tls"
+
+[[hallazgo]]
+lenguajes = ["csharp"]
+patron = '''\bServerCertificate(?:Custom)?ValidationCallback\s*\+?=\s*[^;]*?=>\s*true\b|\bDangerousAcceptAnyServerCertificateValidator\b'''
+riesgo = "roto-clasico"
+advertencia = "Un validador de certificados que siempre devuelve true acepta cualquier servidor TLS."
+
+# ---------------------------------------------------------------------------
+# Rust (RustCrypto, ring, rustls y clientes HTTP)
+# ---------------------------------------------------------------------------
+[[regla]]
+lenguajes = ["rust"]
+patron = '''\b(Md5|Sha1|Sha224|Sha256|Sha384|Sha512|Sha3_256|Sha3_384|Sha3_512|Blake2b512|Blake2s256)::(?:new|digest)\b'''
+espacio = "codigo"
+
+[[regla]]
+lenguajes = ["rust"]
+patron = '''\bmd5::compute\s*\('''
+algoritmo = "md5"
+
+[[regla]]
+lenguajes = ["rust"]
+patron = '''\bdigest::(SHA1_FOR_LEGACY_USE_ONLY|SHA256|SHA384|SHA512)\b'''
+espacio = "codigo"
+
+[[regla]]
+lenguajes = ["rust"]
+patron = '''\bRsaPrivateKey::new\s*\(\s*&mut\s+[\w:]+(?:\(\))?\s*,\s*(\d+)'''
+algoritmo = "rsa"
+tamano = 1
+
+[[regla]]
+lenguajes = ["rust"]
+patron = '''\b(p256|p384|p521|k256)::ecdsa::'''
+espacio = "codigo"
+
+[[regla]]
+lenguajes = ["rust"]
+patron = '''\bed25519_dalek::'''
+algoritmo = "ed25519"
+
+[[regla]]
+lenguajes = ["rust"]
+patron = '''\bx25519_dalek::'''
+algoritmo = "x25519"
+
+[[regla]]
+lenguajes = ["rust"]
+patron = '''\bMlKem(512|768|1024)\b'''
+espacio = "codigo"
+formato = "ml-kem-{1}"
+
+[[regla]]
+lenguajes = ["rust"]
+patron = '''\bMlDsa(44|65|87)\b'''
+espacio = "codigo"
+formato = "ml-dsa-{1}"
+
+[[regla]]
+lenguajes = ["rust"]
+patron = '''\bdes::(Des|TdesEde3)\b'''
+espacio = "codigo"
+
+[[hallazgo]]
+lenguajes = ["rust"]
+patron = '''\bdanger_accept_invalid_certs\s*\(\s*true\s*\)|\bdangerous\(\)\s*\.\s*set_certificate_verifier\b'''
+riesgo = "roto-clasico"
+advertencia = "El cliente TLS acepta certificados inválidos o usa un verificador propio: revise que no omita la autenticación del servidor."
+
+# ---------------------------------------------------------------------------
+# C, C++ y Objective-C (OpenSSL)
+# ---------------------------------------------------------------------------
+[[regla]]
+lenguajes = ["c"]
+patron = '''\bEVP_(md5|sha1|sha224|sha256|sha384|sha512|sha3_256|sha3_384|sha3_512)\s*\('''
+espacio = "codigo"
+
+[[regla]]
+lenguajes = ["c"]
+patron = '''\bEVP_(des_ede3_cbc|des_cbc|des_ecb|rc4|rc2_cbc|bf_cbc|aes_128_ecb|aes_192_ecb|aes_256_ecb|aes_128_cbc|aes_256_cbc|aes_128_gcm|aes_256_gcm|aes_128_ctr|aes_256_ctr|chacha20_poly1305)\s*\('''
+espacio = "codigo"
+
+[[regla]]
+lenguajes = ["c"]
+patron = '''\b(MD5|SHA1)\s*\(\s*[^)]'''
+espacio = "codigo"
+requiere = '''#include\s*<openssl/(?:md5|sha)\.h>'''
+
+[[regla]]
+lenguajes = ["c"]
+patron = '''\bRSA_generate_key\s*\(\s*(\d+)'''
+algoritmo = "rsa"
+tamano = 1
+
+[[regla]]
+lenguajes = ["c"]
+patron = '''\bRSA_generate_key_ex\s*\(\s*[^,]+,\s*(\d+)'''
+algoritmo = "rsa"
+tamano = 1
+
+[[regla]]
+lenguajes = ["c"]
+patron = '''\bEVP_PKEY_CTX_set_rsa_keygen_bits\s*\(\s*[^,]+,\s*(\d+)'''
+algoritmo = "rsa"
+tamano = 1
+
+[[regla]]
+lenguajes = ["c"]
+patron = '''\b(SSLv2|SSLv3|TLSv1|TLSv1_1)_(?:client_|server_)?method\s*\('''
+espacio = "tls"
+
+[[regla]]
+lenguajes = ["c"]
+patron = '''\bSSL(?:_CTX)?_set_min_proto_version\s*\([^,]+,\s*(SSL3|TLS1|TLS1_1|TLS1_2|TLS1_3)_VERSION'''
+espacio = "tls"
+
+[[hallazgo]]
+lenguajes = ["c"]
+patron = '''\bSSL(?:_CTX)?_set_verify\s*\([^,]+,\s*SSL_VERIFY_NONE\b'''
+riesgo = "roto-clasico"
+advertencia = "SSL_VERIFY_NONE desactiva la verificación del certificado del par TLS."
+
+# ---------------------------------------------------------------------------
+# Traducción de nombres capturados a ids de algoritmos.toml
+# ---------------------------------------------------------------------------
+[nombres.codigo]
+"md5" = "md5"
+"sha1" = "sha1"
+"sha-1" = "sha1"
+"sha" = "sha1"
+"sha1-for-legacy-use-only" = "sha1"
+"sha224" = "sha224"
+"sha-224" = "sha224"
+"sha256" = "sha256"
+"sha-256" = "sha256"
+"sha384" = "sha384"
+"sha-384" = "sha384"
+"sha512" = "sha512"
+"sha-512" = "sha512"
+"sha3-256" = "sha3-256"
+"sha3-384" = "sha3-384"
+"sha3-512" = "sha3-512"
+"blake2b" = "blake2b"
+"blake2b512" = "blake2b"
+"blake2s" = "blake2s"
+"blake2s256" = "blake2s"
+"des" = "des"
+"des-cbc" = "des"
+"des-ecb" = "des"
+"descryptoserviceprovider" = "des"
+"des3" = "3des-cbc"
+"desede" = "3des-cbc"
+"tripledes" = "3des-cbc"
+"tdesede3" = "3des-cbc"
+"des-ede3" = "3des-cbc"
+"des-ede3-cbc" = "3des-cbc"
+"tripledescryptoserviceprovider" = "3des-cbc"
+"rc4" = "rc4"
+"arc4" = "rc4"
+"arcfour" = "rc4"
+"rc2" = "rc2"
+"arc2" = "rc2"
+"rc2-cbc" = "rc2"
+"rc2cryptoserviceprovider" = "rc2"
+"blowfish" = "blowfish-cbc"
+"bf-cbc" = "blowfish-cbc"
+"cast" = "cast5"
+"cast5" = "cast5"
+"idea" = "idea"
+"aes" = "aes"
+"aesgcm" = "aes"
+"aesccm" = "aes"
+"aes128" = "aes-128-cbc"
+"aes192" = "aes-192-cbc"
+"aes256" = "aes-256-cbc"
+"aes-128-cbc" = "aes-128-cbc"
+"aes-192-cbc" = "aes-192-cbc"
+"aes-256-cbc" = "aes-256-cbc"
+"aes-128-gcm" = "aes-128-gcm"
+"aes-256-gcm" = "aes-256-gcm"
+"aes-128-ctr" = "aes-128-ctr"
+"aes-192-ctr" = "aes-192-ctr"
+"aes-256-ctr" = "aes-256-ctr"
+"aes-128-ecb" = "modo-ecb"
+"aes-192-ecb" = "modo-ecb"
+"aes-256-ecb" = "modo-ecb"
+"chacha20" = "chacha20"
+"chacha20-poly1305" = "chacha20-poly1305"
+"chacha20poly1305" = "chacha20-poly1305"
+"rsa" = "rsa"
+"rsa-pss" = "rsassa-pss"
+"rsassa-pss" = "rsassa-pss"
+"dsa" = "dsa"
+"ec" = "ec"
+"ecdsa" = "ec"
+"ecdh" = "ecdh"
+"dh" = "ffdh"
+"diffiehellman" = "ffdh"
+"secp256r1" = "ec-p256"
+"prime256v1" = "ec-p256"
+"p-256" = "ec-p256"
+"p256" = "ec-p256"
+"nistp256" = "ec-p256"
+"secp384r1" = "ec-p384"
+"p-384" = "ec-p384"
+"p384" = "ec-p384"
+"nistp384" = "ec-p384"
+"secp521r1" = "ec-p521"
+"p-521" = "ec-p521"
+"p521" = "ec-p521"
+"nistp521" = "ec-p521"
+"secp256k1" = "ec-secp256k1"
+"k256" = "ec-secp256k1"
+"ed25519" = "ed25519"
+"ed448" = "ed448"
+"x25519" = "x25519"
+"x448" = "x448"
+"md5withrsa" = "rsassa-pkcs1-md5"
+"sha1withrsa" = "rsassa-pkcs1-sha1"
+"sha256withrsa" = "rsassa-pkcs1-sha256"
+"sha384withrsa" = "rsassa-pkcs1-sha384"
+"sha512withrsa" = "rsassa-pkcs1-sha512"
+"sha256withrsa/pss" = "rsassa-pss"
+"rsassa-pss-sha256" = "rsassa-pss"
+"sha1withecdsa" = "ecdsa-sha1"
+"sha256withecdsa" = "ecdsa-sha256"
+"sha384withecdsa" = "ecdsa-sha384"
+"sha512withecdsa" = "ecdsa-sha512"
+"sha1withdsa" = "dsa"
+"sha256withdsa" = "dsa"
+"hmacmd5" = "hmac-md5"
+"hmac-md5" = "hmac-md5"
+"hmacsha1" = "hmac-sha1"
+"hmac-sha1" = "hmac-sha1"
+"hmacsha256" = "hmac-sha256"
+"hmac-sha256" = "hmac-sha256"
+"hmacsha384" = "hmac-sha384"
+"hmac-sha384" = "hmac-sha384"
+"hmacsha512" = "hmac-sha512"
+"hmac-sha512" = "hmac-sha512"
+"ml-kem" = "ml-kem-768"
+"ml-kem-512" = "ml-kem-512"
+"ml-kem-768" = "ml-kem-768"
+"ml-kem-1024" = "ml-kem-1024"
+"mlkem512" = "ml-kem-512"
+"mlkem768" = "ml-kem-768"
+"mlkem1024" = "ml-kem-1024"
+"ml-dsa-44" = "ml-dsa-44"
+"ml-dsa-65" = "ml-dsa-65"
+"ml-dsa-87" = "ml-dsa-87"
+"mldsa44" = "ml-dsa-44"
+"mldsa65" = "ml-dsa-65"
+"mldsa87" = "ml-dsa-87"
+"md5cryptoserviceprovider" = "md5"
+"pbewithmd5anddes" = "des"
+"pbewithsha1anddesede" = "3des-cbc"
+"sha1managed" = "sha1"
+"sha1cryptoserviceprovider" = "sha1"
+
+# Transformaciones de javax.crypto.Cipher. Sin modo, el proveedor de Java usa
+# ECB: «AES» y «DES» equivalen a «AES/ECB/PKCS5Padding» y «DES/ECB/...».
+[nombres.java-cifrado]
+"aes" = "modo-ecb"
+"aes/ecb" = "modo-ecb"
+"aes/cbc" = "aes"
+"aes/gcm" = "aes"
+"aes/ctr" = "aes"
+"aes/cfb" = "aes"
+"aes/ofb" = "aes"
+"aes-128/gcm" = "aes-128-gcm"
+"aes-256/gcm" = "aes-256-gcm"
+"aes-128/cbc" = "aes-128-cbc"
+"aes-256/cbc" = "aes-256-cbc"
+"des" = "des"
+"des/ecb" = "des"
+"des/cbc" = "des"
+"desede" = "3des-cbc"
+"desede/ecb" = "3des-cbc"
+"desede/cbc" = "3des-cbc"
+"tripledes" = "3des-cbc"
+"rc4" = "rc4"
+"arcfour" = "rc4"
+"rc2" = "rc2"
+"blowfish" = "blowfish-cbc"
+"rsa" = "rsa"
+"rsa/ecb" = "rsa"
+"rsa/none" = "rsa"
+"chacha20-poly1305" = "chacha20-poly1305"
+"chacha20" = "chacha20"
+
+[nombres.ecdh]
+"p256" = "ecdh-p256"
+"curvep256" = "ecdh-p256"
+"nistp256" = "ecdh-p256"
+"p384" = "ecdh-p384"
+"curvep384" = "ecdh-p384"
+"nistp384" = "ecdh-p384"
+"p521" = "ecdh-p521"
+"curvep521" = "ecdh-p521"
+"nistp521" = "ecdh-p521"
+"x25519" = "x25519"
+"x25519mlkem768" = "x25519-mlkem768"
+"secp256r1mlkem768" = "secp256r1-mlkem768"
+"secp384r1mlkem1024" = "secp384r1-mlkem1024"
+
+[nombres.webcrypto]
+"rsa-oaep" = "rsa"
+"rsassa-pkcs1-v1-5" = "rsa"
+"rsa-pss" = "rsassa-pss"
+"ecdsa" = "ec"
+"ecdh" = "ecdh"
+"aes-gcm" = "aes"
+"aes-cbc" = "aes"
+"aes-ctr" = "aes"
+"aes-kw" = "aes"
+"ed25519" = "ed25519"
+"x25519" = "x25519"
+
+[nombres.tls]
+"sslv2" = "ssl-2.0"
+"ssl2" = "ssl-2.0"
+"sslv3" = "ssl-3.0"
+"ssl3" = "ssl-3.0"
+"ssl30" = "ssl-3.0"
+"tlsv1" = "tls-1.0"
+"tls1" = "tls-1.0"
+"tls10" = "tls-1.0"
+"tlsv1-1" = "tls-1.1"
+"tls1-1" = "tls-1.1"
+"tls11" = "tls-1.1"
+"tlsv1-2" = "tls-1.2"
+"tls1-2" = "tls-1.2"
+"tls12" = "tls-1.2"
+"tlsv1-3" = "tls-1.3"
+"tls1-3" = "tls-1.3"
+"tls13" = "tls-1.3"

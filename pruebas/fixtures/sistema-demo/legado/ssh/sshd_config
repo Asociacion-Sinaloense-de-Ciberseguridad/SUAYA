@@ -1,0 +1,4 @@
+KexAlgorithms curve25519-sha256,diffie-hellman-group14-sha1
+Ciphers aes128-ctr,3des-cbc
+MACs hmac-sha1
+HostKeyAlgorithms ssh-rsa,ssh-dss

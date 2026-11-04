@@ -1,0 +1,9 @@
+myhostname = correo.ejemplo.mx
+inet_interfaces = all
+smtpd_tls_chain_files = $config_directory/correo.pem
+smtpd_tls_security_level = may
+smtpd_tls_protocols = >=TLSv1.2
+smtpd_tls_mandatory_protocols = >=TLSv1.2
+tls_eecdh_auto_curves = X25519MLKEM768 X25519
+    prime256v1
+smtp_tls_security_level = dane

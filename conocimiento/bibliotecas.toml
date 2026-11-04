@@ -1,0 +1,210 @@
+# Suaya: bibliotecas y entornos criptográficos.
+#
+# Suaya reconoce una biblioteca por su nombre de paquete en un ecosistema
+# ("pypi:cryptography", "golang:golang.org/x/crypto"), por la cadena de
+# versión dentro de un binario (OpenSSL, LibreSSL) o por la información de
+# compilación de Go. Con la versión decide:
+#
+#   - si la rama ya no tiene soporte (riesgo obsoleto: reemplazar);
+#   - si la versión ya ofrece PQC (pq_disponible) y si la usa por omisión
+#     (pq_predeterminado);
+#   - si no se sabe, la reporta para verificar, sin afirmar nada.
+#
+# Campos:
+#   id, nombre             identificador y nombre legible
+#   paquetes               "<ecosistema>:<nombre>" (pypi, npm, maven, golang,
+#                          cargo, nuget, binario, jar, runtime)
+#   pq_disponible          primera versión con ML-KEM o ML-DSA
+#   pq_predeterminado      primera versión que negocia un grupo híbrido por omisión
+#   nota_pq                qué ofrece exactamente
+#   riesgo_predeterminado  riesgo cuando no hay datos de PQC ni de soporte
+#   nota                   advertencia fija
+#   version_en_metadatos   la versión real va tras «+» (p. ej. openssl-src 300.3.1+3.3.1)
+#   [[biblioteca.rama]]    version (prefijo) y fin_soporte (AAAA-MM-DD)
+#
+# Las fechas son una fotografía: se actualizan aquí, sin recompilar.
+
+[meta]
+version = "2026.10.0"
+descripcion = "Bibliotecas criptográficas iniciales; fechas de fin de soporte al 16 de octubre de 2026"
+fuente = "Políticas de publicación de cada proyecto, resumidas en endoflife.date"
+
+[[biblioteca]]
+id = "openssl"
+nombre = "OpenSSL"
+paquetes = ["binario:openssl", "cargo:openssl-src", "conan:openssl", "vcpkg:openssl"]
+version_en_metadatos = true
+pq_disponible = "3.5.0"
+pq_predeterminado = "3.5.0"
+nota_pq = "Desde 3.5 ofrece ML-KEM, ML-DSA y SLH-DSA, y X25519MLKEM768 entre los grupos predeterminados de TLS."
+rama = [
+  { version = "4.0", fin_soporte = "2027-05-14" },
+  { version = "3.6", fin_soporte = "2026-11-01" },
+  { version = "3.5", fin_soporte = "2030-04-08" },
+  { version = "3.4", fin_soporte = "2026-10-22" },
+  { version = "3.3", fin_soporte = "2026-04-09" },
+  { version = "3.2", fin_soporte = "2025-11-23" },
+  { version = "3.1", fin_soporte = "2025-03-14" },
+  { version = "3.0", fin_soporte = "2026-09-07" },
+  { version = "1.1.1", fin_soporte = "2023-09-11" },
+  { version = "1.1.0", fin_soporte = "2019-09-11" },
+  { version = "1.0", fin_soporte = "2019-12-31" },
+  { version = "0.9", fin_soporte = "2015-12-31" },
+]
+
+[[biblioteca]]
+id = "libressl"
+nombre = "LibreSSL"
+paquetes = ["binario:libressl"]
+
+[[biblioteca]]
+id = "boringssl"
+nombre = "BoringSSL"
+paquetes = ["binario:boringssl"]
+nota = "BoringSSL no publica versiones: su soporte de PQC depende de la revisión que integra cada producto."
+
+[[biblioteca]]
+id = "go"
+nombre = "Go (biblioteca estándar)"
+paquetes = ["golang:stdlib", "binario:go"]
+pq_disponible = "1.24"
+pq_predeterminado = "1.24"
+nota_pq = "Desde Go 1.24, crypto/mlkem ofrece ML-KEM y crypto/tls negocia X25519MLKEM768 por omisión."
+rama = [
+  { version = "1.25", fin_soporte = "2026-08-19" },
+  { version = "1.24", fin_soporte = "2026-02-10" },
+  { version = "1.23", fin_soporte = "2025-08-12" },
+  { version = "1.22", fin_soporte = "2025-02-11" },
+  { version = "1.21", fin_soporte = "2024-08-13" },
+  { version = "1.20", fin_soporte = "2024-02-06" },
+  { version = "1.19", fin_soporte = "2023-08-08" },
+  { version = "1.18", fin_soporte = "2023-02-01" },
+]
+
+[[biblioteca]]
+id = "golang-x-crypto"
+nombre = "golang.org/x/crypto"
+paquetes = ["golang:golang.org/x/crypto"]
+
+[[biblioteca]]
+id = "circl"
+nombre = "CIRCL (Cloudflare)"
+paquetes = ["golang:github.com/cloudflare/circl"]
+
+[[biblioteca]]
+id = "java"
+nombre = "Java (OpenJDK)"
+paquetes = ["runtime:java"]
+pq_disponible = "24"
+pq_predeterminado = "27"
+nota_pq = "Desde JDK 24 ofrece ML-KEM y ML-DSA (JEP 496 y 497); desde JDK 27, X25519MLKEM768 por omisión en TLS 1.3 (JEP 527)."
+
+[[biblioteca]]
+id = "bouncycastle-java"
+nombre = "Bouncy Castle (Java)"
+paquetes = ["maven:org.bouncycastle:bcprov-jdk18on", "maven:org.bouncycastle:bcprov-jdk15to18", "jar:bcprov-jdk18on", "jar:bcprov-jdk15to18"]
+pq_disponible = "1.79"
+nota_pq = "Desde 1.79 implementa ML-KEM, ML-DSA y SLH-DSA según FIPS 203, 204 y 205."
+
+[[biblioteca]]
+id = "bouncycastle-java-jdk15on"
+nombre = "Bouncy Castle (Java, artefacto jdk15on)"
+paquetes = ["maven:org.bouncycastle:bcprov-jdk15on", "jar:bcprov-jdk15on"]
+riesgo_predeterminado = "obsoleto"
+nota = "El artefacto bcprov-jdk15on dejó de publicarse en la versión 1.70: migre a bcprov-jdk18on."
+
+[[biblioteca]]
+id = "bouncycastle-csharp"
+nombre = "Bouncy Castle (.NET)"
+paquetes = ["nuget:bouncycastle.cryptography"]
+
+[[biblioteca]]
+id = "portable-bouncycastle"
+nombre = "Portable.BouncyCastle"
+paquetes = ["nuget:portable.bouncycastle"]
+riesgo_predeterminado = "obsoleto"
+nota = "Paquete sin mantenimiento: migre a BouncyCastle.Cryptography."
+
+[[biblioteca]]
+id = "pyca-cryptography"
+nombre = "cryptography (Python)"
+paquetes = ["pypi:cryptography"]
+
+[[biblioteca]]
+id = "pycryptodome"
+nombre = "PyCryptodome"
+paquetes = ["pypi:pycryptodome", "pypi:pycryptodomex"]
+
+[[biblioteca]]
+id = "pycrypto"
+nombre = "PyCrypto"
+paquetes = ["pypi:pycrypto"]
+riesgo_predeterminado = "obsoleto"
+nota = "Sin mantenimiento desde 2013 y con vulnerabilidades conocidas: migre a cryptography o PyCryptodome."
+
+[[biblioteca]]
+id = "pyopenssl"
+nombre = "pyOpenSSL"
+paquetes = ["pypi:pyopenssl"]
+
+[[biblioteca]]
+id = "paramiko"
+nombre = "Paramiko"
+paquetes = ["pypi:paramiko"]
+
+[[biblioteca]]
+id = "liboqs"
+nombre = "liboqs (Open Quantum Safe)"
+paquetes = ["pypi:liboqs-python", "binario:liboqs", "cargo:oqs", "npm:liboqs-node"]
+riesgo_predeterminado = "resistente-cuantico"
+nota = "Biblioteca de investigación: Open Quantum Safe no la recomienda para producción. Prefiera una implementación validada (por ejemplo, OpenSSL 3.5 o AWS-LC)."
+
+[[biblioteca]]
+id = "node-forge"
+nombre = "node-forge"
+paquetes = ["npm:node-forge"]
+
+[[biblioteca]]
+id = "crypto-js"
+nombre = "crypto-js"
+paquetes = ["npm:crypto-js"]
+riesgo_predeterminado = "obsoleto"
+nota = "Su desarrollo se descontinuó: use node:crypto o Web Crypto."
+
+[[biblioteca]]
+id = "jsrsasign"
+nombre = "jsrsasign"
+paquetes = ["npm:jsrsasign"]
+
+[[biblioteca]]
+id = "noble-post-quantum"
+nombre = "@noble/post-quantum"
+paquetes = ["npm:@noble/post-quantum"]
+riesgo_predeterminado = "resistente-cuantico"
+
+[[biblioteca]]
+id = "rustls"
+nombre = "rustls"
+paquetes = ["cargo:rustls"]
+
+[[biblioteca]]
+id = "ring"
+nombre = "ring"
+paquetes = ["cargo:ring"]
+
+[[biblioteca]]
+id = "aws-lc-rs"
+nombre = "aws-lc-rs"
+paquetes = ["cargo:aws-lc-rs"]
+
+[[biblioteca]]
+id = "rustcrypto-ml-kem"
+nombre = "ml-kem (RustCrypto)"
+paquetes = ["cargo:ml-kem"]
+riesgo_predeterminado = "resistente-cuantico"
+
+[[biblioteca]]
+id = "rustcrypto-ml-dsa"
+nombre = "ml-dsa (RustCrypto)"
+paquetes = ["cargo:ml-dsa"]
+riesgo_predeterminado = "resistente-cuantico"

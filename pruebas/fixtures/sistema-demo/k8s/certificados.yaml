@@ -1,0 +1,21 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: tienda
+  namespace: tienda
+spec:
+  secretName: tienda-tls
+  dnsNames: [tienda.ejemplo.mx]
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+    rotationPolicy: Always
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: intranet
+  namespace: interno
+spec:
+  secretName: intranet-tls
+  dnsNames: [intranet.ejemplo.mx]

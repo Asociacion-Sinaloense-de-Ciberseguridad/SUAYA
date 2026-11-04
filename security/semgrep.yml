@@ -1,0 +1,44 @@
+rules:
+  - id: suaya-signature-prefix
+    languages: [rust]
+    message: Una firma debe verificarse criptográficamente, nunca por prefijo.
+    severity: ERROR
+    pattern: Ok($S.starts_with("sig_"))
+  - id: suaya-hash-as-signature
+    languages: [rust]
+    message: Un hash sin llave no autentica al firmante.
+    severity: ERROR
+    pattern: format!("sig_{}", $HASH)
+  - id: suaya-bearer-prefix-only
+    languages: [rust]
+    message: Reconocer Bearer no valida credenciales.
+    severity: ERROR
+    pattern: |
+      if $TOKEN.starts_with("Bearer ") {
+        return Ok($REQ.into_response());
+      }
+  - id: suaya-unescaped-html
+    languages: [rust]
+    message: Escape contextual requerido al insertar texto externo en HTML.
+    severity: ERROR
+    pattern-either:
+      - pattern: $OUT.push_str(&format!("<p>{}</p>", $F.description))
+      - pattern: $OUT.push_str(&format!("<h3>{}</h3>", $F.title))
+  - id: suaya-shell-interpreter
+    languages: [rust]
+    message: No introducir un intérprete de shell para procesar entradas externas.
+    severity: ERROR
+    pattern-either:
+      - pattern: std::process::Command::new("sh")
+      - pattern: std::process::Command::new("bash")
+
+  - id: suaya-loopback-prefix-review
+    languages: [rust]
+    severity: ERROR
+    message: Un prefijo textual 127. no valida loopback. Utilizar IpAddr y una política explícita de transporte.
+    pattern: $HOST.starts_with("127.")
+  - id: suaya-global-budget-review
+    languages: [rust]
+    severity: WARNING
+    message: Revisar bucket global compartido antes de autenticar. Confirmar aislamiento mediante regresión SEC002.
+    pattern: $STATE.budget("", $LIMIT)

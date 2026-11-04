@@ -1,0 +1,166 @@
+name: Integración continua
+
+on:
+  push:
+    branches: [main]
+  workflow_call:
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  pruebas:
+    name: Pruebas (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      # Acciones fijadas por commit (v7.0.1 y rama stable).
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec
+        with:
+          toolchain: "1.99.1"
+          components: rustfmt, clippy, llvm-tools-preview
+      - name: Formato
+        run: cargo fmt --all --check
+      - name: Análisis estático
+        run: cargo clippy --workspace --all-targets --locked -- -D warnings
+      - name: Pruebas de empaquetado y configuración
+        run: python3 pruebas/test_release.py
+      - name: Interfaz nativa macOS
+        if: runner.os == 'macOS'
+        run: swiftc -swift-version 5 -parse-as-library -typecheck macos/SuayaApp.swift
+      - name: Pruebas
+        run: cargo test --workspace --locked
+      - name: Regresiones de seguridad con binarios del commit
+        run: |
+          cargo build --workspace --locked
+          SUAYA_BIN="$PWD/target/debug/suaya" SUAYA_API="$PWD/target/debug/suaya-api" python3 pruebas/regresiones.py
+          SUAYA_BIN="$PWD/target/debug/suaya" python3 pruebas/imagenes_seguridad.py
+      - name: Privacidad de exportación macOS
+        if: runner.os == 'macOS'
+        run: python3 pruebas/regresion_gui.py
+      - name: Medición de cobertura Rust
+        if: runner.os == 'Linux'
+        run: python3 scripts/cobertura.py
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        if: runner.os == 'Linux'
+        with:
+          name: rust-coverage
+          path: validacion/coverage.txt
+          if-no-files-found: error
+      - name: Corpus y fuzzing acotado
+        if: runner.os == 'Linux'
+        run: bash scripts/fuzz.sh
+      - name: Empaquetado y firma macOS
+        if: runner.os == 'macOS'
+        run: SUAYA_DMG=1 bash empaquetado/build-macos.sh
+
+  esquema:
+    name: Validación del CBOM contra CycloneDX 1.7
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec
+        with:
+          toolchain: "1.99.1"
+      # v7.0.0
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.13"
+      - name: Escanear el sistema de demostración
+        run: cargo run --locked -p suaya -- escanear pruebas/fixtures/sistema-demo -o demo.cbom.json -r reporte-demo.md
+      - name: Validar contra el esquema oficial
+        run: |
+          pip install jsonschema==4.25.1 referencing==0.36.2
+          python3 pruebas/validar-cbom.py demo.cbom.json
+      - name: Verificar que no se use la raya tipográfica
+        run: python3 pruebas/sin-rayas.py . reporte-demo.md
+
+  dependencias:
+    name: Avisos de seguridad, licencias y origen (cargo-deny)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      # cargo-deny-action v2.1.1
+      - uses: EmbarkStudios/cargo-deny-action@3c6349835b2b7b196a839186cb8b78e02f7b5f25
+        with:
+          command: check
+
+  msrv:
+    name: Versión mínima de Rust (1.89)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec
+        with:
+          toolchain: "1.89"
+      - name: Compilar con la versión mínima
+        run: cargo build --locked --workspace
+
+  reproducible:
+    name: Compilación reproducible
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+      - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec
+        with:
+          toolchain: "1.99.1"
+      - name: Dos compilaciones en rutas distintas
+        run: ./scripts/compilacion-reproducible.sh
+
+  seguridad:
+    name: SAST y detección de secretos
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Semgrep
+        run: |
+          python3 -m venv /tmp/suaya-sast
+          /tmp/suaya-sast/bin/pip install --no-deps -r security/semgrep-requirements.txt
+          echo /tmp/suaya-sast/bin >> "$GITHUB_PATH"
+          /tmp/suaya-sast/bin/semgrep scan --config security/semgrep.yml --error --strict --metrics off --disable-version-check .
+      - name: Gitleaks
+        run: |
+          go install github.com/zricethezav/gitleaks/v8@v8.30.1
+          "$(go env GOPATH)/bin/gitleaks" dir . --config .gitleaks.toml --redact
+
+  contenedor:
+    name: Imagen y SBOM con Trivy fijado
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Construir y analizar
+        run: |
+          curl --fail --location --proto '=https' -o /tmp/trivy.tgz https://github.com/aquasecurity/trivy/releases/download/v0.76.0/trivy_0.76.0_Linux-64bit.tar.gz
+          echo 'e24b1c51293c1b15e4ba8d45bbc7891ba053f90278ec2698f3562c993e145fe7  /tmp/trivy.tgz' | sha256sum -c -
+          tar -xzf /tmp/trivy.tgz -C /tmp trivy
+          docker build -f empaquetado/contenedor/Dockerfile -t suaya:ci .
+          /tmp/trivy image --scanners vuln --severity HIGH,CRITICAL --exit-code 1 suaya:ci
+          /tmp/trivy image --format cyclonedx --output container-sbom.json suaya:ci
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: container-sbom
+          path: container-sbom.json
+          if-no-files-found: error

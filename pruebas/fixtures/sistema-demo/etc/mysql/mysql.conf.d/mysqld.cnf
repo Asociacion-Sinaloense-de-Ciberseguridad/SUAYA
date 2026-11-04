@@ -1,0 +1,6 @@
+[mysqld]
+bind-address = 0.0.0.0
+ssl-cert = /etc/mysql/server-cert.pem
+ssl-key = /etc/mysql/server-key.pem
+tls_version = TLSv1.3
+require_secure_transport = ON

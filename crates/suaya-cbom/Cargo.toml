@@ -1,0 +1,26 @@
+[package]
+name = "suaya-cbom"
+description = "Exportación e interpretación de CBOM CycloneDX 1.7 para Suaya, con reporte ejecutivo y comparación."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[dependencies]
+suaya-core.workspace = true
+aws-lc-rs = "1.18"
+base64 = "0.23.1"
+hex.workspace = true
+sha2.workspace = true
+serde_json.workspace = true
+time.workspace = true
+uuid.workspace = true
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+suaya-escaneo.workspace = true

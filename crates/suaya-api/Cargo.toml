@@ -1,0 +1,44 @@
+[package]
+name = "suaya-api"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+[dependencies]
+suaya-core.workspace = true
+suaya-escaneo.workspace = true
+suaya-cbom.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+hex.workspace = true
+uuid.workspace = true
+time.workspace = true
+anyhow.workspace = true
+clap = { workspace = true, features = ["derive"] }
+axum = "0.8"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "net", "signal", "sync", "time"] }
+rusqlite = { version = "0.37", features = ["bundled"] }
+subtle = "2.6"
+[dev-dependencies]
+tower = { version = "0.5", features = ["util"] }
+http-body-util = "0.1"
+[lints]
+workspace = true
+
+[package.metadata.deb]
+maintainer = "SUAYA contributors"
+section = "admin"
+priority = "optional"
+assets = [
+    ["target/release/suaya-api", "usr/bin/", "755"],
+    ["../../docs/operacion-1.5.md", "usr/share/doc/suaya-api/operacion.md", "644"],
+    ["../../LICENSE", "usr/share/doc/suaya-api/LICENSE", "644"],
+]
+extended-description = "API local de inventario criptográfico con autenticación, ownership y cuotas."
+
+[package.metadata.generate-rpm]
+assets = [
+    { source = "target/release/suaya-api", dest = "/usr/bin/suaya-api", mode = "755" },
+    { source = "docs/operacion-1.5.md", dest = "/usr/share/doc/suaya-api/operacion.md", mode = "644", doc = true },
+]
