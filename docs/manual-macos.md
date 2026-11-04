@@ -17,10 +17,10 @@ Este manual cubre la instalación, configuración y uso de Suaya en macOS 13 (Ve
 
 ```bash
 # Para Apple Silicon (arm64)
-curl -LO https://github.com/[OWNER]/suaya/releases/download/v1.5.0/suaya-1.5.0-arm64.tar.gz
+curl -LO https://github.com/Asociacion-Sinaloense-de-Ciberseguridad/SUAYA/releases/download/v1.5.0/suaya-1.5.0-arm64.tar.gz
 
 # Para Intel (x86_64)
-curl -LO https://github.com/[OWNER]/suaya/releases/download/v1.5.0/suaya-1.5.0-x86_64.tar.gz
+curl -LO https://github.com/Asociacion-Sinaloense-de-Ciberseguridad/SUAYA/releases/download/v1.5.0/suaya-1.5.0-x86_64.tar.gz
 ```
 
 2. Extrae y mueve a `/usr/local/bin`:
@@ -69,7 +69,7 @@ xcode-select --install
 3. Compila Suaya:
 
 ```bash
-git clone https://github.com/[OWNER]/suaya && cd suaya
+git clone https://github.com/Asociacion-Sinaloense-de-Ciberseguridad/SUAYA && cd SUAYA
 cargo build --release
 ```
 
@@ -366,7 +366,7 @@ cargo clean && cargo build --release
 
 ```bash
 # Descarga la nueva versión
-curl -LO https://github.com/[OWNER]/suaya/releases/download/v1.5.1/suaya-1.5.1-arm64.tar.gz
+curl -LO https://github.com/Asociacion-Sinaloense-de-Ciberseguridad/SUAYA/releases/download/v1.5.1/suaya-1.5.1-arm64.tar.gz
 
 # Extrae y reemplaza
 tar xzf suaya-1.5.1-arm64.tar.gz
@@ -388,6 +388,6 @@ brew update && brew upgrade suaya
 
 ## Soporte
 
-- Issues: https://github.com/[OWNER]/suaya/issues
-- Documentación: https://github.com/[OWNER]/suaya/tree/main/docs
+- Issues: https://github.com/Asociacion-Sinaloense-de-Ciberseguridad/SUAYA/issues
+- Documentación: https://github.com/Asociacion-Sinaloense-de-Ciberseguridad/SUAYA/tree/main/docs
 - Comunidad: [enlace a Discord/Slack si aplica]

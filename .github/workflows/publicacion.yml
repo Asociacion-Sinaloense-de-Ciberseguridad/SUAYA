@@ -47,6 +47,10 @@ jobs:
         with:
           toolchain: "1.99.1"
           targets: ${{ matrix.objetivo }}
+      # scripts/manifest-build.py usa tomllib; ubuntu-22.04 trae Python 3.10. v7.0.0
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.13"
       - name: Compilar de forma reproducible
         shell: bash
         run: |
