@@ -1,0 +1,32 @@
+[package]
+name = "suaya-escaneo"
+description = "Escáneres de Suaya: certificados, llaves, configuraciones SSH/TLS y cifrado de volumen."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[dependencies]
+libc = "0.2"
+suaya-core.workspace = true
+base64 = "0.23.1"
+ed25519-dalek = { version = "2", default-features = false, features = ["zeroize"] }
+hex.workspace = true
+regex.workspace = true
+aho-corasick = "1.1"
+memchr = "2.7"
+flate2 = "1.1.10"
+ruzstd = "0.9.1"
+serde_json.workspace = true
+tar = { version = "0.4.46", default-features = false }
+sha2.workspace = true
+ssh-key.workspace = true
+time.workspace = true
+walkdir.workspace = true
+x509-parser.workspace = true
+
+[lints]
+workspace = true

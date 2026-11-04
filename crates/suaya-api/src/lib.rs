@@ -1,0 +1,437 @@
+//! API local: tokens opacos con expiración, autorización por propietario,
+//! objetivos preconfigurados y persistencia SQLite. Nunca acepta rutas o URLs del cliente.
+use axum::{
+    Extension, Json, Router,
+    extract::{DefaultBodyLimit, Path, Request, State},
+    http::{StatusCode, header},
+    middleware::{self, Next},
+    response::{IntoResponse, Response},
+    routing::{get, post},
+};
+use rusqlite::{Connection, OptionalExtension, params};
+use serde::Deserialize;
+use serde_json::{Value, json};
+use sha2::{Digest, Sha256};
+use std::{
+    collections::HashMap,
+    path::PathBuf,
+    sync::{Arc, Mutex, RwLock},
+    time::{Duration, Instant},
+};
+use subtle::ConstantTimeEq;
+use tokio::sync::Semaphore;
+
+#[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Credential {
+    pub user: String,
+    pub token_sha256: String,
+    pub expires_at: i64,
+    pub admin: bool,
+    /// None conserva acceso a todos los alias; Some restringe explícitamente.
+    #[serde(default)]
+    pub targets: Option<Vec<String>>,
+}
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Config {
+    pub credentials: Vec<Credential>,
+    pub targets: HashMap<String, PathBuf>,
+}
+#[derive(Clone)]
+pub struct Principal {
+    pub user: String,
+    pub admin: bool,
+    pub targets: Option<Vec<String>>,
+}
+#[derive(Hash, PartialEq, Eq)]
+enum Bucket {
+    Anonymous,
+    User(String),
+}
+struct Budget {
+    since: Instant,
+    count: u32,
+}
+#[derive(Clone)]
+pub struct AppState {
+    credentials: Arc<RwLock<Vec<Credential>>>,
+    targets: Arc<HashMap<String, PathBuf>>,
+    db: Arc<Mutex<Connection>>,
+    scans: Arc<Semaphore>,
+    requests: Arc<Mutex<HashMap<Bucket, Budget>>>,
+}
+
+impl AppState {
+    pub fn new(mut config: Config, db: Connection) -> anyhow::Result<Self> {
+        anyhow::ensure!(
+            !config.credentials.is_empty() && config.credentials.len() <= 100,
+            "Se requieren 1..100 credenciales"
+        );
+        let mut users = std::collections::HashSet::new();
+        let mut hashes = std::collections::HashSet::new();
+        for c in &mut config.credentials {
+            c.token_sha256.make_ascii_lowercase();
+            if let Some(allowed) = &c.targets {
+                anyhow::ensure!(
+                    allowed.iter().all(|a| config.targets.contains_key(a)),
+                    "Alias de credencial desconocido"
+                );
+            }
+            anyhow::ensure!(
+                !c.user.is_empty()
+                    && c.user.len() <= 64
+                    && c.user
+                        .bytes()
+                        .all(|b| b.is_ascii_alphanumeric() || b == b'-' || b == b'_'),
+                "Identidad inválida"
+            );
+            anyhow::ensure!(
+                users.insert(c.user.clone()) && hashes.insert(c.token_sha256.clone()),
+                "Identidad o token duplicado"
+            );
+            anyhow::ensure!(
+                hex::decode(&c.token_sha256).is_ok_and(|h| h.len() == 32),
+                "Hash de token inválido"
+            );
+            anyhow::ensure!(
+                c.expires_at > time::OffsetDateTime::now_utc().unix_timestamp(),
+                "Credencial expirada"
+            );
+        }
+        let mut targets = HashMap::new();
+        for (name, path) in config.targets {
+            anyhow::ensure!(
+                !name.is_empty()
+                    && name.len() <= 64
+                    && name
+                        .bytes()
+                        .all(|b| b.is_ascii_alphanumeric() || b == b'-' || b == b'_'),
+                "Objetivo inválido"
+            );
+            let path = path.canonicalize()?;
+            anyhow::ensure!(path.is_dir() || path.is_file(), "Objetivo no regular");
+            targets.insert(name, path);
+        }
+        db.busy_timeout(Duration::from_secs(5))?;
+        db.execute_batch(
+            "PRAGMA journal_mode=DELETE; PRAGMA foreign_keys=ON; PRAGMA secure_delete=ON; PRAGMA max_page_count=147456;
+          CREATE TABLE IF NOT EXISTS scans(id TEXT PRIMARY KEY, owner TEXT NOT NULL,
+          created_at TEXT NOT NULL, status TEXT NOT NULL, cbom TEXT NOT NULL);
+          CREATE INDEX IF NOT EXISTS scan_owner ON scans(owner);",
+        )?;
+        Ok(Self {
+            credentials: Arc::new(RwLock::new(config.credentials)),
+            targets: Arc::new(targets),
+            db: Arc::new(Mutex::new(db)),
+            scans: Arc::new(Semaphore::new(2)),
+            requests: Arc::new(Mutex::new(HashMap::new())),
+        })
+    }
+    /// Purga también en períodos sin nuevos escaneos; invocada por el supervisor horario.
+    pub fn maintenance(&self) -> anyhow::Result<()> {
+        let db = self.db.lock().map_err(|_| anyhow::anyhow!("lock"))?;
+        db.execute(
+            "DELETE FROM scans WHERE julianday(created_at) < julianday('now','-30 days')",
+            [],
+        )?;
+        Ok(())
+    }
+    /// Recarga validada y atómica. Cambiar alias requiere reiniciar la instancia.
+    pub fn reload_credentials(&self, config: Config) -> anyhow::Result<()> {
+        let candidate = Self::new(config, Connection::open_in_memory()?)?;
+        anyhow::ensure!(
+            *self.targets == *candidate.targets,
+            "Cambiar objetivos requiere reiniciar"
+        );
+        let credentials = candidate
+            .credentials
+            .read()
+            .map_err(|_| anyhow::anyhow!("lock"))?
+            .clone();
+        *self
+            .credentials
+            .write()
+            .map_err(|_| anyhow::anyhow!("lock"))? = credentials;
+        self.requests
+            .lock()
+            .map_err(|_| anyhow::anyhow!("lock"))?
+            .clear();
+        Ok(())
+    }
+    fn budget(&self, user: Bucket, limit: u32) -> bool {
+        let Ok(mut budgets) = self.requests.lock() else {
+            return false;
+        };
+        let budget = budgets.entry(user).or_insert(Budget {
+            since: Instant::now(),
+            count: 0,
+        });
+        if budget.since.elapsed() >= Duration::from_secs(60) {
+            budget.since = Instant::now();
+            budget.count = 0;
+        }
+        budget.count = budget.count.saturating_add(1);
+        budget.count <= limit
+    }
+}
+
+#[derive(Debug)]
+pub struct ApiError(StatusCode);
+impl IntoResponse for ApiError {
+    fn into_response(self) -> Response {
+        (
+            self.0,
+            Json(json!({"error": self.0.canonical_reason().unwrap_or("Error")})),
+        )
+            .into_response()
+    }
+}
+fn internal(_: impl std::fmt::Display) -> ApiError {
+    eprintln!(
+        "{}",
+        json!({"event":"api_internal_error", "at":time::OffsetDateTime::now_utc().unix_timestamp()})
+    );
+    ApiError(StatusCode::INTERNAL_SERVER_ERROR)
+}
+
+fn authenticate(state: &AppState, request: &Request) -> Result<Principal, ApiError> {
+    let token = request
+        .headers()
+        .get(header::AUTHORIZATION)
+        .and_then(|v| v.to_str().ok())
+        .and_then(|s| s.strip_prefix("Bearer "))
+        .filter(|s| (32..=256).contains(&s.len()));
+    let digest = token.map(|s| Sha256::digest(s.as_bytes()));
+    let now = time::OffsetDateTime::now_utc().unix_timestamp();
+    let credentials = state.credentials.read().map_err(internal)?;
+    let mut principal = None;
+    if let Some(digest) = digest {
+        for credential in credentials.iter() {
+            let expected = hex::decode(&credential.token_sha256).unwrap_or_default();
+            if expected.as_slice().ct_eq(digest.as_slice()).unwrap_u8() == 1
+                && credential.expires_at > now
+            {
+                principal = Some(Principal {
+                    user: credential.user.clone(),
+                    admin: credential.admin,
+                    targets: credential.targets.clone(),
+                });
+            }
+        }
+    }
+    drop(credentials);
+    let Some(principal) = principal else {
+        // Un único bucket anónimo acotado no afecta a los usuarios autenticados.
+        let status = if state.budget(Bucket::Anonymous, 600) {
+            StatusCode::UNAUTHORIZED
+        } else {
+            StatusCode::TOO_MANY_REQUESTS
+        };
+        return Err(ApiError(status));
+    };
+    if !state.budget(Bucket::User(principal.user.clone()), 60) {
+        return Err(ApiError(StatusCode::TOO_MANY_REQUESTS));
+    }
+    Ok(principal)
+}
+async fn auth(State(state): State<AppState>, mut request: Request, next: Next) -> Response {
+    let id = uuid::Uuid::new_v4().to_string();
+    let route = request
+        .extensions()
+        .get::<axum::extract::MatchedPath>()
+        .map(|p| p.as_str())
+        .unwrap_or("unknown")
+        .to_string();
+    let object = request
+        .uri()
+        .path()
+        .rsplit('/')
+        .next()
+        .and_then(|s| uuid::Uuid::parse_str(s).ok())
+        .map(|id| id.to_string());
+    let method = request.method().to_string();
+    let start = Instant::now();
+    let mut user = None;
+    let mut response = match authenticate(&state, &request) {
+        Ok(principal) => {
+            user = Some(principal.user.clone());
+            request.extensions_mut().insert(principal);
+            next.run(request).await
+        }
+        Err(error) => error.into_response(),
+    };
+    response
+        .headers_mut()
+        .insert("x-request-id", id.parse().unwrap());
+    eprintln!(
+        "{}",
+        json!({"event":"api_request", "request_id":id, "user":user,
+        "method":method, "route":route, "object":object, "status":response.status().as_u16(),
+        "duration_ms":start.elapsed().as_millis(), "at":time::OffsetDateTime::now_utc().unix_timestamp()})
+    );
+    response
+}
+async fn headers(request: Request, next: Next) -> Response {
+    let mut response = next.run(request).await;
+    let h = response.headers_mut();
+    h.insert(header::CACHE_CONTROL, "no-store".parse().unwrap());
+    h.insert(header::X_CONTENT_TYPE_OPTIONS, "nosniff".parse().unwrap());
+    h.insert(
+        header::CONTENT_SECURITY_POLICY,
+        "default-src 'none'; frame-ancestors 'none'"
+            .parse()
+            .unwrap(),
+    );
+    response
+}
+pub fn router(state: AppState) -> Router {
+    let protected = Router::new()
+        .route("/api/v1/scan", post(scan))
+        .route("/api/v1/scans", get(list))
+        .route("/api/v1/scan/{id}", get(read).delete(delete))
+        .route("/api/v1/config", get(config))
+        .route_layer(middleware::from_fn_with_state(state.clone(), auth));
+    Router::new()
+        .merge(protected)
+        .route(
+            "/api/v1/health",
+            get(|| async { Json(json!({"status":"ok", "version":env!("CARGO_PKG_VERSION")})) }),
+        )
+        .layer(DefaultBodyLimit::max(4096))
+        .layer(middleware::from_fn(headers))
+        .with_state(state)
+}
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ScanRequest {
+    target: String,
+}
+async fn scan(
+    State(state): State<AppState>,
+    Extension(user): Extension<Principal>,
+    Json(input): Json<ScanRequest>,
+) -> Result<Json<Value>, ApiError> {
+    if !user.admin
+        && user
+            .targets
+            .as_ref()
+            .is_some_and(|targets| !targets.contains(&input.target))
+    {
+        return Err(ApiError(StatusCode::FORBIDDEN));
+    }
+    let path = state
+        .targets
+        .get(&input.target)
+        .cloned()
+        .ok_or(ApiError(StatusCode::BAD_REQUEST))?;
+    let permit = state
+        .scans
+        .clone()
+        .try_acquire_owned()
+        .map_err(|_| ApiError(StatusCode::TOO_MANY_REQUESTS))?;
+    let name = input.target;
+    tokio::task::spawn_blocking(move || {
+        let _permit = permit;
+        let knowledge = suaya_core::Conocimiento::embebido();
+        let result = suaya_escaneo::escanear(&[path], &knowledge, &suaya_escaneo::Opciones { hilos: 2, ..Default::default() });
+        if result.archivos_revisados == 0 && !result.avisos.is_empty() { return Err(ApiError(StatusCode::UNPROCESSABLE_ENTITY)); }
+        let status = if result.avisos.is_empty() && result.archivos_omitidos == 0 { "completed" } else { "partial" };
+        let mut cbom = suaya_cbom::generar(&result.inventario, &knowledge, &suaya_cbom::OpcionesCbom { nombre_sistema: Some(name), ..Default::default() });
+        if let Some(props) = cbom["metadata"]["properties"].as_array_mut() {
+            props.push(json!({"name":"suaya:estado", "value":status}));
+        }
+        let id = uuid::Uuid::new_v4().to_string();
+        let created = time::OffsetDateTime::now_utc().format(&time::format_description::well_known::Rfc3339).map_err(internal)?;
+        let text = serde_json::to_string(&cbom).map_err(internal)?;
+        let db = state.db.lock().map_err(internal)?;
+        // Retención 30 días, máximo 16 MiB por documento, 128 MiB por usuario, 512 MiB total.
+        if text.len() > 16 * 1024 * 1024 { return Err(ApiError(StatusCode::PAYLOAD_TOO_LARGE)); }
+        db.execute("DELETE FROM scans WHERE julianday(created_at) < julianday('now','-30 days')", []).map_err(internal)?;
+        let used: i64 = db.query_row("SELECT COALESCE(SUM(length(CAST(cbom AS BLOB))),0) FROM scans WHERE owner=?1", [&user.user], |r| r.get(0)).map_err(internal)?;
+        let total: i64 = db.query_row("SELECT COALESCE(SUM(length(CAST(cbom AS BLOB))),0) FROM scans", [], |r| r.get(0)).map_err(internal)?;
+        if used + text.len() as i64 > 128 * 1024 * 1024 || total + text.len() as i64 > 512 * 1024 * 1024 { return Err(ApiError(StatusCode::CONFLICT)); }
+        let count: i64 = db.query_row("SELECT COUNT(*) FROM scans WHERE owner=?1", [&user.user], |r| r.get(0)).map_err(internal)?;
+        if count >= 1000 { return Err(ApiError(StatusCode::CONFLICT)); }
+        db.execute("INSERT INTO scans VALUES(?1,?2,?3,?4,?5)", params![id,user.user,created,status,text]).map_err(internal)?;
+        Ok(Json(json!({"id":id,"status":status,"created_at":created,"files":result.archivos_revisados,"skipped":result.archivos_omitidos,"warnings":result.avisos.len()})))
+    }).await.map_err(internal)?
+}
+async fn list(
+    State(state): State<AppState>,
+    Extension(user): Extension<Principal>,
+) -> Result<Json<Value>, ApiError> {
+    tokio::task::spawn_blocking(move || {
+    let db = state.db.lock().map_err(internal)?;
+    let mut stmt = db.prepare("SELECT id,created_at,status FROM scans WHERE owner=?1 OR ?2 ORDER BY created_at DESC LIMIT 1000").map_err(internal)?;
+    let rows = stmt.query_map(params![user.user,user.admin], |r| Ok(json!({"id":r.get::<_,String>(0)?,"created_at":r.get::<_,String>(1)?,"status":r.get::<_,String>(2)?}))).map_err(internal)?;
+    Ok(Json(Value::Array(
+        rows.collect::<Result<Vec<_>, _>>().map_err(internal)?,
+    )))
+    }).await.map_err(internal)?
+}
+fn validate_id(id: &str) -> Result<(), ApiError> {
+    uuid::Uuid::parse_str(id)
+        .map(|_| ())
+        .map_err(|_| ApiError(StatusCode::NOT_FOUND))
+}
+async fn read(
+    State(state): State<AppState>,
+    Extension(user): Extension<Principal>,
+    Path(id): Path<String>,
+) -> Result<Json<Value>, ApiError> {
+    validate_id(&id)?;
+    tokio::task::spawn_blocking(move || {
+        let db = state.db.lock().map_err(internal)?;
+        let text: Option<String> = db
+            .query_row(
+                "SELECT cbom FROM scans WHERE id=?1 AND (owner=?2 OR ?3)",
+                params![id, user.user, user.admin],
+                |r| r.get(0),
+            )
+            .optional()
+            .map_err(internal)?;
+        Ok(Json(
+            serde_json::from_str(&text.ok_or(ApiError(StatusCode::NOT_FOUND))?)
+                .map_err(internal)?,
+        ))
+    })
+    .await
+    .map_err(internal)?
+}
+async fn delete(
+    State(state): State<AppState>,
+    Extension(user): Extension<Principal>,
+    Path(id): Path<String>,
+) -> Result<StatusCode, ApiError> {
+    validate_id(&id)?;
+    tokio::task::spawn_blocking(move || {
+        let db = state.db.lock().map_err(internal)?;
+        let n = db
+            .execute(
+                "DELETE FROM scans WHERE id=?1 AND (owner=?2 OR ?3)",
+                params![id, user.user, user.admin],
+            )
+            .map_err(internal)?;
+        if n == 0 {
+            Err(ApiError(StatusCode::NOT_FOUND))
+        } else {
+            Ok(StatusCode::NO_CONTENT)
+        }
+    })
+    .await
+    .map_err(internal)?
+}
+async fn config(
+    State(state): State<AppState>,
+    Extension(user): Extension<Principal>,
+) -> Result<Json<Value>, ApiError> {
+    if !user.admin {
+        return Err(ApiError(StatusCode::FORBIDDEN));
+    }
+    let mut targets = state.targets.keys().cloned().collect::<Vec<_>>();
+    targets.sort();
+    Ok(Json(
+        json!({"targets":targets,"configuration":"SIGHUP reloads credentials; restart to change targets", "scan_concurrency":2, "max_document_bytes":16777216, "max_owner_bytes":134217728, "max_total_bytes":536870912, "retention_days":30}),
+    ))
+}

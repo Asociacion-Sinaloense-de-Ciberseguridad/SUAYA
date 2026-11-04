@@ -1,0 +1,46 @@
+# Plantilla de perfil de política para marcos nacionales, sectoriales o
+# institucionales (por ejemplo, una política de migración poscuántica de un
+# gobierno, un regulador financiero o una organización).
+#
+# Copie este archivo, ajuste los identificadores, fechas y reglas según el
+# documento oficial que quiera aplicar, y úselo con:
+#
+#     suaya escanear /etc --perfil mi-politica.toml
+#
+# Cómo se evalúa: cada algoritmo se compara con las reglas en orden y gana la
+# primera que coincide. Una regla puede filtrar por:
+#   algoritmos      identificadores de conocimiento/algoritmos.toml
+#   familias        familia CycloneDX (p. ej. "ML-KEM", "RSASSA-PSS")
+#   riesgos         roto-clasico, obsoleto, vulnerable-cuantico,
+#                   debilitado-grover, hibrido-pq, resistente-cuantico
+#   capacidades     capacidades de conocimiento/madurez.toml
+#   tamano_minimo   para algoritmos de tamaño variable (RSA)
+# Estados: "conforme", "transicion" (con retiro y prohibicion) o "no-conforme".
+# Certificados, llaves y protocolos heredan el peor estado de sus algoritmos.
+# [plazos] fija la fecha de prohibición por capacidad para las reglas en
+# transición que no declaran «prohibicion».
+
+[perfil]
+id = "plantilla"
+nombre = "Plantilla de política (ejemplo, no oficial)"
+referencia = "Sustituya por la referencia del documento oficial"
+predeterminado = "sin-evaluar"
+ignorar_primitivas = ["other", "kdf"]
+
+[plazos]
+"predeterminado" = 2035
+
+[[regla]]
+riesgos = ["roto-clasico", "obsoleto"]
+estado = "no-conforme"
+nota = "Prohibido por la política."
+
+[[regla]]
+riesgos = ["vulnerable-cuantico"]
+estado = "transicion"
+retiro = 2030
+nota = "Ajuste las fechas de retiro y prohibición a las de la política oficial."
+
+[[regla]]
+riesgos = ["debilitado-grover", "hibrido-pq", "resistente-cuantico"]
+estado = "conforme"

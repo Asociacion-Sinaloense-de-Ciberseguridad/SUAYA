@@ -1,0 +1,30 @@
+title = "SUAYA 1.5"
+[extend]
+useDefault = true
+# Excepciones documentadas: fixtures sintéticos y productos de compilación.
+[[allowlists]]
+description = "Llaves y credenciales exclusivamente sintéticas de fixtures"
+paths = ['''^pruebas/fixtures/sistema-demo/''', '''^pruebas/fixtures/imagenes/''']
+
+[[allowlists]]
+description = "Productos de compilación; el código fuente se analiza"
+paths = ['(^|/)target/', '^build/', '^bin/']
+[[allowlists]]
+description = "Cabecera PEM sin material de llave y muestras truncadas del parser"
+condition = "AND"
+paths = ['^crates/suaya-escaneo/src/llaves_ssh.rs$', '^crates/suaya-escaneo/tests/robustez.rs$']
+regexTarget = "secret"
+regexes = ['^-----BEGIN OPENSSH PRIVATE KEY-----\\n(?:b3BlbnNzaC1rZXktdjE=\\n)?$', '^-----BEGIN PRIVATE KEY-----\\nMIIB']
+[[allowlists]]
+description = "Credenciales WireGuard públicas y sintéticas del generador de fixtures"
+condition = "AND"
+paths = ['^pruebas/generar-fixtures.sh$']
+regexTarget = "secret"
+regexes = ['^gI6EdUSYvn8ugXOt8QQD6Yc\+JyiZxIhp3GInSWRfWGE=$', '^FpCyhws9cxwWoV4xELtfJvjJN\+zQVRPISllRWgeopVE=$']
+
+[[allowlists]]
+description = "Manifiesto de procedencia: únicamente hashes SHA-256 de archivos"
+condition = "AND"
+paths = ['^docs/procedencia.json$', '^validacion/build-manifest.json$']
+regexTarget = "secret"
+regexes = ['^[a-f0-9]{64}$']

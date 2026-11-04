@@ -1,0 +1,1717 @@
+# Suaya: catálogo de traducción al inglés de los textos de hallazgos.
+#
+# Cada
+
+[[texto]]
+es = "Servidores web"
+en = "Web servers"
+
+[[texto]]
+es = "Navegadores web"
+en = "Web browsers"
+
+[[texto]]
+es = "VPN y cifrado de red"
+en = "VPN and network encryption"
+
+[[texto]]
+es = "Aseguramiento de plataforma"
+en = "Platform assurance"
+
+[[texto]]
+es = "Firma de código"
+en = "Code signing"
+
+[[texto]]
+es = "Gestión de PKI y autoridades certificadoras"
+en = "PKI and certificate authority management"
+
+[[texto]]
+es = "Cifrado de volumen"
+en = "Volume encryption"
+
+[[texto]]
+es = "Conectividad a servicios en la nube"
+en = "Cloud service connectivity"
+
+[[texto]]
+es = "Almacén de confianza del sistema"
+en = "System trust store"
+
+[[texto]]
+es = "Código de aplicaciones"
+en = "Application code"
+
+[[texto]]
+es = "Sin clasificar"
+en = "Unclassified"
+
+[[texto]]
+es = "confidencialidad"
+en = "confidentiality"
+
+[[texto]]
+es = "autenticación"
+en = "authentication"
+
+[[texto]]
+es = "integridad"
+en = "integrity"
+
+[[texto]]
+es = "Confidencialidad"
+en = "Confidentiality"
+
+[[texto]]
+es = "Autenticación"
+en = "Authentication"
+
+[[texto]]
+es = "Integridad"
+en = "Integrity"
+
+[[texto]]
+es = "No aplica"
+en = "Not applicable"
+
+[[texto]]
+es = "Bloqueado"
+en = "Blocked"
+
+[[texto]]
+es = "Habilitado"
+en = "Enabled"
+
+[[texto]]
+es = "Componentes disponibles"
+en = "Components available"
+
+[[texto]]
+es = "Integración preliminar"
+en = "Preliminary integration"
+
+[[texto]]
+es = "Integración"
+en = "Integration"
+
+[[texto]]
+es = "Integración validada"
+en = "Validated integration"
+
+[[texto]]
+es = "La capacidad no depende de manera significativa de este tipo de garantía."
+en = "The capability does not depend significantly on this type of assurance."
+
+[[texto]]
+es = "No existen estándares que permitan PQC en esta capacidad para este tipo de garantía."
+en = "No standards exist that enable PQC in this capability for this type of assurance."
+
+[[texto]]
+es = "Existen los estándares necesarios para PQC en esta capacidad y este tipo de garantía."
+en = "The standards needed for PQC exist in this capability and this type of assurance."
+
+[[texto]]
+es = "Existen componentes especializados con soporte PQC basado en estándares, aún no integrados en el producto general."
+en = "Specialized components with standards-based PQC support exist, not yet integrated into the general product."
+
+[[texto]]
+es = "Una versión preliminar, limitada o experimental ofrece PQC."
+en = "A preliminary, limited or experimental release offers PQC."
+
+[[texto]]
+es = "Una versión general, disponible al público y lista para usarse, ofrece PQC."
+en = "A general, publicly available, production-ready release offers PQC."
+
+[[texto]]
+es = "Una versión general ofrece PQC mediante un módulo validado FIPS 140-3 certificado para esas funciones."
+en = "A general release offers PQC through a FIPS 140-3 validated module certified for those functions."
+
+[[texto]]
+es = "Inseguro hoy, sin necesidad de una computadora cuántica."
+en = "Insecure today, no quantum computer required."
+
+[[texto]]
+es = "Retirado o en retiro por los estándares vigentes."
+en = "Retired or being retired by current standards."
+
+[[texto]]
+es = "Vulnerable al algoritmo de Shor. En {capacidad} el ecosistema ya ofrece PQC para {garantia} ({}): la migración es accionable hoy."
+en = "Vulnerable to Shor's algorithm. In {capacidad} the ecosystem already offers PQC for {garantia} ({}): migration is actionable today."
+
+[[texto]]
+es = "Vulnerable al algoritmo de Shor. En {capacidad} el ecosistema para {garantia} está en «{}»: conviene planificar y probar, aún no migrar en producción."
+en = "Vulnerable to Shor's algorithm. In {capacidad} the ecosystem for {garantia} is at \"{}\": plan and test, but do not migrate production yet."
+
+[[texto]]
+es = "Vulnerable al algoritmo de Shor, pero en {capacidad} aún no hay una vía de migración madura para {garantia}. Documentar y monitorear."
+en = "Vulnerable to Shor's algorithm, but in {capacidad} there is no mature migration path yet for {garantia}. Document and monitor."
+
+[[texto]]
+es = "Suaya no pudo determinar el algoritmo o sus parámetros; requiere revisión manual."
+en = "Suaya could not determine the algorithm or its parameters; manual review required."
+
+[[texto]]
+es = "El algoritmo de Grover reduce su margen de seguridad; considerar llaves de 256 bits."
+en = "Grover's algorithm reduces its security margin; consider 256-bit keys."
+
+[[texto]]
+es = "Combina protección clásica y poscuántica."
+en = "Combines classical and post-quantum protection."
+
+[[texto]]
+es = "Resistente a los ataques cuánticos conocidos."
+en = "Resistant to known quantum attacks."
+
+[[texto]]
+es = "La misma llave privada aparece en {} ubicaciones ({}). Cada copia amplía la superficie de exposición; conserve solo las necesarias."
+en = "The same private key appears in {} locations ({}). Each copy widens the exposure surface; keep only the necessary ones."
+
+[[texto]]
+es = "Versión no determinada: {} ofrece PQC desde la versión {d}."
+en = "Version not determined: {} offers PQC starting with version {d}."
+
+[[texto]]
+es = "La versión {version} ofrece PQC, pero no la usa por omisión: verifique la configuración.{extra}"
+en = "Version {version} offers PQC but does not use it by default: check the configuration.{extra}"
+
+[[texto]]
+es = "La versión {version} ofrece PQC: verifique que la aplicación la use.{extra}"
+en = "Version {version} offers PQC: check that the application uses it.{extra}"
+
+[[texto]]
+es = "La versión {version} no ofrece criptografía poscuántica: actualice al menos a {}."
+en = "Version {version} does not offer post-quantum cryptography: upgrade to at least {}."
+
+[[texto]]
+es = "una versión con PQC"
+en = "a version with PQC"
+
+[[texto]]
+es = "La rama {} de {} dejó de recibir correcciones de seguridad el {}."
+en = "The {} branch of {} stopped receiving security fixes on {}."
+
+[[texto]]
+es = "La rama {} de {} termina su soporte el {}: planifique la actualización."
+en = "The {} branch of {} reaches end of support on {}: plan the upgrade."
+
+[[texto]]
+es = "Versión mínima declarada en go.mod: la versión con la que se compila puede ser mayor."
+en = "Minimum version declared in go.mod: the version used to build may be higher."
+
+[[texto]]
+es = "Versión mínima declarada: la instalada puede ser mayor."
+en = "Minimum version declared: the installed one may be higher."
+
+[[texto]]
+es = "Versión declarada en package.json (rango): la instalada puede ser mayor."
+en = "Version declared in package.json (range): the installed one may be higher."
+
+[[texto]]
+es = "Go (biblioteca estándar)"
+en = "Go (standard library)"
+
+[[texto]]
+es = "Go (biblioteca estándar) {}"
+en = "Go (standard library) {}"
+
+[[texto]]
+es = "Bouncy Castle (Java, artefacto jdk15on)"
+en = "Bouncy Castle (Java, jdk15on artifact)"
+
+[[texto]]
+es = "Bouncy Castle (Java, artefacto jdk15on) {}"
+en = "Bouncy Castle (Java, jdk15on artifact) {}"
+
+[[texto]]
+es = "Desde 3.5 ofrece ML-KEM, ML-DSA y SLH-DSA, y X25519MLKEM768 entre los grupos predeterminados de TLS."
+en = "Since 3.5 it offers ML-KEM, ML-DSA and SLH-DSA, and X25519MLKEM768 among the default TLS groups."
+
+[[texto]]
+es = "BoringSSL no publica versiones: su soporte de PQC depende de la revisión que integra cada producto."
+en = "BoringSSL does not publish versions: its PQC support depends on the revision each product integrates."
+
+[[texto]]
+es = "Desde Go 1.24, crypto/mlkem ofrece ML-KEM y crypto/tls negocia X25519MLKEM768 por omisión."
+en = "Since Go 1.24, crypto/mlkem offers ML-KEM and crypto/tls negotiates X25519MLKEM768 by default."
+
+[[texto]]
+es = "Desde JDK 24 ofrece ML-KEM y ML-DSA (JEP 496 y 497); desde JDK 27, X25519MLKEM768 por omisión en TLS 1.3 (JEP 527)."
+en = "Since JDK 24 it offers ML-KEM and ML-DSA (JEP 496 and 497); since JDK 27, X25519MLKEM768 by default in TLS 1.3 (JEP 527)."
+
+[[texto]]
+es = "Desde 1.79 implementa ML-KEM, ML-DSA y SLH-DSA según FIPS 203, 204 y 205."
+en = "Since 1.79 it implements ML-KEM, ML-DSA and SLH-DSA per FIPS 203, 204 and 205."
+
+[[texto]]
+es = "El artefacto bcprov-jdk15on dejó de publicarse en la versión 1.70: migre a bcprov-jdk18on."
+en = "The bcprov-jdk15on artifact stopped being published at version 1.70: migrate to bcprov-jdk18on."
+
+[[texto]]
+es = "Paquete sin mantenimiento: migre a BouncyCastle.Cryptography."
+en = "Unmaintained package: migrate to BouncyCastle.Cryptography."
+
+[[texto]]
+es = "Sin mantenimiento desde 2013 y con vulnerabilidades conocidas: migre a cryptography o PyCryptodome."
+en = "Unmaintained since 2013 and with known vulnerabilities: migrate to cryptography or PyCryptodome."
+
+[[texto]]
+es = "Biblioteca de investigación: Open Quantum Safe no la recomienda para producción. Prefiera una implementación validada (por ejemplo, OpenSSL 3.5 o AWS-LC)."
+en = "Research library: Open Quantum Safe does not recommend it for production. Prefer a validated implementation (for example, OpenSSL 3.5 or AWS-LC)."
+
+[[texto]]
+es = "Su desarrollo se descontinuó: use node:crypto o Web Crypto."
+en = "Its development was discontinued: use node:crypto or Web Crypto."
+
+[[texto]]
+es = "NIST IR 8547 (transición a criptografía poscuántica)"
+en = "NIST IR 8547 (transition to post-quantum cryptography)"
+
+[[texto]]
+es = "NIST IR 8547, Transition to Post-Quantum Cryptography Standards, borrador inicial (noviembre de 2024)"
+en = "NIST IR 8547, Transition to Post-Quantum Cryptography Standards, initial public draft (November 2024)"
+
+[[texto]]
+es = "NIST IR 8547, Transition to Post-Quantum Cryptography Standards (borrador inicial, noviembre de 2024)"
+en = "NIST IR 8547, Transition to Post-Quantum Cryptography Standards (initial public draft, November 2024)"
+
+[[texto]]
+es = "Inseguro o retirado por los estándares vigentes."
+en = "Insecure or retired by current standards."
+
+[[texto]]
+es = "Llave pública vulnerable a cómputo cuántico: en retiro después de 2030, prohibida después de 2035."
+en = "Quantum-vulnerable public key: deprecated after 2030, disallowed after 2035."
+
+[[texto]]
+es = "Aceptado por NIST (categoría de seguridad 1)."
+en = "Accepted by NIST (security category 1)."
+
+[[texto]]
+es = "Inseguro o retirado."
+en = "Insecure or retired."
+
+[[texto]]
+es = "Híbrido con ML-KEM-1024 y P-384."
+en = "Hybrid with ML-KEM-1024 and P-384."
+
+[[texto]]
+es = "CNSA 2.0 exige ML-KEM-1024 para el establecimiento de llaves."
+en = "CNSA 2.0 requires ML-KEM-1024 for key establishment."
+
+[[texto]]
+es = "CNSA 2.0 exige ML-DSA-87 para firmas generales."
+en = "CNSA 2.0 requires ML-DSA-87 for general-purpose signatures."
+
+[[texto]]
+es = "SLH-DSA no forma parte de CNSA 2.0; para firma de software y firmware use LMS o XMSS."
+en = "SLH-DSA is not part of CNSA 2.0; for software and firmware signing use LMS or XMSS."
+
+[[texto]]
+es = "Algoritmo de CNSA 1.0, admitido hasta la fecha de uso exclusivo de CNSA 2.0 para esta capacidad."
+en = "CNSA 1.0 algorithm, allowed until the CNSA 2.0 exclusive-use date for this capability."
+
+[[texto]]
+es = "RSA de 3072 bits o más (CNSA 1.0), admitido hasta la fecha de uso exclusivo de CNSA 2.0."
+en = "RSA of 3072 bits or more (CNSA 1.0), allowed until the CNSA 2.0 exclusive-use date."
+
+[[texto]]
+es = "Fuera de CNSA 2.0 y de CNSA 1.0, como P-256, X25519, Ed25519, RSA-2048, AES-128 o SHA-256."
+en = "Outside CNSA 2.0 and CNSA 1.0, such as P-256, X25519, Ed25519, RSA-2048, AES-128 or SHA-256."
+
+[[texto]]
+es = "Plantilla de política (ejemplo, no oficial)"
+en = "Policy template (example, not official)"
+
+[[texto]]
+es = "Sustituya por la referencia del documento oficial"
+en = "Replace with the reference of the official document"
+
+[[texto]]
+es = "Prohibido por la política."
+en = "Prohibited by the policy."
+
+[[texto]]
+es = "Ajuste las fechas de retiro y prohibición a las de la política oficial."
+en = "Adjust the deprecation and prohibition dates to those of the official policy."
+
+[[texto]]
+es = "Ninguna regla del perfil cubre este algoritmo."
+en = "No rule in the profile covers this algorithm."
+
+[[texto]]
+es = "Plazo vencido en {p}. {nota}"
+en = "Deadline passed in {p}. {nota}"
+
+[[texto]]
+es = "Sin algoritmo identificado que el perfil pueda evaluar."
+en = "No identified algorithm that the profile can evaluate."
+
+[[texto]]
+es = "No conforme"
+en = "Non-compliant"
+
+[[texto]]
+es = "En transición"
+en = "In transition"
+
+[[texto]]
+es = "Conforme"
+en = "Compliant"
+
+[[texto]]
+es = "Sin evaluar"
+en = "Not evaluated"
+
+[[texto]]
+es = "RSASSA-PKCS1-v1_5 con {}"
+en = "RSASSA-PKCS1-v1_5 with {}"
+
+[[texto]]
+es = "ECDSA con {}"
+en = "ECDSA with {}"
+
+[[texto]]
+es = "Diffie-Hellman de campo finito"
+en = "Finite-field Diffie-Hellman"
+
+[[texto]]
+es = "Diffie-Hellman con SHA-1"
+en = "Diffie-Hellman with SHA-1"
+
+[[texto]]
+es = "Diffie-Hellman de 1024 o 1536 bits"
+en = "1024- or 1536-bit Diffie-Hellman"
+
+[[texto]]
+es = "X25519MLKEM768 (híbrido)"
+en = "X25519MLKEM768 (hybrid)"
+
+[[texto]]
+es = "SecP256r1MLKEM768 (híbrido)"
+en = "SecP256r1MLKEM768 (hybrid)"
+
+[[texto]]
+es = "SecP384r1MLKEM1024 (híbrido)"
+en = "SecP384r1MLKEM1024 (hybrid)"
+
+[[texto]]
+es = "sntrup761x25519 (híbrido no NIST)"
+en = "sntrup761x25519 (non-NIST hybrid)"
+
+[[texto]]
+es = "X25519Kyber768Draft00 (híbrido preliminar)"
+en = "X25519Kyber768Draft00 (pre-standard hybrid)"
+
+[[texto]]
+es = "AES (tamaño no determinado)"
+en = "AES (size not determined)"
+
+[[texto]]
+es = "Modo de operación ECB"
+en = "ECB mode of operation"
+
+[[texto]]
+es = "Curva elíptica (no determinada)"
+en = "Elliptic curve (not determined)"
+
+[[texto]]
+es = "ECDH (curva no determinada)"
+en = "ECDH (curve not determined)"
+
+[[texto]]
+es = "ML-DSA-{} compuesta con {}"
+en = "ML-DSA-{} composite with {}"
+
+[[texto]]
+es = "Factorización eficiente con el algoritmo de Shor. Migrar a ML-DSA (firma) o ML-KEM (establecimiento de llaves)."
+en = "Efficient factoring with Shor's algorithm. Migrate to ML-DSA (signatures) or ML-KEM (key establishment)."
+
+[[texto]]
+es = "SHA-1 tiene colisiones prácticas; las firmas con SHA-1 no son confiables."
+en = "SHA-1 has practical collisions; signatures with SHA-1 are not trustworthy."
+
+[[texto]]
+es = "MD5 está roto para firmas."
+en = "MD5 is broken for signatures."
+
+[[texto]]
+es = "FIPS 186-5 ya no aprueba DSA para generar firmas."
+en = "FIPS 186-5 no longer approves DSA for signature generation."
+
+[[texto]]
+es = "Usa SHA-1 o grupos de 1024 bits; debe deshabilitarse."
+en = "Uses SHA-1 or 1024-bit groups; it must be disabled."
+
+[[texto]]
+es = "Grupo híbrido más desplegado en navegadores y servidores."
+en = "The most widely deployed hybrid group in browsers and servers."
+
+[[texto]]
+es = "Híbrido con un algoritmo no estandarizado por NIST. Preferir mlkem768x25519-sha256."
+en = "Hybrid with an algorithm not standardized by NIST. Prefer mlkem768x25519-sha256."
+
+[[texto]]
+es = "Borrador previo a FIPS 203, ya retirado por los navegadores. Sustituir por X25519MLKEM768."
+en = "Pre-FIPS 203 draft, already retired by browsers. Replace with X25519MLKEM768."
+
+[[texto]]
+es = "Aceptable para NIST (categoría 1); CNSA 2.0 exige AES-256."
+en = "Acceptable to NIST (category 1); CNSA 2.0 requires AES-256."
+
+[[texto]]
+es = "Bloque de 64 bits vulnerable a Sweet32; retirado por NIST."
+en = "64-bit block vulnerable to Sweet32; retired by NIST."
+
+[[texto]]
+es = "Esquema de cifrado con contraseña; su fortaleza depende de la KDF, el cifrador y la contraseña."
+en = "Password-based encryption scheme; its strength depends on the KDF, the cipher and the password."
+
+[[texto]]
+es = "Predeterminado de LUKS2 (llave XTS de 512 bits)."
+en = "LUKS2 default (512-bit XTS key)."
+
+[[texto]]
+es = "No está roto como MAC, pero SHA-1 está en retiro; sustituir por HMAC-SHA-256."
+en = "Not broken as a MAC, but SHA-1 is being retired; replace with HMAC-SHA-256."
+
+[[texto]]
+es = "Grupos menores a 2048 bits: alcanzables con cómputo clásico (Logjam)."
+en = "Groups smaller than 2048 bits: within reach of classical computing (Logjam)."
+
+[[texto]]
+es = "Bloque de 64 bits vulnerable a Sweet32; era el cifrador predeterminado de OpenVPN antes de 2.4."
+en = "64-bit block vulnerable to Sweet32; it was OpenVPN's default cipher before 2.4."
+
+[[texto]]
+es = "MD5 está roto; retirado de IPsec y SSH."
+en = "MD5 is broken; retired from IPsec and SSH."
+
+[[texto]]
+es = "Prohibido por RFC 6176."
+en = "Prohibited by RFC 6176."
+
+[[texto]]
+es = "Prohibido por RFC 7568 (POODLE)."
+en = "Prohibited by RFC 7568 (POODLE)."
+
+[[texto]]
+es = "Retirado por RFC 8996."
+en = "Retired by RFC 8996."
+
+[[texto]]
+es = "Los grupos híbridos con ML-KEM están definidos para TLS 1.3; una conexión TLS 1.2 no puede negociarlos."
+en = "Hybrid groups with ML-KEM are defined for TLS 1.3; a TLS 1.2 connection cannot negotiate them."
+
+[[texto]]
+es = "Requisito para negociar grupos híbridos poscuánticos; el riesgo real depende de los grupos configurados."
+en = "Required to negotiate post-quantum hybrid groups; the actual risk depends on the configured groups."
+
+[[texto]]
+es = "Colisiones prácticas desde 2004; no sirve para integridad, firmas ni contraseñas."
+en = "Practical collisions since 2004; unfit for integrity, signatures or passwords."
+
+[[texto]]
+es = "Colisiones prácticas (SHAttered, 2017); NIST lo retira a más tardar en 2030. Sustituir por SHA-256 o SHA-3."
+en = "Practical collisions (SHAttered, 2017); NIST retires it by 2030 at the latest. Replace with SHA-256 or SHA-3."
+
+[[texto]]
+es = "Llave de 56 bits, recuperable por fuerza bruta."
+en = "56-bit key, recoverable by brute force."
+
+[[texto]]
+es = "Sesgos explotables en el flujo de llave; prohibido en TLS por RFC 7465."
+en = "Exploitable keystream biases; prohibited in TLS by RFC 7465."
+
+[[texto]]
+es = "Bloque de 64 bits, expuesto a ataques de cumpleaños (Sweet32)."
+en = "64-bit block, exposed to birthday attacks (Sweet32)."
+
+[[texto]]
+es = "El código no fija el tamaño de llave: con 128 bits el margen queda reducido por Grover; con 256 bits es resistente."
+en = "The code does not fix the key size: with 128 bits Grover reduces the margin; with 256 bits it is resistant."
+
+[[texto]]
+es = "Cifra bloques iguales en bloques iguales y revela patrones; use GCM o ChaCha20-Poly1305. En Java, «AES» sin modo equivale a AES/ECB."
+en = "Encrypts equal blocks into equal blocks and reveals patterns; use GCM or ChaCha20-Poly1305. In Java, \"AES\" without a mode means AES/ECB."
+
+[[texto]]
+es = "El código no fija la curva; cualquier curva elíptica es vulnerable al algoritmo de Shor."
+en = "The code does not fix the curve; any elliptic curve is vulnerable to Shor's algorithm."
+
+[[texto]]
+es = "Sin Poly1305 no autentica el mensaje; prefiera ChaCha20-Poly1305."
+en = "Without Poly1305 it does not authenticate the message; prefer ChaCha20-Poly1305."
+
+[[texto]]
+es = "Firma compuesta: ML-DSA-{} junto con {}, prehash {}. El validador debe exigir ambas firmas; aceptar solo la clásica anula la protección poscuántica (despojo)."
+en = "Composite signature: ML-DSA-{} together with {}, prehash {}. The verifier must require both signatures; accepting only the classical one voids the post-quantum protection (stripping)."
+
+[[texto]]
+es = "Llave de cert-manager {espacio}/{nombre} ({})"
+en = "cert-manager key {espacio}/{nombre} ({})"
+
+[[texto]]
+es = "cert-manager generará llaves con este algoritmo en cada renovación. Para migrar, cambie spec.privateKey.algorithm cuando su versión de cert-manager y su emisor admitan un algoritmo poscuántico."
+en = "cert-manager will generate keys with this algorithm on every renewal. To migrate, change spec.privateKey.algorithm once your cert-manager version and issuer support a post-quantum algorithm."
+
+[[texto]]
+es = "spec.privateKey.rotationPolicy no es «Always»: la llave se reutiliza en las renovaciones, lo que alarga su exposición y retrasa la migración."
+en = "spec.privateKey.rotationPolicy is not \"Always\": the key is reused across renewals, which lengthens its exposure and delays migration."
+
+[[texto]]
+es = "TLS en código ({})"
+en = "TLS in code ({})"
+
+[[texto]]
+es = "{t} (línea {})."
+en = "{t} (line {})."
+
+[[texto]]
+es = "Algoritmo no reconocido por la base de conocimiento: «{}». Considere agregarlo a conocimiento/algoritmos.toml."
+en = "Algorithm not recognized by the knowledge base: \"{}\". Consider adding it to conocimiento/algoritmos.toml."
+
+[[texto]]
+es = "Certificado referenciado que no se encontró en el escaneo: {ruta_config}. Inclúyalo para evaluarlo."
+en = "Referenced certificate not found in the scan: {ruta_config}. Include it to evaluate it."
+
+[[texto]]
+es = "un archivo YAML"
+en = "a YAML file"
+
+[[texto]]
+es = "un archivo JSON"
+en = "a JSON file"
+
+[[texto]]
+es = "un archivo de Terraform"
+en = "a Terraform file"
+
+[[texto]]
+es = "un archivo de variables de entorno"
+en = "an environment variables file"
+
+[[texto]]
+es = "un archivo de configuración"
+en = "a configuration file"
+
+[[texto]]
+es = "un Secret de Kubernetes"
+en = "a Kubernetes Secret"
+
+[[texto]]
+es = "un archivo kubeconfig"
+en = "a kubeconfig file"
+
+[[texto]]
+es = "el estado de Terraform"
+en = "the Terraform state"
+
+[[texto]]
+es = "un archivo de texto (codificado en base64)"
+en = "a text file (base64-encoded)"
+
+[[texto]]
+es = "Secret de Kubernetes"
+en = "Kubernetes Secret"
+
+[[texto]]
+es = "Desactiva la verificación del certificado TLS (verify=False): cualquiera en la red puede suplantar al servidor."
+en = "Disables TLS certificate verification (verify=False): anyone on the network can impersonate the server."
+
+[[texto]]
+es = "Crea un contexto TLS sin verificación de certificado o de nombre: la conexión cifra, pero no autentica al servidor."
+en = "Creates a TLS context without certificate or hostname verification: the connection encrypts but does not authenticate the server."
+
+[[texto]]
+es = "Un X509TrustManager con checkServerTrusted vacío acepta cualquier certificado: la conexión TLS no autentica al servidor."
+en = "An X509TrustManager with an empty checkServerTrusted accepts any certificate: the TLS connection does not authenticate the server."
+
+[[texto]]
+es = "Un HostnameVerifier que siempre devuelve true acepta certificados emitidos para otros nombres."
+en = "A HostnameVerifier that always returns true accepts certificates issued for other names."
+
+[[texto]]
+es = "InsecureSkipVerify: true desactiva la verificación del certificado TLS: cualquiera en la red puede suplantar al servidor."
+en = "InsecureSkipVerify: true disables TLS certificate verification: anyone on the network can impersonate the server."
+
+[[texto]]
+es = "Desactiva la verificación del certificado TLS (rejectUnauthorized: false o NODE_TLS_REJECT_UNAUTHORIZED=0)."
+en = "Disables TLS certificate verification (rejectUnauthorized: false or NODE_TLS_REJECT_UNAUTHORIZED=0)."
+
+[[texto]]
+es = "Un validador de certificados que siempre devuelve true acepta cualquier servidor TLS."
+en = "A certificate validator that always returns true accepts any TLS server."
+
+[[texto]]
+es = "El cliente TLS acepta certificados inválidos o usa un verificador propio: revise que no omita la autenticación del servidor."
+en = "The TLS client accepts invalid certificates or uses its own verifier: check that it does not skip server authentication."
+
+[[texto]]
+es = "SSL_VERIFY_NONE desactiva la verificación del certificado del par TLS."
+en = "SSL_VERIFY_NONE disables verification of the TLS peer certificate."
+
+[[texto]]
+es = "Java elige los grupos de TLS con la propiedad del sistema jdk.tls.namedGroups, fuera de java.security. Verifique si su versión del JDK ofrece grupos híbridos con ML-KEM y si las aplicaciones fijan esa propiedad."
+en = "Java chooses TLS groups with the jdk.tls.namedGroups system property, outside java.security. Check whether your JDK version offers hybrid groups with ML-KEM and whether applications set that property."
+
+[[texto]]
+es = "jdk.tls.disabledAlgorithms ya no excluye {}: Java puede negociar cifrados rotos. Restaure la lista predeterminada del JDK."
+en = "jdk.tls.disabledAlgorithms no longer excludes {}: Java may negotiate broken ciphers. Restore the JDK default list."
+
+[[texto]]
+es = "jdk.certpath.disabledAlgorithms ya no excluye {}: se aceptan certificados firmados con resúmenes rotos."
+en = "jdk.certpath.disabledAlgorithms no longer excludes {}: certificates signed with broken digests are accepted."
+
+[[texto]]
+es = "jdk.certpath.disabledAlgorithms no limita el tamaño de RSA (se espera «RSA keySize < 1024» o más): se aceptan certificados con llaves RSA débiles."
+en = "jdk.certpath.disabledAlgorithms does not limit the RSA size (\"RSA keySize < 1024\" or more is expected): certificates with weak RSA keys are accepted."
+
+[[texto]]
+es = "jdk.jar.disabledAlgorithms ya no excluye {}: se aceptan JAR firmados con resúmenes rotos (capacidad de firma de código)."
+en = "jdk.jar.disabledAlgorithms no longer excludes {}: JARs signed with broken digests are accepted (code signing capability)."
+
+[[texto]]
+es = "keystore.type usa el formato heredado JKS/JCEKS, que protege las llaves con algoritmos propietarios débiles. Use PKCS12."
+en = "keystore.type uses the legacy JKS/JCEKS format, which protects keys with weak proprietary algorithms. Use PKCS12."
+
+[[texto]]
+es = "Java ({})"
+en = "Java ({})"
+
+[[texto]]
+es = "La configuración no fija los grupos de intercambio de llaves de TLS: el servidor usa los predeterminados de su biblioteca OpenSSL (desde OpenSSL 3.5 incluyen X25519MLKEM768; antes solo hay grupos clásicos). Verifique la versión de OpenSSL enlazada."
+en = "The configuration does not set the TLS key exchange groups: the server uses the defaults of its OpenSSL library (since OpenSSL 3.5 they include X25519MLKEM768; before that only classical groups). Check the linked OpenSSL version."
+
+[[texto]]
+es = "TLS deshabilitado en el servidor: las consultas, los resultados y las credenciales viajan sin cifrar."
+en = "TLS disabled on the server: queries, results and credentials travel unencrypted."
+
+[[texto]]
+es = "MariaDB sin opciones de TLS: antes de la versión 11.4 el servidor no cifra por omisión. Declare ssl_cert, ssl_key y require_secure_transport=ON."
+en = "MariaDB without TLS options: before version 11.4 the server does not encrypt by default. Declare ssl_cert, ssl_key and require_secure_transport=ON."
+
+[[texto]]
+es = "No declara tls_version: se asume el predeterminado de las versiones actuales (TLSv1.2 y TLSv1.3)."
+en = "tls_version is not declared: the default of current versions is assumed (TLSv1.2 and TLSv1.3)."
+
+[[texto]]
+es = "No exige transporte cifrado (require_secure_transport=ON): un cliente puede conectarse sin TLS y exponer sus credenciales."
+en = "Does not require encrypted transport (require_secure_transport=ON): a client can connect without TLS and expose its credentials."
+
+[[texto]]
+es = "Sin ssl_cert, MySQL usa el certificado autofirmado que genera en su directorio de datos (RSA de 2048 bits): los clientes no pueden verificar la identidad del servidor."
+en = "Without ssl_cert, MySQL uses the self-signed certificate it generates in its data directory (2048-bit RSA): clients cannot verify the server's identity."
+
+[[texto]]
+es = "No declara tls_eecdh_auto_curves: Postfix usa sus curvas predeterminadas, que son clásicas salvo que su versión y OpenSSL (3.5 o posterior) agreguen X25519MLKEM768. Verifique la versión de OpenSSL enlazada."
+en = "tls_eecdh_auto_curves is not declared: Postfix uses its default curves, which are classical unless its version and OpenSSL (3.5 or later) add X25519MLKEM768. Check the linked OpenSSL version."
+
+[[texto]]
+es = "El servidor SMTP no ofrece STARTTLS (smtpd_tls_security_level=none): el correo y las credenciales SMTP AUTH viajan sin cifrar."
+en = "The SMTP server does not offer STARTTLS (smtpd_tls_security_level=none): mail and SMTP AUTH credentials travel unencrypted."
+
+[[texto]]
+es = "TLS oportunista (smtpd_tls_security_level=may): un atacante en la red puede suprimir STARTTLS y forzar texto claro. Para el intercambio entre sistemas propios exija TLS (encrypt) o publique DANE o MTA-STS."
+en = "Opportunistic TLS (smtpd_tls_security_level=may): a network attacker can strip STARTTLS and force plaintext. For exchange between your own systems require TLS (encrypt) or publish DANE or MTA-STS."
+
+[[texto]]
+es = "El envío saliente no usa TLS (smtp_tls_security_level=none): el correo hacia otros servidores viaja sin cifrar. Use al menos «may», o «dane» con DNSSEC."
+en = "Outbound delivery does not use TLS (smtp_tls_security_level=none): mail to other servers travels unencrypted. Use at least \"may\", or \"dane\" with DNSSEC."
+
+[[texto]]
+es = "No declara ssl_groups ni ssl_ecdh_curve: los grupos predeterminados de PostgreSQL son clásicos. Declare un grupo híbrido (p. ej. X25519MLKEM768) si su versión de PostgreSQL y OpenSSL lo admiten."
+en = "Neither ssl_groups nor ssl_ecdh_curve is declared: PostgreSQL's default groups are classical. Declare a hybrid group (e.g. X25519MLKEM768) if your PostgreSQL and OpenSSL versions support it."
+
+[[texto]]
+es = "No declara «ssl» (predeterminado: off) y escucha en «{escucha}». Si no se activa en postgresql.auto.conf o en un archivo incluido, las conexiones viajan sin cifrar."
+en = "\"ssl\" is not declared (default: off) and it listens on \"{escucha}\". Unless it is enabled in postgresql.auto.conf or an included file, connections travel unencrypted."
+
+[[texto]]
+es = "SSL deshabilitado y escucha en «{escucha}»: las conexiones a la base de datos viajan sin cifrar."
+en = "SSL disabled while listening on \"{escucha}\": database connections travel unencrypted."
+
+[[texto]]
+es = "MySQL/MariaDB ({})"
+en = "MySQL/MariaDB ({})"
+
+[[texto]]
+es = "Postfix SMTP ({})"
+en = "Postfix SMTP ({})"
+
+[[texto]]
+es = "PostgreSQL ({})"
+en = "PostgreSQL ({})"
+
+[[texto]]
+es = "Configuración SSH ({})"
+en = "SSH configuration ({})"
+
+[[texto]]
+es = "KexAlgorithms no se declara de forma explícita: el resultado depende de la versión de OpenSSH (10.0 o posterior prefiere mlkem768x25519-sha256). Verificar con «suaya sondear»."
+en = "KexAlgorithms is not declared explicitly: the result depends on the OpenSSH version (10.0 or later prefers mlkem768x25519-sha256). Verify with \"suaya sondear\"."
+
+[[texto]]
+es = "El intercambio de llaves acepta algoritmos rotos; deshabilitarlos."
+en = "Key exchange accepts broken algorithms; disable them."
+
+[[texto]]
+es = "El intercambio de llaves acepta algoritmos obsoletos."
+en = "Key exchange accepts deprecated algorithms."
+
+[[texto]]
+es = "También acepta intercambios clásicos: los clientes antiguos negociarán sin protección poscuántica."
+en = "It also accepts classical exchanges: older clients will negotiate without post-quantum protection."
+
+[[texto]]
+es = "Configuración TLS ({})"
+en = "TLS configuration ({})"
+
+[[texto]]
+es = "SSLProtocol no se declara; depende de la versión de Apache y OpenSSL."
+en = "SSLProtocol is not declared; it depends on the Apache and OpenSSL versions."
+
+[[texto]]
+es = "ssl_protocols no se declara; se asume el predeterminado de nginx 1.23.4 o posterior (TLSv1.2 TLSv1.3)."
+en = "ssl_protocols is not declared; the default of nginx 1.23.4 or later is assumed (TLSv1.2 TLSv1.3)."
+
+[[texto]]
+es = "No declara grupos de intercambio de llaves: con OpenSSL 3.5 o posterior el predeterminado incluye X25519MLKEM768; con versiones anteriores solo hay grupos clásicos. Verificar la versión de OpenSSL o sondear el servicio con «suaya sondear»."
+en = "No key exchange groups declared: with OpenSSL 3.5 or later the default includes X25519MLKEM768; with older versions there are only classical groups. Check the OpenSSL version or probe the service with \"suaya sondear\"."
+
+[[texto]]
+es = "Habilita versiones de SSL/TLS rotas u obsoletas (RFC 8996)."
+en = "Enables broken or deprecated SSL/TLS versions (RFC 8996)."
+
+[[texto]]
+es = "Sin TLS 1.3 no es posible negociar grupos híbridos poscuánticos."
+en = "Without TLS 1.3 post-quantum hybrid groups cannot be negotiated."
+
+[[texto]]
+es = "También acepta grupos clásicos: los clientes antiguos negociarán sin protección poscuántica."
+en = "It also accepts classical groups: older clients will negotiate without post-quantum protection."
+
+[[texto]]
+es = "TLS 1.2 sigue habilitado: esas conexiones no pueden usar grupos híbridos."
+en = "TLS 1.2 is still enabled: those connections cannot use hybrid groups."
+
+[[texto]]
+es = "HAProxy bind {} ({})"
+en = "HAProxy bind {} ({})"
+
+[[texto]]
+es = "Contenedor protegido por contraseña: Suaya no lo abre. Inventaríe su contenido con «{herramienta}»."
+en = "Password-protected container: Suaya does not open it. Inventory its contents with \"{herramienta}\"."
+
+[[texto]]
+es = "Llave del volumen {nombre_volumen}"
+en = "Volume key {nombre_volumen}"
+
+[[texto]]
+es = "archivo de llave {k}"
+en = "key file {k}"
+
+[[texto]]
+es = "El cifrador se define en la cabecera LUKS; se asume el predeterminado de LUKS2 (aes-xts-plain64, 512 bits). Confirmar con «cryptsetup luksDump»."
+en = "The cipher is defined in the LUKS header; the LUKS2 default is assumed (aes-xts-plain64, 512 bits). Confirm with \"cryptsetup luksDump\"."
+
+[[texto]]
+es = "Se desbloquea con TPM2, que usa criptografía asimétrica clásica; aún no hay TPM de hardware con PQC disponibles comercialmente."
+en = "Unlocked with TPM2, which uses classical asymmetric cryptography; hardware TPMs with PQC are not yet commercially available."
+
+[[texto]]
+es = "Se desbloquea con un token FIDO2 basado en curvas elípticas (vulnerable a Shor)."
+en = "Unlocked with a FIDO2 token based on elliptic curves (vulnerable to Shor)."
+
+[[texto]]
+es = "Se desbloquea con un token PKCS#11; revisar el algoritmo de la llave del token."
+en = "Unlocked with a PKCS#11 token; review the algorithm of the token key."
+
+[[texto]]
+es = "{} en una capa posterior, pero sigue dentro de la imagen (capa {}) y cualquiera que la descargue puede extraerla. Reconstruya la imagen sin el secreto y revóquelo."
+en = "{} in a later layer, but it is still inside the image (layer {}) and anyone who pulls the image can extract it. Rebuild the image without the secret and revoke it."
+
+[[texto]]
+es = "Se borró"
+en = "Deleted"
+
+[[texto]]
+es = "Se reemplazó"
+en = "Replaced"
+
+[[texto]]
+es = "Llave privada dentro de la imagen de contenedor «{etiqueta}»: queda expuesta en cada registro y equipo donde se copie la imagen. Móntela en tiempo de ejecución desde un gestor de secretos."
+en = "Private key inside container image \"{etiqueta}\": it is exposed in every registry and host the image is copied to. Mount it at runtime from a secrets manager."
+
+[[texto]]
+es = "{origen}: {} secreto(s) borrados en capas posteriores siguen dentro de la imagen"
+en = "{origen}: {} secret(s) deleted in later layers are still inside the image"
+
+[[texto]]
+es = "Importado del CBOM {origen} (generado por {herramienta})."
+en = "Imported from CBOM {origen} (generated by {herramienta})."
+
+[[texto]]
+es = "herramienta no declarada"
+en = "undeclared tool"
+
+[[texto]]
+es = "El CBOM importado no declara los grupos de intercambio de llaves: verifique el servicio."
+en = "The imported CBOM does not declare the key exchange groups: verify the service."
+
+[[texto]]
+es = "{origen}: componente «{nombre}» con assetType no soportado ({otro})"
+en = "{origen}: component \"{nombre}\" with unsupported assetType ({otro})"
+
+[[texto]]
+es = "Llave respaldada por un autenticador FIDO (sk-); su migración depende del fabricante del token."
+en = "Key backed by a FIDO authenticator (sk-); its migration depends on the token manufacturer."
+
+[[texto]]
+es = "Raíz autofirmada con {}: la firma propia de un ancla de confianza no afecta la seguridad; lo relevante es su llave pública."
+en = "Self-signed root with {}: a trust anchor's own signature does not affect security; what matters is its public key."
+
+[[texto]]
+es = "Forma parte de un almacén de confianza: su reemplazo depende de las autoridades certificadoras y del proveedor del sistema operativo."
+en = "Part of a trust store: its replacement depends on the certificate authorities and the operating system vendor."
+
+[[texto]]
+es = "Certificado vencido el {}."
+en = "Certificate expired on {}."
+
+[[texto]]
+es = "Vigente hasta {} con un algoritmo vulnerable; NIST prevé retirar RSA y ECC de 112 bits después de {} y prohibirlos después de {} ({})."
+en = "Valid until {} with a vulnerable algorithm; NIST plans to deprecate 112-bit RSA and ECC after {} and disallow them after {} ({})."
+
+[[texto]]
+es = "Llave cifrada: su algoritmo no es visible sin la contraseña. Inventaríe el certificado o la llave pública que la acompaña."
+en = "Encrypted key: its algorithm is not visible without the password. Inventory the certificate or public key that accompanies it."
+
+[[texto]]
+es = "Formato de cifrado heredado de OpenSSL; preferir PKCS#8 con PBES2 o scrypt."
+en = "Legacy OpenSSL encryption format; prefer PKCS#8 with PBES2 or scrypt."
+
+[[texto]]
+es = "cifrado heredado de OpenSSL ({})"
+en = "legacy OpenSSL encryption ({})"
+
+[[texto]]
+es = "cifrada (algoritmo no visible)"
+en = "encrypted (algorithm not visible)"
+
+[[texto]]
+es = "EC (curva no visible)"
+en = "EC (curve not visible)"
+
+[[texto]]
+es = "EC curva no declarada"
+en = "EC curve not declared"
+
+[[texto]]
+es = "Llave pública {descripcion_alg}"
+en = "Public key {descripcion_alg}"
+
+[[texto]]
+es = "Llave pública {}"
+en = "Public key {}"
+
+[[texto]]
+es = "Llave privada {}"
+en = "Private key {}"
+
+[[texto]]
+es = "Llave privada incrustada en {origen}: quien tenga acceso a este archivo, o a su historial en control de versiones, tiene la llave. Use un gestor de secretos (por ejemplo, Sealed Secrets, External Secrets o SOPS)."
+en = "Private key embedded in {origen}: whoever has access to this file, or to its version control history, has the key. Use a secrets manager (for example, Sealed Secrets, External Secrets or SOPS)."
+
+[[texto]]
+es = "Llave privada sin cifrar con permisos de lectura para grupo u otros ({:o}). Restringir a 600."
+en = "Unencrypted private key readable by group or others ({:o}). Restrict to 600."
+
+[[texto]]
+es = "contraseña"
+en = "password"
+
+[[texto]]
+es = "Todos los pares usan PresharedKey, que añade una capa simétrica con resistencia poscuántica a la confidencialidad, siempre que esa llave se haya distribuido por un canal seguro distinto de la propia VPN."
+en = "All peers use PresharedKey, which adds a symmetric layer with post-quantum resistance to confidentiality, provided that key was distributed over a secure channel other than the VPN itself."
+
+[[texto]]
+es = "{} de {pares} pares no usan PresharedKey: su tráfico depende solo de X25519 y puede guardarse para descifrarse en el futuro."
+en = "{} of {pares} peers do not use PresharedKey: their traffic relies only on X25519 and can be stored to be decrypted in the future."
+
+[[texto]]
+es = "La autenticación de los pares sigue basada en X25519. Para un intercambio poscuántico completo, considere Rosenpass, que renueva la PresharedKey con ML-KEM y Classic McEliece."
+en = "Peer authentication is still based on X25519. For a fully post-quantum exchange, consider Rosenpass, which renews the PresharedKey with ML-KEM and Classic McEliece."
+
+[[texto]]
+es = "Llave privada de WireGuard legible por grupo u otros ({:o}). Restringir a 600."
+en = "WireGuard private key readable by group or others ({:o}). Restrict to 600."
+
+[[texto]]
+es = "No declara data-ciphers: OpenVPN 2.5 o posterior usa AES-256-GCM, AES-128-GCM y CHACHA20-POLY1305 por omisión."
+en = "data-ciphers is not declared: OpenVPN 2.5 or later uses AES-256-GCM, AES-128-GCM and CHACHA20-POLY1305 by default."
+
+[[texto]]
+es = "tls-version-min no se declara: se asume TLS 1.2, el mínimo predeterminado de OpenVPN 2.6."
+en = "tls-version-min is not declared: TLS 1.2 is assumed, OpenVPN 2.6's default minimum."
+
+[[texto]]
+es = "No declara tls-groups: OpenVPN usa los grupos predeterminados de OpenSSL (con OpenSSL 3.5 o posterior incluyen X25519MLKEM768). Verificar la versión o sondear el servicio."
+en = "tls-groups is not declared: OpenVPN uses OpenSSL's default groups (with OpenSSL 3.5 or later they include X25519MLKEM768). Check the version or probe the service."
+
+[[texto]]
+es = "Usa parámetros Diffie-Hellman de campo finito ({d}) para TLS 1.2; con TLS 1.3 se usan los grupos de tls-groups."
+en = "Uses finite-field Diffie-Hellman parameters ({d}) for TLS 1.2; with TLS 1.3 the tls-groups groups are used."
+
+[[texto]]
+es = "tls-crypt cifra el canal de control con una llave simétrica compartida: si esa llave no se expone, dificulta capturar el intercambio de llaves para descifrarlo en el futuro."
+en = "tls-crypt encrypts the control channel with a shared symmetric key: as long as that key is not exposed, it makes it harder to capture the key exchange to decrypt it in the future."
+
+[[texto]]
+es = "El canal de datos acepta cifradores o MAC rotos u obsoletos."
+en = "The data channel accepts broken or deprecated ciphers or MACs."
+
+[[texto]]
+es = "No declara propuestas IKE: se usan las predeterminadas de strongSwan. Verifique si incluyen ML-KEM en su versión."
+en = "No IKE proposals declared: strongSwan defaults are used. Check whether they include ML-KEM in your version."
+
+[[texto]]
+es = "También acepta propuestas IKE sin ML-KEM: los pares antiguos negociarán sin protección poscuántica."
+en = "It also accepts IKE proposals without ML-KEM: older peers will negotiate without post-quantum protection."
+
+[[texto]]
+es = "Ninguna propuesta IKE incluye ML-KEM. strongSwan 6 admite intercambios adicionales (RFC 9370), por ejemplo «aes256gcm16-sha384-x25519-ke1_mlkem768»."
+en = "No IKE proposal includes ML-KEM. strongSwan 6 supports additional key exchanges (RFC 9370), for example \"aes256gcm16-sha384-x25519-ke1_mlkem768\"."
+
+[[texto]]
+es = "Las propuestas incluyen algoritmos rotos u obsoletos (3DES, MD5, SHA-1 o grupos DH menores a 2048 bits)."
+en = "The proposals include broken or deprecated algorithms (3DES, MD5, SHA-1 or DH groups smaller than 2048 bits)."
+
+[[texto]]
+es = "Usa IKEv1, retirado por RFC 9395; migre a IKEv2, que además admite intercambios adicionales con ML-KEM."
+en = "Uses IKEv1, retired by RFC 9395; migrate to IKEv2, which also supports additional key exchanges with ML-KEM."
+
+[[texto]]
+es = "WireGuard ({})"
+en = "WireGuard ({})"
+
+[[texto]]
+es = "OpenVPN ({})"
+en = "OpenVPN ({})"
+
+[[texto]]
+es = "strongSwan ({})"
+en = "strongSwan ({})"
+
+[[texto]]
+es = "Llave privada en un Secret de Kubernetes: los Secrets solo están codificados en base64. Verifique que etcd tenga cifrado en reposo y que el RBAC limite quién puede leerlos."
+en = "Private key in a Kubernetes Secret: Secrets are only base64-encoded. Check that etcd has encryption at rest and that RBAC limits who can read them."
+
+[[texto]]
+es = "Lo publica el Ingress {ns}/{nombre} para: {}."
+en = "Published by Ingress {ns}/{nombre} for: {}."
+
+[[texto]]
+es = "todos los hosts"
+en = "all hosts"
+
+[[texto]]
+es = "el Ingress {ns}/{nombre} usa el Secret «{secreto}», que no se encontró o no contiene un certificado"
+en = "Ingress {ns}/{nombre} uses Secret \"{secreto}\", which was not found or does not contain a certificate"
+
+[[texto]]
+es = "{} sin TLS en {}:{}"
+en = "{} without TLS at {}:{}"
+
+[[texto]]
+es = "{} con STARTTLS en {}:{}"
+en = "{} with STARTTLS at {}:{}"
+
+[[texto]]
+es = "TLS en {}:{}"
+en = "TLS at {}:{}"
+
+[[texto]]
+es = "SSH en {}:{}"
+en = "SSH at {}:{}"
+
+[[texto]]
+es = "SSH en {}:{} ({software})"
+en = "SSH at {}:{} ({software})"
+
+[[texto]]
+es = "El servidor anuncia el protocolo SSH {version}; SSH-1 está roto."
+en = "The server announces SSH protocol {version}; SSH-1 is broken."
+
+[[texto]]
+es = "Observado en la red: refleja lo que el servicio ofrece realmente."
+en = "Observed on the network: reflects what the service actually offers."
+
+[[texto]]
+es = "El servidor SMTP no anuncia STARTTLS: el correo y las credenciales viajan sin cifrar."
+en = "The SMTP server does not announce STARTTLS: mail and credentials travel unencrypted."
+
+[[texto]]
+es = "El servidor PostgreSQL no admite TLS (respondió N al SSLRequest): las consultas viajan sin cifrar."
+en = "The PostgreSQL server does not support TLS (it answered N to SSLRequest): queries travel unencrypted."
+
+[[texto]]
+es = "El servidor MySQL no admite TLS: las consultas y las credenciales viajan sin cifrar."
+en = "The MySQL server does not support TLS: queries and credentials travel unencrypted."
+
+[[texto]]
+es = "En TLS 1.2 elige {nombre}: intercambio de llaves RSA estático, sin secreto perfecto hacia adelante."
+en = "In TLS 1.2 it chooses {nombre}: static RSA key exchange, without forward secrecy."
+
+[[texto]]
+es = "En TLS 1.2 elige una suite con 3DES (Sweet32)."
+en = "In TLS 1.2 it chooses a suite with 3DES (Sweet32)."
+
+[[texto]]
+es = "No ofrece TLS 1.3, por lo que no puede negociar grupos híbridos poscuánticos."
+en = "It does not offer TLS 1.3, so it cannot negotiate post-quantum hybrid groups."
+
+[[texto]]
+es = "Prioriza el grupo poscuántico aunque el cliente ofrezca primero grupos clásicos."
+en = "It prioritizes the post-quantum group even when the client offers classical groups first."
+
+[[texto]]
+es = "Respeta el orden del cliente: los clientes que ofrecen primero un híbrido obtienen protección poscuántica; los que ofrecen primero un grupo clásico negocian {}."
+en = "It follows the client's order: clients that offer a hybrid first get post-quantum protection; those that offer a classical group first negotiate {}."
+
+[[texto]]
+es = "Aunque el cliente ofrezca primero un grupo híbrido, el servidor elige {}: revisar el orden de grupos en su configuración."
+en = "Even when the client offers a hybrid group first, the server chooses {}: review the group order in its configuration."
+
+[[texto]]
+es = "Ofrece TLS 1.3, pero no aceptó ninguno de los grupos de la base de conocimiento."
+en = "It offers TLS 1.3 but did not accept any of the knowledge base groups."
+
+[[texto]]
+es = "el archivo no es texto UTF-8"
+en = "the file is not UTF-8 text"
+
+[[texto]]
+es = "No se pudo recorrer: {e}"
+en = "Could not walk: {e}"
+
+[[texto]]
+es = "no se pudo leer {ruta}: {fuente}"
+en = "could not read {ruta}: {fuente}"
+
+[[texto]]
+es = "formato inválido en {archivo}: {fuente}"
+en = "invalid format in {archivo}: {fuente}"
+
+[[texto]]
+es = "inconsistencia en la base de conocimiento: {0}"
+en = "inconsistency in the knowledge base: {0}"
+
+[[texto]]
+es = "perfil inválido: {e}"
+en = "invalid profile: {e}"
+
+[[texto]]
+es = "no se pudo leer {id_o_ruta}: {e}"
+en = "could not read {id_o_ruta}: {e}"
+
+[[texto]]
+es = "JSON inválido: {e}"
+en = "invalid JSON: {e}"
+
+[[texto]]
+es = "el archivo no es un BOM CycloneDX"
+en = "the file is not a CycloneDX BOM"
+
+[[texto]]
+es = "codigo.toml: patrón inválido «{p}»: {e}"
+en = "codigo.toml: invalid pattern \"{p}\": {e}"
+
+[[texto]]
+es = "no es un archivo tar: {e}"
+en = "not a tar file: {e}"
+
+[[texto]]
+es = "no parece un archivo tar de imagen de contenedor ({e})"
+en = "does not look like a container image tar file ({e})"
+
+[[texto]]
+es = "no se reconoce como imagen docker save ni OCI (falta manifest.json o index.json)"
+en = "not recognized as a docker save or OCI image (manifest.json or index.json missing)"
+
+[[texto]]
+es = "la imagen excede el número máximo de entradas"
+en = "the image exceeds the maximum number of entries"
+
+[[texto]]
+es = "la imagen excede el límite de datos descomprimidos"
+en = "the image exceeds the decompressed data limit"
+
+[[texto]]
+es = "tar dañado: {e}"
+en = "corrupt tar: {e}"
+
+[[texto]]
+es = "llave OpenSSH inválida: {e}"
+en = "invalid OpenSSH key: {e}"
+
+[[texto]]
+es = "archivo DER no reconocido: {e}"
+en = "unrecognized DER file: {e}"
+
+[[texto]]
+es = "bloque {} (línea {}): {e}"
+en = "block {} (line {}): {e}"
+
+[[texto]]
+es = "certificado inválido: {e}"
+en = "invalid certificate: {e}"
+
+[[texto]]
+es = "certificado sin sujeto"
+en = "certificate without subject"
+
+[[texto]]
+es = "llave pública inválida: {e}"
+en = "invalid public key: {e}"
+
+[[texto]]
+es = "PKCS#8 inválido: {e}"
+en = "invalid PKCS#8: {e}"
+
+[[texto]]
+es = "PKCS#8 cifrado inválido: {e}"
+en = "invalid encrypted PKCS#8: {e}"
+
+[[texto]]
+es = "certificado {} de la cadena: {e}"
+en = "certificate {} of the chain: {e}"
+
+[[texto]]
+es = "no se obtuvo la cadena de certificados: {e}"
+en = "the certificate chain could not be obtained: {e}"
+
+[[texto]]
+es = "prueba de {nombre}: {e}"
+en = "probe {nombre}: {e}"
+
+[[texto]]
+es = "el servicio no aceptó ninguna versión de TLS ofrecida"
+en = "the service did not accept any offered TLS version"
+
+[[texto]]
+es = "el servicio no respondió con TLS"
+en = "the service did not answer with TLS"
+
+[[texto]]
+es = "el servidor no respondió a tiempo"
+en = "the server did not answer in time"
+
+[[texto]]
+es = "respuesta de saludo inesperada"
+en = "unexpected handshake response"
+
+[[texto]]
+es = "mensaje de saludo demasiado grande"
+en = "handshake message too large"
+
+[[texto]]
+es = "sin identificación SSH: {e}"
+en = "no SSH identification: {e}"
+
+[[texto]]
+es = "identificación SSH demasiado larga"
+en = "SSH identification too long"
+
+[[texto]]
+es = "no se recibió KEXINIT: {e}"
+en = "KEXINIT not received: {e}"
+
+[[texto]]
+es = "paquete SSH con longitud inválida"
+en = "SSH packet with invalid length"
+
+[[texto]]
+es = "el primer paquete no es KEXINIT"
+en = "the first packet is not KEXINIT"
+
+[[texto]]
+es = "lista de nombres no ASCII"
+en = "non-ASCII name list"
+
+[[texto]]
+es = "no se pudo resolver {}: {e}"
+en = "could not resolve {}: {e}"
+
+[[texto]]
+es = "no se pudo resolver {host}: {e}"
+en = "could not resolve {host}: {e}"
+
+[[texto]]
+es = "no se pudo conectar a {}:{}: {ultimo}"
+en = "could not connect to {}:{}: {ultimo}"
+
+[[texto]]
+es = "no se pudo conectar a {host}: {e}"
+en = "could not connect to {host}: {e}"
+
+[[texto]]
+es = "esquema no soportado: {otro} (use tls://, ssh://, smtp://, imap://, pop3://, ldap://, postgres:// o mysql://)"
+en = "unsupported scheme: {otro} (use tls://, ssh://, smtp://, imap://, pop3://, ldap://, postgres:// or mysql://)"
+
+[[texto]]
+es = "objetivo sin host: {texto}"
+en = "target without host: {texto}"
+
+[[texto]]
+es = "puerto inválido en {texto}"
+en = "invalid port in {texto}"
+
+[[texto]]
+es = "dirección IPv6 sin corchete de cierre"
+en = "IPv6 address without closing bracket"
+
+[[texto]]
+es = "preámbulo: {e}"
+en = "preamble: {e}"
+
+[[texto]]
+es = "el servidor cerró la conexión durante el preámbulo"
+en = "the server closed the connection during the preamble"
+
+[[texto]]
+es = "el servidor rechazó STARTTLS: {l}"
+en = "the server rejected STARTTLS: {l}"
+
+[[texto]]
+es = "respuesta inesperada al SSLRequest: 0x{otro:02x}"
+en = "unexpected response to SSLRequest: 0x{otro:02x}"
+
+[[texto]]
+es = "saludo de MySQL inválido"
+en = "invalid MySQL greeting"
+
+[[texto]]
+es = "el servidor MySQL rechazó la conexión"
+en = "the MySQL server rejected the connection"
+
+[[texto]]
+es = "respuesta LDAP inválida"
+en = "invalid LDAP response"
+
+[[texto]]
+es = "longitud LDAP inválida"
+en = "invalid LDAP length"
+
+[[texto]]
+es = "el servidor LDAP rechazó StartTLS (código {})"
+en = "the LDAP server rejected StartTLS (code {})"
+
+[[texto]]
+es = "respuesta LDAP sin resultCode"
+en = "LDAP response without resultCode"
+
+[[texto]]
+es = "credenciales rechazadas por el clúster (401)"
+en = "credentials rejected by the cluster (401)"
+
+[[texto]]
+es = "sin permiso para leer {ruta} (403); se requiere «list» en ese recurso"
+en = "no permission to read {ruta} (403); \"list\" on that resource is required"
+
+[[texto]]
+es = "el kubeconfig no tiene current-context; indique --contexto"
+en = "the kubeconfig has no current-context; pass --contexto"
+
+[[texto]]
+es = "no existe el contexto «{nombre_contexto}»"
+en = "context \"{nombre_contexto}\" does not exist"
+
+[[texto]]
+es = "no existe el cluster «{nombre_cluster}»"
+en = "cluster \"{nombre_cluster}\" does not exist"
+
+[[texto]]
+es = "el kubeconfig usa auth-provider, retirado por Kubernetes; actualice a un complemento exec"
+en = "the kubeconfig uses auth-provider, removed by Kubernetes; update to an exec plugin"
+
+[[texto]]
+es = "el servidor no declara su autoridad certificadora (certificate-authority); no se puede verificar"
+en = "the server does not declare its certificate authority (certificate-authority); it cannot be verified"
+
+[[texto]]
+es = "no se encontró ninguna autoridad certificadora en el sistema"
+en = "no certificate authority was found on the system"
+
+[[texto]]
+es = "el proxy rechazó el túnel hacia {destino} (estado {estado})"
+en = "the proxy rejected the tunnel to {destino} (status {estado})"
+
+[[texto]]
+es = "la imagen no existe en el registro ({referencia})"
+en = "the image does not exist in the registry ({referencia})"
+
+[[texto]]
+es = "acceso denegado por el registro ({}){}"
+en = "access denied by the registry ({}){}"
+
+[[texto]]
+es = "; configure credenciales con docker login o SUAYA_REGISTRO_USUARIO"
+en = "; configure credentials with docker login or SUAYA_REGISTRO_USUARIO"
+
+[[texto]]
+es = "el servicio de tokens respondió {estado}{}"
+en = "the token service answered {estado}{}"
+
+[[texto]]
+es = " (revise las credenciales)"
+en = " (check the credentials)"
+
+[[texto]]
+es = " (la imagen puede ser privada: configure credenciales)"
+en = " (the image may be private: configure credentials)"
+
+[[texto]]
+es = "la imagen no está publicada para {plataforma} (disponibles: {}); use --plataforma"
+en = "the image is not published for {plataforma} (available: {}); use --plataforma"
+
+[[texto]]
+es = "la capa {} no coincide con su resumen o tamaño; se descarta la imagen"
+en = "layer {} does not match its digest or size; the image is discarded"
+
+[[texto]]
+es = "el manifiesto no coincide con su resumen (se esperaba {referencia}, llegó {resumen})"
+en = "the manifest does not match its digest (expected {referencia}, got {resumen})"
+
+[[texto]]
+es = "el registro redirigió de HTTPS a HTTP ({}); se rechaza"
+en = "the registry redirected from HTTPS to HTTP ({}); rejected"
+
+[[texto]]
+es = "{etiqueta}: capa {} no distribuible (se omite)"
+en = "{etiqueta}: non-distributable layer {} (skipped)"
+
+[[texto]]
+es = "{etiqueta}: {} capas verificadas ({resumen}, {})"
+en = "{etiqueta}: {} layers verified ({resumen}, {})"
+
+[[texto]]
+es = "{t} [línea {}]"
+en = "{t} [line {}]"
+
+[[texto]]
+es = "{} (campo «{}»)"
+en = "{} (field \"{}\")"
+
+[[texto]]
+es = "integración"
+en = "integration"
+
+[[texto]]
+es = "integración preliminar"
+en = "preliminary integration"
+
+[[texto]]
+es = "integración validada"
+en = "validated integration"
+
+[[texto]]
+es = "componentes disponibles"
+en = "components available"
+
+[[texto]]
+es = "habilitado"
+en = "enabled"
+
+[[texto]]
+es = "bloqueado"
+en = "blocked"
+
+[[texto]]
+es = "no aplica"
+en = "not applicable"
+
+[[texto]]
+es = "desconocido"
+en = "unknown"
+
+[[texto]]
+es = "algoritmos {} · código {} · bibliotecas {} · madurez {} ({}, edición {})"
+en = "algorithms {} · code {} · libraries {} · maturity {} ({}, {} edition)"
+
+[[texto]]
+es = "algoritmos {} · madurez {} ({}, edición {})"
+en = "algorithms {} · maturity {} ({}, {} edition)"
+
+[[texto]]
+es = "fuente no declarada"
+en = "undeclared source"
+
+# --- Ayuda de la línea de órdenes ---
+
+[[texto]]
+es = "Archivo CBOM de salida, JSON CycloneDX 1.7 (predeterminado: suaya-cbom.json)"
+en = "Output CBOM file, CycloneDX 1.7 JSON (default: suaya-cbom.json)"
+
+[[texto]]
+es = "Archivo de la firma (predeterminado: <CBOM>.firma)"
+en = "Signature file (default: <CBOM>.firma)"
+
+[[texto]]
+es = "Archivo de salida (.md o .html); si se omite, se imprime en pantalla"
+en = "Output file (.md or .html); if omitted, it is printed to the screen"
+
+[[texto]]
+es = "Archivos o directorios a escanear"
+en = "Files or directories to scan"
+
+[[texto]]
+es = "Autoridad certificadora adicional (PEM) para un registro privado"
+en = "Additional certificate authority (PEM) for a private registry"
+
+[[texto]]
+es = "Año de evaluación del perfil (predeterminado: el actual)"
+en = "Profile evaluation year (default: the current one)"
+
+[[texto]]
+es = "CBOM CycloneDX (JSON) a importar"
+en = "CycloneDX CBOM (JSON) to import"
+
+[[texto]]
+es = "CBOM CycloneDX de otra herramienta que se une a este inventario (repetible)"
+en = "CycloneDX CBOM from another tool to merge into this inventory (repeatable)"
+
+[[texto]]
+es = "CBOM a firmar"
+en = "CBOM to sign"
+
+[[texto]]
+es = "CBOM del escaneo actual"
+en = "CBOM of the current scan"
+
+[[texto]]
+es = "CBOM del escaneo anterior"
+en = "CBOM of the previous scan"
+
+[[texto]]
+es = "CBOM firmado"
+en = "Signed CBOM"
+
+[[texto]]
+es = "CBOM generado por Suaya"
+en = "CBOM generated by Suaya"
+
+[[texto]]
+es = "Capacidad tecnológica de los servicios TLS, p. ej. vpn-cifrado-red o conectividad-nube (predeterminada: servidores-web)"
+en = "Technology capability of the TLS services, e.g. vpn-cifrado-red or conectividad-nube (default: servidores-web)"
+
+[[texto]]
+es = "Compara dos CBOM para seguir el avance de una migración"
+en = "Compares two CBOMs to track migration progress"
+
+[[texto]]
+es = "Contexto del kubeconfig (predeterminado: current-context)"
+en = "kubeconfig context (default: current-context)"
+
+[[texto]]
+es = "Directorio con algoritmos.toml y madurez.toml que sustituye a la base incrustada"
+en = "Directory with algoritmos.toml and madurez.toml that replaces the embedded knowledge base"
+
+[[texto]]
+es = "Escanea archivos y directorios (y, opcionalmente, servicios de red) y genera el CBOM"
+en = "Scans files and directories (and, optionally, network services) and generates the CBOM"
+
+[[texto]]
+es = "Espacio de nombres a leer (repetible; predeterminado: todos)"
+en = "Namespace to read (repeatable; default: all)"
+
+[[texto]]
+es = "Firma el CBOM generado con esta llave privada de Suaya (crea <SALIDA>.firma)"
+en = "Signs the generated CBOM with this Suaya private key (creates <OUTPUT>.firma)"
+
+[[texto]]
+es = "Firma un CBOM con ML-DSA-65 y Ed25519 (firma en un archivo aparte)"
+en = "Signs a CBOM with ML-DSA-65 and Ed25519 (detached signature file)"
+
+[[texto]]
+es = "Formato: md o html (predeterminado: según la extensión de la salida)"
+en = "Format: md or html (default: from the output file extension)"
+
+[[texto]]
+es = "Genera además el reporte ejecutivo: HTML si termina en .html, Markdown en otro caso"
+en = "Also generates the executive report: HTML if it ends in .html, Markdown otherwise"
+
+[[texto]]
+es = "Genera el reporte ejecutivo a partir de un CBOM de Suaya"
+en = "Generates the executive report from a Suaya CBOM"
+
+[[texto]]
+es = "Genera un par de llaves de firma híbrida (ML-DSA-65 y Ed25519) para firmar CBOM"
+en = "Generates a hybrid signing key pair (ML-DSA-65 and Ed25519) to sign CBOMs"
+
+[[texto]]
+es = "Imagen de contenedor (repetible): archivo tar de «docker save», «podman save» u OCI, o docker://registro/repositorio:etiqueta para descargarla del registro"
+en = "Container image (repeatable): a \"docker save\", \"podman save\" or OCI tar file, or docker://registry/repository:tag to pull it from the registry"
+
+[[texto]]
+es = "Importa CBOM CycloneDX de otras herramientas (p. ej. CBOMkit) y los clasifica con el criterio de Suaya"
+en = "Imports CycloneDX CBOMs from other tools (e.g. CBOMkit) and classifies them with Suaya's criteria"
+
+[[texto]]
+es = "Inventario criptográfico abierto (CBOM CycloneDX 1.7) con evaluación de preparación poscuántica.\n«Suaya» significa cuidar, proteger, en yoremnokki, la lengua yoreme mayo de Sinaloa."
+en = "Open cryptographic inventory (CycloneDX 1.7 CBOM) with post-quantum readiness assessment.\n\"Suaya\" means to care for, to protect, in Yoremnokki, the Yoreme Mayo language of Sinaloa."
+
+[[texto]]
+es = "Inventaría un clúster de Kubernetes en vivo (Secrets, Ingress y cert-manager), solo con lecturas"
+en = "Inventories a live Kubernetes cluster (Secrets, Ingress and cert-manager), read-only"
+
+[[texto]]
+es = "Lee por la API del clúster los Secrets, los Ingress y, si existe, los Certificates de cert-manager. Solo hace lecturas (GET) y analiza el contenido de los Secrets en memoria; nunca lo guarda.\n\nRequiere permiso «list» sobre secrets e ingresses. Usa el kubeconfig (contexto actual o --contexto) o la cuenta de servicio cuando se ejecuta dentro del clúster."
+en = "Reads Secrets, Ingresses and, if present, cert-manager Certificates through the cluster API. It only reads (GET) and analyzes Secret contents in memory; it never stores them.\n\nRequires \"list\" permission on secrets and ingresses. Uses the kubeconfig (current context or --contexto) or the service account when running inside the cluster."
+
+[[texto]]
+es = "Lista los perfiles de política incluidos"
+en = "Lists the bundled policy profiles"
+
+[[texto]]
+es = "Llave privada de Suaya (<PREFIJO>.privada.json)"
+en = "Suaya private key (<PREFIX>.privada.json)"
+
+[[texto]]
+es = "Llave pública de Suaya (<PREFIJO>.publica.json)"
+en = "Suaya public key (<PREFIX>.publica.json)"
+
+[[texto]]
+es = "Muestra la ayuda"
+en = "Shows help"
+
+[[texto]]
+es = "Muestra la base de conocimiento y la tabla de madurez del ecosistema"
+en = "Shows the knowledge base and the ecosystem maturity table"
+
+[[texto]]
+es = "Muestra la versión"
+en = "Shows the version"
+
+[[texto]]
+es = "Muestra los avisos de lo que no se pudo interpretar o alcanzar"
+en = "Shows notices about what could not be parsed or reached"
+
+[[texto]]
+es = "No obtiene la cadena de certificados"
+en = "Does not fetch the certificate chain"
+
+[[texto]]
+es = "Nombre del sistema evaluado"
+en = "Name of the assessed system"
+
+[[texto]]
+es = "Perfil de política para evaluar el cumplimiento: nist-ir-8547, cnsa-2.0 o un archivo TOML propio"
+en = "Policy profile to assess compliance: nist-ir-8547, cnsa-2.0 or your own TOML file"
+
+[[texto]]
+es = "Plataforma a descargar de una imagen multiplataforma (predeterminado: la de este equipo, p. ej. linux/amd64)"
+en = "Platform to pull from a multi-platform image (default: this machine's, e.g. linux/amd64)"
+
+[[texto]]
+es = "Prefijo de los archivos: crea <PREFIJO>.privada.json y <PREFIJO>.publica.json"
+en = "File prefix: creates <PREFIX>.privada.json and <PREFIX>.publica.json"
+
+[[texto]]
+es = "Revisa también ejecutables grandes (hasta 512 MiB) en busca de su biblioteca criptográfica y su versión"
+en = "Also inspects large executables (up to 512 MiB) for their cryptographic library and version"
+
+[[texto]]
+es = "Ruta del kubeconfig (predeterminada: $KUBECONFIG o ~/.kube/config)"
+en = "kubeconfig path (default: $KUBECONFIG or ~/.kube/config)"
+
+[[texto]]
+es = "Servicio de red a sondear además de los archivos (repetible): tls://, ssh://, smtp://, imap://, pop3://, ldap://, postgres:// o mysql://host:puerto"
+en = "Network service to probe in addition to files (repeatable): tls://, ssh://, smtp://, imap://, pop3://, ldap://, postgres:// or mysql://host:port"
+
+[[texto]]
+es = "Servicios a sondear: tls://, ssh://, smtp://, imap://, pop3://, ldap://, postgres:// o mysql://host:puerto, o host:puerto"
+en = "Services to probe: tls://, ssh://, smtp://, imap://, pop3://, ldap://, postgres:// or mysql://host:port, or host:port"
+
+[[texto]]
+es = "Sigue enlaces simbólicos"
+en = "Follows symbolic links"
+
+[[texto]]
+es = "Sondea además por TLS los hosts publicados en los Ingress"
+en = "Also probes over TLS the hosts published by the Ingresses"
+
+[[texto]]
+es = "Sondea servicios TLS, STARTTLS y SSH en la red y genera el CBOM"
+en = "Probes TLS, STARTTLS and SSH services on the network and generates the CBOM"
+
+[[texto]]
+es = "Sondea servicios TLS y SSH para observar la criptografía que ofrecen realmente: versiones de TLS, grupos de intercambio de llaves (incluidos los híbridos con ML-KEM), algoritmos SSH y la cadena de certificados.\n\nUso responsable: sondee solo sistemas que administre o que tenga autorización expresa para evaluar. Cada objetivo recibe unas veinte conexiones breves y secuenciales."
+en = "Probes TLS and SSH services to observe the cryptography they actually offer: TLS versions, key exchange groups (including hybrids with ML-KEM), SSH algorithms and the certificate chain.\n\nResponsible use: probe only systems you administer or are expressly authorized to assess. Each target receives about twenty brief, sequential connections."
+
+[[texto]]
+es = "Suaya: protege lo que sostiene tu criptografía."
+en = "Suaya: protect what holds up your cryptography."
+
+[[texto]]
+es = "Tamaño máximo de archivo, en MiB (predeterminado: 5)"
+en = "Maximum file size, in MiB (default: 5)"
+
+[[texto]]
+es = "Termina con código 2 si aparecen hallazgos críticos o altos, o si algo empeora"
+en = "Exits with code 2 if critical or high findings appear, or if anything gets worse"
+
+[[texto]]
+es = "Termina con código 2 si hay hallazgos de esta prioridad o más grave (1 = crítica ... 4 = baja)"
+en = "Exits with code 2 if there are findings of this priority or worse (1 = critical ... 4 = low)"
+
+[[texto]]
+es = "Tiempo límite por conexión, en segundos (predeterminado: 5)"
+en = "Timeout per connection, in seconds (default: 5)"
+
+[[texto]]
+es = "Variable de entorno con la frase de paso de la llave privada"
+en = "Environment variable with the private key passphrase"
+
+[[texto]]
+es = "Variable de entorno con la frase de paso que cifra la llave privada"
+en = "Environment variable with the passphrase that encrypts the private key"
+
+[[texto]]
+es = "Verifica la firma híbrida de un CBOM: deben ser válidas ML-DSA-65 y Ed25519"
+en = "Verifies a CBOM's hybrid signature: both ML-DSA-65 and Ed25519 must be valid"
+
+[[texto]]
+es = "Idioma de la interfaz y de los reportes: es o en (también SUAYA_IDIOMA)"
+en = "Language of the interface and reports: es or en (also SUAYA_IDIOMA)"
+
+[[texto]]
+es = "Hilos de análisis (predeterminado: todos los núcleos)"
+en = "Analysis threads (default: all cores)"
+
+[[texto]]
+es = "Imprime el autocompletado para un intérprete de órdenes (bash, zsh, fish, powershell o elvish)"
+en = "Prints shell completion for a shell (bash, zsh, fish, powershell or elvish)"
+
+[[texto]]
+es = "Imprime la página de manual (roff)"
+en = "Prints the manual page (roff)"
+
+[[texto]]
+es = "Intérprete de órdenes"
+en = "Shell"
+
+[[texto]]
+es = "Códigos de salida: 0 éxito; 1 error; 2 se alcanzó el umbral de --fallar-en o --fallar-si-empeora; 3 firma no válida; 4 inventario incompleto."
+en = "Exit codes: 0 success; 1 error; 2 the --fallar-en or --fallar-si-empeora threshold was reached; 3 invalid signature; 4 incomplete inventory."
+
+[[texto]]
+es = "Devuelve código 4 si hay avisos o archivos omitidos; conserva el resultado parcial"
+en = "Return code 4 for warnings or skipped files; preserve the partial result"
+
+[[texto]]
+es = "Permite HTTP de desarrollo únicamente para registros loopback"
+en = "Allow development HTTP only for loopback registries"
+
+[[texto]]
+es = "Autoriza un origen de tokens por registro: REGISTRO=https://auth.example (repetible)"
+en = "Authorize a token origin per registry: REGISTRY=https://auth.example (repeatable)"

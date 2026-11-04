@@ -1,0 +1,262 @@
+   Compiling suaya-escaneo v1.5.0 (/private/tmp/suaya-v1.5/crates/suaya-escaneo)
+   Compiling suaya-red v1.5.0 (/private/tmp/suaya-v1.5/crates/suaya-red)
+   Compiling suaya-api v1.5.0 (/private/tmp/suaya-v1.5/crates/suaya-api)
+   Compiling suaya-cbom v1.5.0 (/private/tmp/suaya-v1.5/crates/suaya-cbom)
+   Compiling suaya v1.5.0 (/private/tmp/suaya-v1.5/crates/suaya-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.87s
+     Running unittests src/main.rs (/private/tmp/suaya-v15-target/debug/deps/suaya-5f2ecce4bdaf1213)
+
+running 1 test
+test pruebas::ayuda_traducida_al_ingles ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+     Running tests/cli.rs (/private/tmp/suaya-v15-target/debug/deps/cli-ea7cf6531a8463ae)
+
+running 3 tests
+test ingles_y_ordenes_auxiliares ... ok
+test escanear_reportar_y_comparar ... ok
+test llaves_firmar_y_verificar ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.59s
+
+     Running tests/security_14.rs (/private/tmp/suaya-v15-target/debug/deps/security_14-aef12a7eba792e34)
+
+running 1 test
+test incomplete_scan_is_machine_readable_and_can_fail_gate ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running unittests src/lib.rs (/private/tmp/suaya-v15-target/debug/deps/suaya_api-9e12f9e50f05cfea)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (/private/tmp/suaya-v15-target/debug/deps/suaya_api-76edd1d0107756a3)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/security.rs (/private/tmp/suaya-v15-target/debug/deps/security-b0dfe73471481daf)
+
+running 11 tests
+test duplicate_tokens_rejected_including_hex_case ... ok
+test rejects_expired_config_and_duplicate_tokens ... ok
+test scoped_credential_cannot_scan_another_alias ... ok
+test rejects_arbitrary_paths_urls_and_unknown_fields ... ok
+test retention_removes_expired_records_without_new_scans ... ok
+test reload_revokes_old_token_and_accepts_new_token ... ok
+test real_scan_persists_and_is_readable_by_owner ... ok
+test credentials_required_and_admin_role_enforced ... ok
+test ownership_checked_on_read_delete_and_list ... ok
+test anonymous_flood_preserves_authenticated_budgets ... ok
+test request_budget_and_response_headers ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+     Running unittests src/lib.rs (/private/tmp/suaya-v15-target/debug/deps/suaya_cbom-6a8cce747d5517fc)
+
+running 3 tests
+test reporte::pruebas::markdown_en_linea ... ok
+test firma::pruebas::firmar_y_verificar ... ok
+test firma::pruebas::llaves_en_json_cifradas_y_en_claro ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.81s
+
+     Running tests/security_14.rs (/private/tmp/suaya-v15-target/debug/deps/security_14-8f1ebead43cfd25a)
+
+running 3 tests
+test hostile_strings_are_text_and_critical_is_counted ... ok
+test signature_binds_timestamp_and_rejects_legacy_prefix ... ok
+test rejects_hostile_kdf_parameters_before_work ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.34s
+
+     Running tests/sistema_demo.rs (/private/tmp/suaya-v15-target/debug/deps/sistema_demo-4178679b650b0d23)
+
+running 25 tests
+test permisos_laxos ... ok
+test imagen_de_contenedor_con_secreto_borrado ... ok
+test llaves_enlazadas_con_su_certificado_en_todos_los_formatos ... ok
+test llaves ... ok
+test secretos_de_kubernetes_y_kubeconfig ... ok
+test codigo_fuente ... ok
+test ssh_moderno_y_heredado ... ok
+test volumenes ... ok
+test vpn ... ok
+test postgresql_con_y_sin_tls ... ok
+test mysql_y_postfix ... ok
+test haproxy_por_bind ... ok
+test bibliotecas_criptograficas ... ok
+test ida_y_vuelta_reporte_y_comparacion ... ok
+test politica_de_java ... ok
+test escaneo_sin_avisos ... ok
+test cert_manager_declara_el_algoritmo_futuro ... ok
+test certificado_heredado_es_critico ... ok
+test importacion_de_cbom_externo_y_propio ... ok
+test nginx_hibrido_y_certificado_enlazado ... ok
+test apache_obsoleto ... ok
+test perfiles_de_politica ... ok
+test el_resultado_no_depende_del_numero_de_hilos ... ok
+test reporte_y_cbom_en_ingles ... ok
+test el_cbom_y_los_reportes_no_contienen_material_secreto ... ok
+
+test result: ok. 25 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.69s
+
+     Running unittests src/lib.rs (/private/tmp/suaya-v15-target/debug/deps/suaya_core-709b478dd5ee8855)
+
+running 16 tests
+test idioma::pruebas::marcadores_con_formato ... ok
+test enlace::pruebas::enlaza_y_hereda_contexto ... ok
+test politica::pruebas::los_perfiles_incluidos_son_validos ... ok
+test clasificacion::pruebas::se_elige_el_contexto_mas_urgente ... ok
+test conocimiento::pruebas::la_base_embebida_es_valida ... ok
+test clasificacion::pruebas::autenticacion_vpn_se_planifica ... ok
+test conocimiento::pruebas::busquedas_basicas ... ok
+test conocimiento::pruebas::madurez_segun_reporte ... ok
+test clasificacion::pruebas::rsa_1024_es_critico ... ok
+test clasificacion::pruebas::vulnerable_en_capacidad_madura_se_migra ... ok
+test clasificacion::pruebas::el_certificado_hereda_el_peor_riesgo ... ok
+test conocimiento::pruebas_bibliotecas::versiones_y_soporte ... ok
+test conocimiento::pruebas::rsa_pequeno_es_roto ... ok
+test politica::pruebas::cnsa_2_0_plazos_por_capacidad_y_tamano ... ok
+test politica::pruebas::nist_ir_8547 ... ok
+test idioma::pruebas::plantillas ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s
+
+     Running tests/robustez.rs (/private/tmp/suaya-v15-target/debug/deps/robustez-ac7b95ddcb82f1d4)
+
+running 1 test
+test entradas_arbitrarias ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.35s
+
+     Running unittests src/lib.rs (/private/tmp/suaya-v15-target/debug/deps/suaya_escaneo-0c64012cbf4d4923)
+
+running 17 tests
+test comun::pruebas::lineas ... ok
+test identidad::pruebas::longitudes_largas ... ok
+test vpn::pruebas::fichas_ignorables ... ok
+test codigo::pruebas::lenguajes ... ok
+test comun::pruebas::bits ... ok
+test identidad::pruebas::entero_canonico ... ok
+test config_java::pruebas::listas ... ok
+test codigo::pruebas::comentarios_fuera_cadenas_dentro ... ok
+test cert_manager::pruebas::lee_privatekey ... ok
+test config_tls::pruebas::apache_all_menos_viejas ... ok
+test config_postfix::pruebas::listas_de_protocolos ... ok
+test incrustados::pruebas::campo_de_la_linea ... ok
+test config_haproxy::pruebas::versiones ... ok
+test bibliotecas::pruebas::cadenas_en_binarios ... ok
+test importar::pruebas::purl_y_nombres ... ok
+test bibliotecas::pruebas::nombres_de_jar_y_bibliotecas ... ok
+test codigo::pruebas::reglas_validas ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s
+
+     Running tests/robustez.rs (/private/tmp/suaya-v15-target/debug/deps/robustez-f3172e28e9bb1ab5)
+
+running 2 tests
+test importar_cbom_danado_no_entra_en_panico ... ok
+test ningun_escaner_entra_en_panico ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.20s
+
+     Running unittests src/lib.rs (/private/tmp/suaya-v15-target/debug/deps/suaya_red-76a71d554c235a29)
+
+running 18 tests
+test registro::auditoria_regresion_localhost::sec004_dominios_no_son_loopback ... ok
+test tls::pruebas::interpreta_hello_retry_request ... ok
+test pruebas::interpretar_objetivos ... ok
+test http::pruebas::servidores ... ok
+test ssh::pruebas::kexinit_truncado ... ok
+test http::pruebas::exclusiones_del_proxy ... ok
+test tls::pruebas::client_hello_bien_formado ... ok
+test registro::pruebas::referencias ... ok
+test registro::politica_registros::dominios_con_prefijos_ip_no_autorizan_http ... ok
+test kubernetes::pruebas::url_y_rutas ... ok
+test registro::pruebas::urls ... ok
+test tls::pruebas::interpreta_alerta_y_cierre ... ok
+test http::pruebas::fragmentado_y_longitud ... ok
+test registro::pruebas::desafios ... ok
+test ssh::pruebas::interpreta_kexinit ... ok
+test registro::politica_registros::realm_no_autorizado_se_rechaza_antes_de_conectar ... ok
+test kubernetes::pruebas::kubeconfig_con_token_y_archivos_relativos ... ok
+test tls::pruebas::nombres_de_grupo_desde_la_base ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/kubernetes_simulado.rs (/private/tmp/suaya-v15-target/debug/deps/kubernetes_simulado-5f9e61338bea91d5)
+
+running 3 tests
+test rechaza_un_servidor_con_otra_autoridad ... ok
+test informa_credenciales_rechazadas ... ok
+test inventario_de_un_cluster_simulado ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/registro_simulado.rs (/private/tmp/suaya-v15-target/debug/deps/registro_simulado-177182c2bbad13e1)
+
+running 3 tests
+test credenciales_incorrectas ... ok
+test capa_alterada_descarta_la_imagen ... ok
+test descarga_verificada_con_token_y_redireccion ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/robustez.rs (/private/tmp/suaya-v15-target/debug/deps/robustez-3677d498afd88a92)
+
+running 2 tests
+test textos_arbitrarios ... ok
+test respuestas_arbitrarias ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/servidores_simulados.rs (/private/tmp/suaya-v15-target/debug/deps/servidores_simulados-a1d3eee03e7fa718)
+
+running 9 tests
+test ssh_con_hibrido ... ok
+test ssh_heredado_es_critico ... ok
+test tls_heredado_obsoleto ... ok
+test tls_con_suite_3des_es_critico ... ok
+test servicio_inexistente_produce_aviso ... ok
+test tls_que_respeta_el_orden_del_cliente ... ok
+test tls_que_prefiere_hibrido ... ok
+test tls_que_acepta_pero_no_prefiere_hibrido ... ok
+test starttls_smtp_y_postgres ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+   Doc-tests suaya_api
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests suaya_cbom
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests suaya_core
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests suaya_escaneo
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests suaya_red
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

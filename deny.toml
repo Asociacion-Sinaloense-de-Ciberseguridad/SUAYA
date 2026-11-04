@@ -1,0 +1,43 @@
+# Política de dependencias para cargo-deny (https://github.com/EmbarkStudios/cargo-deny).
+#   cargo deny check
+# Se revisa en la integración continua: avisos de seguridad de RustSec,
+# licencias compatibles con Apache-2.0 y origen de cada crate.
+
+[graph]
+all-features = false
+
+[advisories]
+# Todo aviso de RustSec rompe la compilación salvo que se documente aquí
+# con una justificación.
+ignore = []
+
+[licenses]
+confidence-threshold = 0.9
+allow = [
+    "Apache-2.0",
+    "MIT",
+    "MIT-0",
+    "BSD-3-Clause",
+    "ISC",
+    "Zlib",
+    "Unicode-3.0",
+    "Unlicense",
+    "CC0-1.0",
+    "0BSD",
+    "BSD-1-Clause",
+]
+
+[bans]
+multiple-versions = "warn"
+wildcards = "deny"
+# Solo un proveedor criptográfico: aws-lc-rs. ring y openssl no deben entrar.
+deny = [
+    { crate = "ring", reason = "Suaya usa aws-lc-rs como único proveedor criptográfico" },
+    { crate = "openssl", reason = "Suaya no enlaza con OpenSSL" },
+    { crate = "openssl-sys", reason = "Suaya no enlaza con OpenSSL" },
+]
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]

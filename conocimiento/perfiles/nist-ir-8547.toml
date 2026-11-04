@@ -1,0 +1,36 @@
+# Perfil de política: NIST IR 8547 (borrador inicial, noviembre de 2024).
+#
+# Algoritmos de llave pública vulnerables a cómputo cuántico (RSA, ECDSA,
+# EdDSA, ECDH, DH): en retiro después de 2030 y prohibidos después de 2035.
+# Los simétricos y hashes actuales siguen aceptados en tamaños adecuados.
+# Es una guía en borrador; verifique la versión final de NIST.
+
+[perfil]
+id = "nist-ir-8547"
+nombre = "NIST IR 8547 (transición a criptografía poscuántica)"
+referencia = "NIST IR 8547, Transition to Post-Quantum Cryptography Standards, borrador inicial (noviembre de 2024)"
+# Estado de los algoritmos que ninguna regla cubre.
+predeterminado = "sin-evaluar"
+# Versiones de protocolo y funciones de derivación no se evalúan como algoritmos.
+ignorar_primitivas = ["other", "kdf"]
+
+[[regla]]
+riesgos = ["roto-clasico", "obsoleto"]
+estado = "no-conforme"
+nota = "Inseguro o retirado por los estándares vigentes."
+
+[[regla]]
+riesgos = ["vulnerable-cuantico"]
+estado = "transicion"
+retiro = 2030
+prohibicion = 2035
+nota = "Llave pública vulnerable a cómputo cuántico: en retiro después de 2030, prohibida después de 2035."
+
+[[regla]]
+riesgos = ["debilitado-grover"]
+estado = "conforme"
+nota = "Aceptado por NIST (categoría de seguridad 1)."
+
+[[regla]]
+riesgos = ["hibrido-pq", "resistente-cuantico"]
+estado = "conforme"

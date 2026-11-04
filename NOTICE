@@ -1,0 +1,31 @@
+Suaya
+Copyright 2026 José Enrique Rangel Ramírez y las personas contribuyentes de Suaya.
+
+Este producto se distribuye bajo la Licencia Apache, versión 2.0.
+
+-------------------------------------------------------------------------------
+Atribuciones
+-------------------------------------------------------------------------------
+
+Tabla de madurez del ecosistema (conocimiento/madurez.toml)
+  Los niveles de madurez por capacidad tecnológica se derivan del
+  "Post-Quantum Cryptography (PQC) Capability Development Report",
+  septiembre de 2026, (c) 2026 MITRE. Aprobado para difusión pública;
+  distribución ilimitada. Caso 26-2150.
+  Suaya registra únicamente los niveles asignados y no reproduce el texto
+  del reporte. Su uso no implica respaldo de MITRE a Suaya.
+
+Especificación CycloneDX
+  CycloneDX es un estándar de la OWASP Foundation, publicado por Ecma
+  International como ECMA-424. Suaya emite documentos conformes a la
+  versión 1.7 de la especificación.
+
+Nombre del proyecto
+  "Suaya" es una palabra del yoremnokki, la lengua del pueblo yoreme mayo.
+  La palabra pertenece a su comunidad; el proyecto la usa con
+  reconocimiento y gratitud.
+
+Esquemas de prueba (pruebas/esquemas/)
+  Copia de los esquemas JSON de CycloneDX 1.7 del repositorio
+  CycloneDX/specification (commit ad83dae28b23), (c) OWASP Foundation,
+  Licencia Apache 2.0. Se usan solo para validar la salida en las pruebas.

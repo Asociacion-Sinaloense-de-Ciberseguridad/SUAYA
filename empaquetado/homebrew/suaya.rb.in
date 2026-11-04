@@ -1,0 +1,33 @@
+# Fórmula de Homebrew para Suaya (plantilla).
+#
+# Los valores entre corchetes se completan al publicar cada versión con los
+# datos de SHA256SUMS. La fórmula compila desde el código fuente, que es lo
+# que Homebrew prefiere para un tap propio.
+class Suaya < Formula
+  desc "Inventario criptográfico abierto (CBOM CycloneDX 1.7) en español"
+  homepage "https://github.com/[OWNER]/suaya"
+  url "https://github.com/[OWNER]/suaya/archive/refs/tags/v1.0.0.tar.gz"
+  sha256 "[SHA256 DEL ARCHIVO FUENTE]"
+  license "Apache-2.0"
+  head "https://github.com/[OWNER]/suaya.git", branch: "main"
+
+  depends_on "cmake" => :build
+  depends_on "rust" => :build
+
+  def install
+    system "cargo", "install", *std_cargo_args(path: "crates/suaya-cli")
+    generate_completions_from_executable(bin/"suaya", "completado")
+    (man1/"suaya.1").write Utils.safe_popen_read(bin/"suaya", "manual")
+  end
+
+  test do
+    assert_match version.to_s, shell_output("#{bin}/suaya --version")
+    (testpath/"llave.pem").write <<~PEM
+      -----BEGIN PUBLIC KEY-----
+      MCowBQYDK2VwAyEAGb9ECWmEzf6FQbrBZ9w7lshQhqowtrbLDFw4rXAxZuE=
+      -----END PUBLIC KEY-----
+    PEM
+    system bin/"suaya", "escanear", testpath, "-o", testpath/"cbom.json"
+    assert_match "CycloneDX", (testpath/"cbom.json").read
+  end
+end

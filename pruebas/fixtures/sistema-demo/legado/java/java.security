@@ -1,0 +1,4 @@
+# Recortada «por compatibilidad» con un proveedor antiguo.
+keystore.type=jks
+jdk.certpath.disabledAlgorithms=MD2, RSA keySize < 1024
+jdk.tls.disabledAlgorithms=SSLv3, RC4, DES, MD5withRSA, anon, NULL

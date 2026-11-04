@@ -1,0 +1,64 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "serialNumber": "urn:uuid:3e671687-395b-41f5-a30f-a58921a69b79",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-09-30T12:00:00Z",
+    "tools": { "components": [{ "type": "application", "name": "CBOMkit", "version": "2.0.0" }] }
+  },
+  "components": [
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "c0a8e2f4-0001",
+      "name": "RSA-2048",
+      "evidence": { "occurrences": [{ "location": "src/main/java/mx/ejemplo/Firma.java", "line": 42 }] },
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "oid": "1.2.840.113549.1.1.1",
+        "algorithmProperties": { "primitive": "pke", "parameterSetIdentifier": "2048" }
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "c0a8e2f4-0002",
+      "name": "AES128-GCM",
+      "evidence": { "occurrences": [{ "location": "src/main/java/mx/ejemplo/Cifrado.java", "line": 17 }] },
+      "cryptoProperties": { "assetType": "algorithm", "algorithmProperties": { "primitive": "ae", "mode": "gcm" } }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "c0a8e2f4-0003",
+      "name": "SHA1",
+      "evidence": { "occurrences": [{ "location": "src/main/java/mx/ejemplo/Huella.java", "line": 9 }] },
+      "cryptoProperties": { "assetType": "algorithm", "algorithmProperties": { "primitive": "hash" } }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "c0a8e2f4-0004",
+      "name": "TLSv1.2",
+      "cryptoProperties": {
+        "assetType": "protocol",
+        "protocolProperties": {
+          "type": "tls",
+          "version": "1.2",
+          "cipherSuites": [{ "name": "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256" }],
+          "relatedCryptographicAssets": [{ "type": "algorithm", "ref": "c0a8e2f4-0002" }]
+        }
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "c0a8e2f4-0005",
+      "name": "Rabbit",
+      "cryptoProperties": { "assetType": "algorithm", "algorithmProperties": { "primitive": "stream-cipher" } }
+    },
+    {
+      "type": "library",
+      "bom-ref": "lib-bc",
+      "name": "bcprov-jdk18on",
+      "version": "1.77",
+      "purl": "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.77"
+    }
+  ]
+}
