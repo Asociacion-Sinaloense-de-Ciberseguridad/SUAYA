@@ -3,8 +3,8 @@
 ┌─────────────┐
 │ Scan Status │
 └─────────────┘
-  Scanning 220 files tracked by git with 7 Code rules:
-  Scanning 59 files with 7 rust rules.
+  Scanning 253 files tracked by git with 7 Code rules:
+  Scanning 61 files with 7 rust rules.
                 
                 
 ┌──────────────┐
@@ -13,9 +13,10 @@
 ✅ Scan completed successfully.
  • Findings: 0 (0 blocking)
  • Rules run: 7
- • Targets scanned: 59
+ • Targets scanned: 61
  • Parsed lines: ~100.0%
  • Scan skipped: 
-   ◦ Files matching .semgrepignore patterns: 1
+   ◦ Files larger than  files 1.0 MB: 3
+   ◦ Files matching .semgrepignore patterns: 6
  • For a detailed list of skipped files and lines, run semgrep with the --verbose flag
-Ran 7 rules on 59 files: 0 findings.
+Ran 7 rules on 61 files: 0 findings.

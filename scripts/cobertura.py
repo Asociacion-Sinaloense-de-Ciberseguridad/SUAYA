@@ -22,7 +22,8 @@ with tempfile.TemporaryDirectory(prefix='suaya-coverage-') as td:
  print(report)
 
 rows=[line.split() for line in report.splitlines() if '/crates/' in line and '/src/' in line]
-lines=sum(int(row[7]) for row in rows); missed=sum(int(row[8]) for row in rows)
+# Columnas desde la derecha: la ruta del proyecto puede contener espacios.
+lines=sum(int(row[-6]) for row in rows); missed=sum(int(row[-5]) for row in rows)
 summary={'scope':'crates/*/src, incluye tests internos; excluye integración y dependencias generadas','lines':lines,'missed_lines':missed,'covered_percent':round(100*(lines-missed)/lines,2)}
 (root/'validacion/coverage-source.json').write_text(json.dumps(summary,indent=2)+'\n')
 print(summary)

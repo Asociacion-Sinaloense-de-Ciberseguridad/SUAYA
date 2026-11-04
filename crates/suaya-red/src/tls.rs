@@ -270,7 +270,7 @@ fn preguntar(o: &Objetivo, op: &Opciones, saludo: &[u8]) -> Result<Respuesta, St
 }
 
 /// Nombre IANA (minúsculas) del grupo, tomado de los alias `tls-grupo`.
-fn nombre_grupo(codigo: u16, def: &AlgoritmoDef) -> String {
+pub(crate) fn nombre_grupo(codigo: u16, def: &AlgoritmoDef) -> String {
     let indice = def
         .codigos_tls
         .iter()

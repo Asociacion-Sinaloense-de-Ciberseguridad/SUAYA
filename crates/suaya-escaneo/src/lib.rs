@@ -49,7 +49,9 @@ pub mod api {
     pub use crate::comun::resolver_certificados_referenciados;
     pub use crate::comun::{activo_algoritmo, id_corto, por_alias};
     pub use crate::config_ssh::riesgo_kex_ssh;
-    pub use crate::pem::{analizar_texto_pem, certificado_en_contexto};
+    pub use crate::pem::{
+        ResumenCertificado, analizar_texto_pem, certificado_en_contexto, resumen_certificado,
+    };
 }
 
 /// Un escáner analiza archivos y devuelve activos criptográficos.

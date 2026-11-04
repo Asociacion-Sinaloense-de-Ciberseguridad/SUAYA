@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
-VERSION=1.5.0
+VERSION=1.6.0
 ARCH=$(uname -m)
 BUILD_DIR=${SUAYA_BUILD_DIR:-build}
 APP="$BUILD_DIR/SUAYA.app"

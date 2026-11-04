@@ -191,3 +191,39 @@ fn ingles_y_ordenes_auxiliares() {
     let s = correr(suaya().args(["reporte", "/no/existe.json"]));
     assert_eq!(s.status.code(), Some(1));
 }
+
+#[test]
+fn diagnosticar_puerto_cerrado_json_y_umbral() {
+    let d = directorio("diagnosticar");
+    let puerto = {
+        let l = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+        l.local_addr().unwrap().port()
+    };
+    let json = d.join("diagnostico.json");
+    let objetivo = format!("tls://127.0.0.1:{puerto}");
+
+    // Sin umbral, un hallazgo crítico no cambia el código de salida.
+    let s = correr(suaya().args(["diagnosticar", &objetivo]));
+    assert_eq!(s.status.code(), Some(0));
+    assert!(String::from_utf8_lossy(&s.stdout).contains("CON-TCP"));
+
+    let s = correr(
+        suaya()
+            .args(["diagnose", &objetivo, "--fallar-en", "critico", "--json"])
+            .arg(&json),
+    );
+    assert_eq!(s.status.code(), Some(2));
+    let v: serde_json::Value = serde_json::from_slice(&std::fs::read(&json).unwrap()).unwrap();
+    let diag = &v["diagnosticos"][0];
+    assert_eq!(diag["objetivo"], objetivo);
+    assert_eq!(
+        diag["conectividad"]["direcciones"][0]["estado"],
+        "rechazado"
+    );
+    assert_eq!(diag["hallazgos"][0]["codigo"], "CON-TCP");
+    assert_eq!(diag["hallazgos"][0]["nivel"], "critico");
+
+    // Un nivel inválido es un error de uso.
+    let s = correr(suaya().args(["diagnosticar", &objetivo, "--fallar-en", "grave"]));
+    assert_eq!(s.status.code(), Some(1));
+}

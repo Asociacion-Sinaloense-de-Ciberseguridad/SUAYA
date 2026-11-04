@@ -1,5 +1,18 @@
 # Cambios
 
+## [1.6.0] - 2026-10-30
+
+- Nueva orden `suaya diagnosticar` (`diagnose`): análisis de conectividad e intercambio de llaves y certificados de servicios TLS, STARTTLS y SSH, con salida para personas, `--json` y `--fallar-en critico|alto|medio|bajo` (código 2).
+- Conectividad: resolución del nombre, cada dirección IPv4 e IPv6 con estado TCP y latencia, preámbulo STARTTLS y tiempo del saludo.
+- Intercambio de llaves TLS: dos saludos completos (cliente moderno con X25519MLKEM768 y cliente solo clásico) con versión, suite, grupo negociado, `HelloRetryRequest`, ALPN y verificación de la firma del `CertificateVerify`.
+- Intercambio de certificados: validación estándar con las autoridades del sistema (y `--ca` propia), nombre, vigencia, orden, raíz enviada, llaves, firmas, tamaño de la cadena y engrapado OCSP.
+- SSH: intercambios poscuánticos ofrecidos, «strict KEX» (Terrapin, CVE-2023-48795) y llaves de host solo SHA-1/DSA.
+- `sondear`, `escanear --objetivo` y `kubernetes --sondear-ingress` aceptan `--diagnostico` (y `--ca`) para agregar esos hallazgos al CBOM como `suaya:advertencia`.
+- API: `POST /api/v1/diagnose` sobre alias preconfigurados (`network_targets`, `configurar-api.py --network-target`), con alcance por credencial y sin persistencia.
+- macOS: pestaña «Diagnóstico de red» con autoridad propia opcional, hallazgos por nivel y exportación JSON privada; la escritura privada se comparte con el inventario.
+- El saludo del cliente moderno se repite una vez antes de concluir que el servidor lo rechaza.
+- Catálogo en inglés ampliado; 136 pruebas Rust (18 nuevas, incluidos servidores rustls reales en loopback).
+
 ## [1.5.0] - 2026-10-20
 
 - Corrige desafíos de autenticación entre orígenes; autorización explícita de realms por registro y TLS predeterminado.

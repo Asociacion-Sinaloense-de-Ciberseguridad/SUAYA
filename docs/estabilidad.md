@@ -8,7 +8,7 @@ Lo siguiente solo cambia de forma incompatible en una versión mayor (2.0.0):
 
 ### Línea de órdenes
 
-- Los nombres de las órdenes y sus alias en inglés: `escanear` (`scan`), `sondear` (`probe`), `kubernetes` (`k8s`), `reporte` (`report`), `comparar` (`diff`), `importar` (`import`), `perfiles` (`profiles`), `llaves` (`keygen`), `firmar` (`sign`), `verificar` (`verify`), `conocimiento` (`knowledge`), y las órdenes auxiliares `completado` y `manual`.
+- Los nombres de las órdenes y sus alias en inglés: `escanear` (`scan`), `sondear` (`probe`), `diagnosticar` (`diagnose`), `kubernetes` (`k8s`), `reporte` (`report`), `comparar` (`diff`), `importar` (`import`), `perfiles` (`profiles`), `llaves` (`keygen`), `firmar` (`sign`), `verificar` (`verify`), `conocimiento` (`knowledge`), y las órdenes auxiliares `completado` y `manual`.
 - Los nombres y el significado de las opciones documentadas en `suaya <orden> --ayuda`. Se pueden agregar opciones nuevas; una opción existente no se elimina ni cambia de significado.
 - Las variables de entorno `SUAYA_IDIOMA`, `SUAYA_CLAVE_FIRMA`, `SUAYA_REGISTRO_USUARIO`, `SUAYA_REGISTRO_CLAVE` y `SUAYA_FECHA`.
 
@@ -43,7 +43,7 @@ Lo siguiente solo cambia de forma incompatible en una versión mayor (2.0.0):
 - **Los textos.** Las justificaciones, los avisos, la ayuda y los reportes en Markdown y HTML pueden cambiar de redacción en cualquier versión. No los analice con expresiones regulares: lea las propiedades del CBOM.
 - **Qué se detecta.** Las versiones nuevas detectan más cosas; un CBOM puede crecer al actualizar Suaya sin que el sistema haya cambiado. `comparar` distingue los activos nuevos de los que empeoraron.
 - **Las bibliotecas de Rust** (`suaya-core`, `suaya-escaneo`, `suaya-cbom`, `suaya-red`). Su API pública es interna del proyecto y puede cambiar en versiones menores hasta que se publique en crates.io con su propio compromiso.
-- **La salida en pantalla** de `escanear` y `sondear`, pensada para personas.
+- **La salida en pantalla** de `escanear`, `sondear` y `diagnosticar`, pensada para personas. Para automatizar, use el JSON de `diagnosticar --json`: sus campos y los códigos de hallazgo (`CERT-VENCE`, `KEX-PQ`...) solo crecen; los textos de los mensajes pueden cambiar.
 
 ## Obsolescencia
 

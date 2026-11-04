@@ -1,6 +1,6 @@
 {
   "scope": "crates/*/src, incluye tests internos; excluye integraci\u00f3n y dependencias generadas",
-  "lines": 12125,
-  "missed_lines": 1914,
-  "covered_percent": 84.21
+  "lines": 13438,
+  "missed_lines": 2123,
+  "covered_percent": 84.2
 }

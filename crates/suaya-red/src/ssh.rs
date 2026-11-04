@@ -21,6 +21,9 @@ pub struct KexInit {
     pub llaves_host: Vec<String>,
     pub cifrados: Vec<String>,
     pub macs: Vec<String>,
+    /// Pseudoalgoritmos de la lista de intercambio (`ext-info-s`,
+    /// `kex-strict-s-v00@openssh.com`), que señalan extensiones.
+    pub extensiones: Vec<String>,
 }
 
 impl KexInit {
@@ -58,6 +61,11 @@ impl KexInit {
             // Se usan las listas del servidor hacia el cliente.
             cifrados: listas[3].clone(),
             macs: listas[5].clone(),
+            extensiones: listas[0]
+                .iter()
+                .filter(|k| PSEUDOALGORITMOS.iter().any(|p| k.starts_with(p)))
+                .cloned()
+                .collect(),
         })
     }
 }
@@ -104,17 +112,21 @@ fn leer_paquete(s: &mut impl Read) -> Result<Vec<u8>, String> {
     Ok(resto)
 }
 
+/// Intercambia identificaciones y lee el `KEXINIT` por una conexión abierta.
+pub(crate) fn observar(s: &mut (impl Read + Write)) -> Result<(String, KexInit), String> {
+    s.write_all(format!("SSH-2.0-Suaya_{}\r\n", suaya_core::VERSION).as_bytes())
+        .map_err(|e| e.to_string())?;
+    let identificacion = leer_identificacion(s)?;
+    let kexinit = KexInit::desde_carga(&leer_paquete(s)?)?;
+    Ok((identificacion, kexinit))
+}
+
 pub(crate) fn sondear(
     o: &Objetivo,
     c: &Conocimiento,
     op: &Opciones,
 ) -> Result<(Vec<Activo>, Vec<String>), String> {
-    let mut s = o.conectar(op)?;
-    s.write_all(format!("SSH-2.0-Suaya_{}\r\n", suaya_core::VERSION).as_bytes())
-        .map_err(|e| e.to_string())?;
-    let identificacion = leer_identificacion(&mut s)?;
-    let kexinit = KexInit::desde_carga(&leer_paquete(&mut s)?)?;
-    drop(s);
+    let (identificacion, kexinit) = observar(&mut o.conectar(op)?)?;
     Ok((activos(o, &identificacion, &kexinit, c), Vec::new()))
 }
 
@@ -224,6 +236,10 @@ mod pruebas {
         );
         let k = KexInit::desde_carga(&carga).unwrap();
         assert_eq!(k.kex, vec!["mlkem768x25519-sha256", "curve25519-sha256"]);
+        assert_eq!(
+            k.extensiones,
+            vec!["ext-info-s", "kex-strict-s-v00@openssh.com"]
+        );
         assert_eq!(k.llaves_host.len(), 2);
     }
 

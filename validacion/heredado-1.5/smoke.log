@@ -1,0 +1,26 @@
+Suaya 1.5.0 · algoritmos 2026.10.0 · código 2026.10.0 · bibliotecas 2026.10.0 · madurez 2026.09.0 (MITRE, Post-Quantum Cryptography (PQC) Capability Development Report, edición 2026-09)
+Archivos revisados: 62 · omitidos por tamaño: 0 · servicios sondeados: 0 · activos criptográficos: 115
+
+  Crítica        20
+  Alta           20
+  Media          16
+  Baja           34
+  Informativa    25
+
+Atención prioritaria:
+  [Crítica] Triple DES (CBC) · Corregir de inmediato · pruebas/fixtures/sistema-demo/legado/ssh/sshd_config
+  [Crítica] Blowfish (CBC) · Corregir de inmediato · pruebas/fixtures/sistema-demo/legado/vpn/cliente.ovpn
+  [Crítica] Diffie-Hellman de 1024 o 1536 bits · Corregir de inmediato · pruebas/fixtures/sistema-demo/legado/vpn/ipsec.conf
+  [Crítica] Diffie-Hellman con SHA-1 · Corregir de inmediato · pruebas/fixtures/sistema-demo/legado/ssh/sshd_config
+  [Crítica] HMAC-MD5 · Corregir de inmediato · pruebas/fixtures/sistema-demo/legado/vpn/ipsec.conf
+  [Crítica] MD5 · Corregir de inmediato · pruebas/fixtures/sistema-demo/srv/app/pagos.py
+  [Crítica] RSA-1024 · Corregir de inmediato · pruebas/fixtures/sistema-demo/legado/legado.crt
+  [Crítica] RSASSA-PKCS1-v1_5 con SHA-1 · Corregir de inmediato · pruebas/fixtures/sistema-demo/legado/ssh/sshd_config
+  [Crítica] SSL 3.0 · Corregir de inmediato · pruebas/fixtures/sistema-demo/srv/app/legado.c
+  [Crítica] legado.ejemplo.mx · Corregir de inmediato · pruebas/fixtures/sistema-demo/legado/legado.crt
+  [Crítica] Llave privada RSA-1024 · Corregir de inmediato · pruebas/fixtures/sistema-demo/legado/legado.key
+  [Crítica] strongSwan (ipsec.conf) · Corregir de inmediato · pruebas/fixtures/sistema-demo/legado/vpn/ipsec.conf
+  ... y 28 más (ver el reporte)
+
+CBOM: validacion/demo.json
+Reporte: validacion/demo.html

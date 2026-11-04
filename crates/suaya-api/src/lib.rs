@@ -1,5 +1,6 @@
 //! API local: tokens opacos con expiración, autorización por propietario,
-//! objetivos preconfigurados y persistencia SQLite. Nunca acepta rutas o URLs del cliente.
+//! objetivos preconfigurados y persistencia SQLite. Nunca acepta rutas o URLs del cliente:
+//! los escaneos usan alias de rutas y los diagnósticos de red, alias de servicios.
 use axum::{
     Extension, Json, Router,
     extract::{DefaultBodyLimit, Path, Request, State},
@@ -37,6 +38,9 @@ pub struct Credential {
 pub struct Config {
     pub credentials: Vec<Credential>,
     pub targets: HashMap<String, PathBuf>,
+    /// Servicios de red autorizados para diagnóstico: alias → `tls://host:puerto`, `ssh://...`.
+    #[serde(default)]
+    pub network_targets: HashMap<String, String>,
 }
 #[derive(Clone)]
 pub struct Principal {
@@ -57,6 +61,7 @@ struct Budget {
 pub struct AppState {
     credentials: Arc<RwLock<Vec<Credential>>>,
     targets: Arc<HashMap<String, PathBuf>>,
+    network_targets: Arc<HashMap<String, suaya_red::Objetivo>>,
     db: Arc<Mutex<Connection>>,
     scans: Arc<Semaphore>,
     requests: Arc<Mutex<HashMap<Bucket, Budget>>>,
@@ -74,7 +79,8 @@ impl AppState {
             c.token_sha256.make_ascii_lowercase();
             if let Some(allowed) = &c.targets {
                 anyhow::ensure!(
-                    allowed.iter().all(|a| config.targets.contains_key(a)),
+                    allowed.iter().all(|a| config.targets.contains_key(a)
+                        || config.network_targets.contains_key(a)),
                     "Alias de credencial desconocido"
                 );
             }
@@ -99,16 +105,30 @@ impl AppState {
                 "Credencial expirada"
             );
         }
+        let valid_alias = |name: &str| {
+            !name.is_empty()
+                && name.len() <= 64
+                && name
+                    .bytes()
+                    .all(|b| b.is_ascii_alphanumeric() || b == b'-' || b == b'_')
+        };
+        anyhow::ensure!(
+            config.network_targets.len() <= 256,
+            "Se admiten hasta 256 servicios de red"
+        );
+        let mut network_targets = HashMap::new();
+        for (name, target) in config.network_targets {
+            anyhow::ensure!(
+                valid_alias(&name) && !config.targets.contains_key(&name),
+                "Servicio de red inválido o con alias repetido"
+            );
+            let objetivo = suaya_red::Objetivo::interpretar(&target)
+                .map_err(|e| anyhow::anyhow!("Servicio de red {name}: {e}"))?;
+            network_targets.insert(name, objetivo);
+        }
         let mut targets = HashMap::new();
         for (name, path) in config.targets {
-            anyhow::ensure!(
-                !name.is_empty()
-                    && name.len() <= 64
-                    && name
-                        .bytes()
-                        .all(|b| b.is_ascii_alphanumeric() || b == b'-' || b == b'_'),
-                "Objetivo inválido"
-            );
+            anyhow::ensure!(valid_alias(&name), "Objetivo inválido");
             let path = path.canonicalize()?;
             anyhow::ensure!(path.is_dir() || path.is_file(), "Objetivo no regular");
             targets.insert(name, path);
@@ -123,6 +143,7 @@ impl AppState {
         Ok(Self {
             credentials: Arc::new(RwLock::new(config.credentials)),
             targets: Arc::new(targets),
+            network_targets: Arc::new(network_targets),
             db: Arc::new(Mutex::new(db)),
             scans: Arc::new(Semaphore::new(2)),
             requests: Arc::new(Mutex::new(HashMap::new())),
@@ -141,7 +162,8 @@ impl AppState {
     pub fn reload_credentials(&self, config: Config) -> anyhow::Result<()> {
         let candidate = Self::new(config, Connection::open_in_memory()?)?;
         anyhow::ensure!(
-            *self.targets == *candidate.targets,
+            *self.targets == *candidate.targets
+                && *self.network_targets == *candidate.network_targets,
             "Cambiar objetivos requiere reiniciar"
         );
         let credentials = candidate
@@ -288,6 +310,7 @@ async fn headers(request: Request, next: Next) -> Response {
 pub fn router(state: AppState) -> Router {
     let protected = Router::new()
         .route("/api/v1/scan", post(scan))
+        .route("/api/v1/diagnose", post(diagnose))
         .route("/api/v1/scans", get(list))
         .route("/api/v1/scan/{id}", get(read).delete(delete))
         .route("/api/v1/config", get(config))
@@ -356,6 +379,54 @@ async fn scan(
         db.execute("INSERT INTO scans VALUES(?1,?2,?3,?4,?5)", params![id,user.user,created,status,text]).map_err(internal)?;
         Ok(Json(json!({"id":id,"status":status,"created_at":created,"files":result.archivos_revisados,"skipped":result.archivos_omitidos,"warnings":result.avisos.len()})))
     }).await.map_err(internal)?
+}
+/// Diagnóstico de conectividad e intercambio de llaves y certificados de un
+/// servicio preconfigurado. No se persiste: el resultado describe un instante.
+async fn diagnose(
+    State(state): State<AppState>,
+    Extension(user): Extension<Principal>,
+    Json(input): Json<ScanRequest>,
+) -> Result<Json<Value>, ApiError> {
+    if !user.admin
+        && user
+            .targets
+            .as_ref()
+            .is_some_and(|targets| !targets.contains(&input.target))
+    {
+        return Err(ApiError(StatusCode::FORBIDDEN));
+    }
+    let objetivo = state
+        .network_targets
+        .get(&input.target)
+        .cloned()
+        .ok_or(ApiError(StatusCode::BAD_REQUEST))?;
+    let permit = state
+        .scans
+        .clone()
+        .try_acquire_owned()
+        .map_err(|_| ApiError(StatusCode::TOO_MANY_REQUESTS))?;
+    tokio::task::spawn_blocking(move || {
+        let _permit = permit;
+        let knowledge = suaya_core::Conocimiento::embebido();
+        let diagnostico = suaya_red::diagnosticar(
+            std::slice::from_ref(&objetivo),
+            &knowledge,
+            &suaya_red::Opciones::default(),
+        )
+        .pop()
+        .ok_or_else(|| internal("sin diagnóstico"))?;
+        let created = time::OffsetDateTime::now_utc()
+            .format(&time::format_description::well_known::Rfc3339)
+            .map_err(internal)?;
+        Ok(Json(json!({
+            "target": input.target,
+            "created_at": created,
+            "worst": diagnostico.peor().map(suaya_red::Nivel::como_texto),
+            "diagnosis": diagnostico,
+        })))
+    })
+    .await
+    .map_err(internal)?
 }
 async fn list(
     State(state): State<AppState>,
@@ -431,7 +502,9 @@ async fn config(
     }
     let mut targets = state.targets.keys().cloned().collect::<Vec<_>>();
     targets.sort();
+    let mut network_targets = state.network_targets.keys().cloned().collect::<Vec<_>>();
+    network_targets.sort();
     Ok(Json(
-        json!({"targets":targets,"configuration":"SIGHUP reloads credentials; restart to change targets", "scan_concurrency":2, "max_document_bytes":16777216, "max_owner_bytes":134217728, "max_total_bytes":536870912, "retention_days":30}),
+        json!({"targets":targets,"network_targets":network_targets,"configuration":"SIGHUP reloads credentials; restart to change targets", "scan_concurrency":2, "max_document_bytes":16777216, "max_owner_bytes":134217728, "max_total_bytes":536870912, "retention_days":30}),
     ))
 }

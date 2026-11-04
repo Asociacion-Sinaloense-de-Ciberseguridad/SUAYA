@@ -1,4 +1,5 @@
 """Ejecuta el bloque de escritura real de la GUI con Foundation, sin abrir ventanas.
+Desde 1.6 el bloque vive en writePrivately, compartido por inventario y diagnóstico.
 SUAYA_SWIFT permite señalar el fuente de una futura versión corregida.
 Si cambia la estructura del método, falla explícitamente para adaptar el harness.
 """
@@ -9,13 +10,16 @@ import tempfile
 
 source = Path(os.environ.get('SUAYA_SWIFT', str(Path(__file__).resolve().parents[1] / 'macos/SuayaApp.swift')))
 text = source.read_text()
-method = text.split('func export(htmlReport: Bool)', 1)[1]
+method = text.split('func writePrivately(_ data: Data, to url: URL) throws', 1)[1]
 start = method.index('let tmp = url.deletingLastPathComponent()')
-end = method.index('status = "Archivo guardado:', start)
+end = method.index('// fin de escritura privada', start)
 block = method[start:end]
 with tempfile.TemporaryDirectory(prefix='suaya-sec005-') as td:
     d = Path(td)
     program = '''import Foundation
+func write(_ data: Data, _ url: URL) throws {
+''' + block + '''
+}
 func check() throws {
     let fm = FileManager.default
     let dir = fm.temporaryDirectory.appendingPathComponent(UUID().uuidString)
@@ -29,7 +33,8 @@ func check() throws {
     let url = dir.appendingPathComponent("report.html")
     let data = Data("synthetic inventory".utf8)
     guard fm.createFile(atPath: url.path, contents: Data("old".utf8), attributes: [.posixPermissions: 0o644]) else { throw CocoaError(.fileWriteUnknown) }
-''' + block + '''
+    try write(data, url)
+''' + '''
     let mode = (try fm.attributesOfItem(atPath: url.path)[.posixPermissions] as! NSNumber).intValue
     print(String(format: "mode_after_real_export=%o", mode))
     guard mode == 0o600 else { exit(1) }

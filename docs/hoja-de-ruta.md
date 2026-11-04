@@ -1,6 +1,12 @@
 # Hoja de ruta
 
-## 1.0 (actual): estable
+## 1.6 (actual): diagnóstico de conectividad e intercambio de llaves y certificados
+
+- Orden `diagnosticar` (`diagnose`) con conectividad por dirección, saludos TLS completos de un cliente moderno y uno clásico, validación estándar de la cadena y análisis del `KEXINIT` de SSH, en texto y JSON, con umbral `--fallar-en`.
+- `--diagnostico` en el sondeo para llevar los hallazgos al CBOM.
+- Diagnóstico en la API (`POST /api/v1/diagnose`, alias preconfigurados) y en la interfaz macOS (pestaña «Diagnóstico de red»).
+
+## 1.0: estable
 
 - Contrato de estabilidad para órdenes, opciones, códigos de salida, propiedades `suaya:` del CBOM, formato de firma y esquema de la base de conocimiento ([estabilidad.md](estabilidad.md)).
 - Rendimiento: análisis en paralelo determinista, detección de marcas en una sola pasada (Aho-Corasick) y lectura por bloques de binarios grandes.

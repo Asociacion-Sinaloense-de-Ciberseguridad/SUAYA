@@ -183,6 +183,41 @@ enum Orden {
         #[command(flatten)]
         red: ArgsRed,
     },
+    /// Diagnostica la conectividad y el intercambio de llaves y certificados de servicios TLS, STARTTLS y SSH.
+    #[command(
+        visible_alias = "diagnose",
+        override_usage = "suaya diagnosticar [OPCIONES] <OBJETIVOS>...",
+        long_about = "Diagnostica lo que obtiene realmente un cliente al conectarse: resolución del nombre, \
+                      cada dirección IPv4 e IPv6 con su latencia, el preámbulo STARTTLS, dos saludos TLS completos \
+                      (un cliente moderno con X25519MLKEM768 y uno solo clásico) con el grupo negociado, la suite y la firma, \
+                      y la validación estándar de la cadena de certificados (autoridad, nombre, vigencia, orden, llaves, firmas y OCSP). \
+                      En SSH, el KEXINIT con sus intercambios poscuánticos y la mitigación de Terrapin.\n\n\
+                      Uso responsable: diagnostique solo sistemas que administre o que tenga autorización expresa \
+                      para evaluar. No se envían datos de aplicación."
+    )]
+    Diagnosticar {
+        /// Servicios a diagnosticar: tls://, ssh://, smtp://, imap://, pop3://, ldap://, postgres:// o mysql://host:puerto, o host:puerto.
+        #[arg(required = true, help_heading = "Argumentos")]
+        objetivos: Vec<String>,
+        /// Escribe el diagnóstico completo en JSON.
+        #[arg(long, value_name = "ARCHIVO.json")]
+        json: Option<PathBuf>,
+        /// Termina con código 2 si hay hallazgos de este nivel o más grave: critico, alto, medio o bajo.
+        #[arg(long, value_name = "NIVEL", value_parser = ["critico", "alto", "medio", "bajo"], hide_possible_values = true)]
+        fallar_en: Option<String>,
+        /// Autoridad certificadora adicional (PEM) para validar cadenas privadas.
+        #[arg(long, value_name = "ARCHIVO.pem")]
+        ca: Option<PathBuf>,
+        /// Tiempo límite por conexión, en segundos (predeterminado: 5).
+        #[arg(long, default_value_t = 5, hide_default_value = true)]
+        tiempo_limite: u64,
+        /// Muestra también el detalle de cada certificado de la cadena.
+        #[arg(short, long)]
+        detallado: bool,
+        /// Directorio con algoritmos.toml y madurez.toml que sustituye a la base incrustada.
+        #[arg(long)]
+        base_conocimiento: Option<PathBuf>,
+    },
     /// Inventaría un clúster de Kubernetes en vivo (Secrets, Ingress y cert-manager), solo con lecturas.
     #[command(
         visible_alias = "k8s",
@@ -392,6 +427,12 @@ struct ArgsRed {
     /// Tiempo límite por conexión, en segundos (predeterminado: 5).
     #[arg(long, default_value_t = 5, hide_default_value = true)]
     tiempo_limite: u64,
+    /// Agrega al CBOM los hallazgos del diagnóstico de conectividad, intercambio de llaves y certificados.
+    #[arg(long)]
+    diagnostico: bool,
+    /// Autoridad certificadora adicional (PEM) para validar cadenas en el diagnóstico.
+    #[arg(long, value_name = "ARCHIVO.pem", requires = "diagnostico")]
+    ca: Option<PathBuf>,
 }
 
 impl ArgsRed {
@@ -409,8 +450,17 @@ impl ArgsRed {
             tiempo_limite: std::time::Duration::from_secs(self.tiempo_limite.max(1)),
             capacidad_tls: self.capacidad_tls.clone(),
             certificados: !self.sin_certificados,
+            diagnostico: self.diagnostico,
+            autoridad_pem: leer_autoridad(self.ca.as_ref())?,
         })
     }
+}
+
+fn leer_autoridad(ruta: Option<&PathBuf>) -> Result<Option<Vec<u8>>> {
+    ruta.map(|r| {
+        leer_limitado(r).with_context(|| suaya_core::t!("al leer {}", "reading {}", r.display()))
+    })
+    .transpose()
 }
 
 fn interpretar_objetivos(textos: &[String]) -> Result<Vec<Objetivo>> {
@@ -907,6 +957,53 @@ fn ejecutar(cli: Cli) -> Result<ExitCode> {
             finalizar(&mut inventario, &c, &salida, raices, &r.avisos, &linea)
         }
 
+        Orden::Diagnosticar {
+            objetivos,
+            json,
+            fallar_en,
+            ca,
+            tiempo_limite,
+            detallado,
+            base_conocimiento,
+        } => {
+            let objetivos = interpretar_objetivos(&objetivos)?;
+            let c = cargar_conocimiento(base_conocimiento.as_ref())?;
+            let op = suaya_red::Opciones {
+                tiempo_limite: std::time::Duration::from_secs(tiempo_limite.max(1)),
+                autoridad_pem: leer_autoridad(ca.as_ref())?,
+                ..suaya_red::Opciones::default()
+            };
+            let diagnosticos = suaya_red::diagnosticar(&objetivos, &c, &op);
+            if let Some(ruta) = &json {
+                let documento = serde_json::json!({
+                    "herramienta": format!("Suaya {}", suaya_core::VERSION),
+                    "fecha": time::OffsetDateTime::now_utc()
+                        .format(&time::format_description::well_known::Rfc3339)
+                        .unwrap_or_default(),
+                    "diagnosticos": diagnosticos,
+                });
+                escribir_atomico(ruta, serde_json::to_string_pretty(&documento)?).with_context(
+                    || suaya_core::t!("al escribir {}", "writing {}", ruta.display()),
+                )?;
+            }
+            imprimir_diagnosticos(&diagnosticos, detallado);
+            if let Some(json) = &json {
+                decir!("Diagnóstico JSON: {}", "Diagnosis JSON: {}", json.display());
+            }
+            let umbral = fallar_en.as_deref().and_then(suaya_red::Nivel::interpretar);
+            let alcanzado = umbral.is_some_and(|u| {
+                diagnosticos
+                    .iter()
+                    .filter_map(suaya_red::Diagnostico::peor)
+                    .any(|n| n <= u)
+            });
+            Ok(if alcanzado {
+                ExitCode::from(2)
+            } else {
+                ExitCode::SUCCESS
+            })
+        }
+
         Orden::Kubernetes {
             kubeconfig,
             contexto,
@@ -1190,6 +1287,203 @@ fn ejecutar(cli: Cli) -> Result<ExitCode> {
             Ok(ExitCode::SUCCESS)
         }
     }
+}
+
+/// Imprime los diagnósticos para personas (el formato puede cambiar; use --json).
+fn imprimir_diagnosticos(diagnosticos: &[suaya_red::Diagnostico], detallado: bool) {
+    use suaya_core::idioma::{traducir, tx};
+    use suaya_red::diagnostico::EstadoTcp;
+    let riesgo = |r: Option<suaya_core::Riesgo>| {
+        r.map(|r| format!(" ({})", r.etiqueta()))
+            .unwrap_or_default()
+    };
+    println!(
+        "Suaya {} · {}",
+        suaya_core::VERSION,
+        tx(
+            "diagnóstico de conectividad e intercambio de llaves y certificados",
+            "connectivity, key exchange and certificate diagnosis"
+        )
+    );
+    for d in diagnosticos {
+        println!();
+        println!("{}", d.objetivo);
+        let k = &d.conectividad;
+        println!("  {}", tx("Conectividad", "Connectivity"));
+        match (&k.error_resolucion, k.resolucion_ms) {
+            (Some(e), _) => decir!("    DNS: sin resolver ({})", "    DNS: unresolved ({})", e),
+            (None, Some(t)) => decir!(
+                "    DNS: {} ms · direcciones: {}",
+                "    DNS: {} ms · addresses: {}",
+                t,
+                k.direcciones.len()
+            ),
+            _ => {}
+        }
+        for x in &k.direcciones {
+            let estado = match x.estado {
+                EstadoTcp::Abierto => suaya_core::t!(
+                    "abierto en {} ms",
+                    "open in {} ms",
+                    x.milisegundos.unwrap_or(0)
+                ),
+                EstadoTcp::Rechazado => tx("rechazado", "refused").into(),
+                EstadoTcp::TiempoAgotado => tx("tiempo agotado", "timed out").into(),
+                EstadoTcp::Inalcanzable => tx("inalcanzable", "unreachable").into(),
+                EstadoTcp::Error => x.error.clone().unwrap_or_default(),
+            };
+            println!("    {} ({}): {estado}", x.ip, x.familia);
+        }
+        if let Some(st) = &k.starttls {
+            println!("    STARTTLS: {}", traducir(st));
+        }
+        if let Some(t) = k.saludo_ms {
+            decir!("    Saludo: {} ms", "    Handshake: {} ms", t);
+        }
+        if let Some(t) = &d.tls {
+            println!("  {}", tx("Intercambio de llaves", "Key exchange"));
+            for s in [&t.moderno, &t.clasico] {
+                let cliente = if s.cliente == "moderno" {
+                    tx("Cliente moderno", "Modern client")
+                } else {
+                    tx("Cliente clásico", "Classical client")
+                };
+                if !s.exito {
+                    println!(
+                        "    {cliente}: {} ({})",
+                        tx("falló", "failed"),
+                        traducir(s.error.as_deref().unwrap_or(""))
+                    );
+                    continue;
+                }
+                let mut partes: Vec<String> = Vec::new();
+                partes.extend(s.version.clone());
+                partes.extend(s.suite.clone());
+                if let Some(g) = &s.grupo {
+                    partes.push(format!("{g}{}", riesgo(s.riesgo_grupo)));
+                }
+                if s.reintento {
+                    partes.push("HelloRetryRequest".into());
+                }
+                if let Some(e) = &s.esquema_firma {
+                    partes.push(match s.firma_verificada {
+                        Some(true) => {
+                            suaya_core::t!("firma {} verificada", "signature {} verified", e)
+                        }
+                        Some(false) => {
+                            suaya_core::t!("firma {} no verificada", "signature {} not verified", e)
+                        }
+                        None => suaya_core::t!("firma {}", "signature {}", e),
+                    });
+                }
+                if let Some(a) = &s.alpn {
+                    partes.push(format!("ALPN {a}"));
+                }
+                println!("    {cliente}: {}", partes.join(" · "));
+            }
+        }
+        if let Some(cad) = &d.certificados {
+            decir!(
+                "  Certificados ({}, {} bytes)",
+                "  Certificates ({}, {} bytes)",
+                cad.certificados.len(),
+                cad.bytes
+            );
+            let validacion = match (&cad.error_validacion, &cad.error_nombre) {
+                (None, None) => tx(
+                    "válida para un cliente estándar",
+                    "valid for a standard client",
+                )
+                .to_string(),
+                (Some(e), _) | (None, Some(e)) => traducir(e).into_owned(),
+            };
+            decir!("    Validación: {}", "    Validation: {}", validacion);
+            for (i, x) in cad.certificados.iter().enumerate() {
+                let nombre_llave = traducir(&x.algoritmo_llave);
+                let llave = match x.tamano_llave {
+                    Some(t) if !nombre_llave.contains(&t.to_string()) => {
+                        format!("{nombre_llave} {t} bits")
+                    }
+                    _ => nombre_llave.into_owned(),
+                };
+                println!(
+                    "    {}. {} · {llave} · {} {} ({})",
+                    i + 1,
+                    x.nombre,
+                    tx("vence", "expires"),
+                    x.no_despues.get(..10).unwrap_or(&x.no_despues),
+                    suaya_core::t!("{} días", "{} days", x.dias_restantes)
+                );
+                if detallado {
+                    decir!("       Sujeto: {}", "       Subject: {}", x.sujeto);
+                    decir!("       Emisor: {}", "       Issuer: {}", x.emisor);
+                    if !x.nombres_alternativos.is_empty() {
+                        decir!(
+                            "       Nombres: {}",
+                            "       Names: {}",
+                            x.nombres_alternativos.join(", ")
+                        );
+                    }
+                    decir!(
+                        "       Firma: {} · huella SHA-256 {}",
+                        "       Signature: {} · SHA-256 fingerprint {}",
+                        traducir(&x.algoritmo_firma),
+                        x.huella_sha256
+                    );
+                }
+            }
+        }
+        if let Some(s) = &d.ssh {
+            println!("  {}", tx("Intercambio de llaves SSH", "SSH key exchange"));
+            println!("    {}", s.identificacion);
+            println!("    KEX: {}", s.kex.join(", "));
+            decir!(
+                "    Llaves de host: {}",
+                "    Host keys: {}",
+                s.llaves_host.join(", ")
+            );
+            if !s.extensiones.is_empty() {
+                decir!(
+                    "    Extensiones: {}",
+                    "    Extensions: {}",
+                    s.extensiones.join(", ")
+                );
+            }
+        }
+        if !d.hallazgos.is_empty() {
+            println!("  {}", tx("Hallazgos", "Findings"));
+            for h in &d.hallazgos {
+                println!(
+                    "    [{}] {} {}",
+                    h.nivel.etiqueta(),
+                    h.codigo,
+                    traducir(&h.mensaje)
+                );
+            }
+        }
+    }
+    let contar = |n: suaya_red::Nivel| {
+        diagnosticos
+            .iter()
+            .flat_map(|d| &d.hallazgos)
+            .filter(|h| h.nivel == n)
+            .count()
+    };
+    let alcanzados = diagnosticos
+        .iter()
+        .filter(|d| d.conectividad.alcanzable())
+        .count();
+    println!();
+    decir!(
+        "Objetivos: {} · alcanzados: {} · críticos {} · altos {} · medios {} · bajos {}",
+        "Targets: {} · reached: {} · critical {} · high {} · medium {} · low {}",
+        diagnosticos.len(),
+        alcanzados,
+        contar(suaya_red::Nivel::Critico),
+        contar(suaya_red::Nivel::Alto),
+        contar(suaya_red::Nivel::Medio),
+        contar(suaya_red::Nivel::Bajo)
+    );
 }
 
 // Todos los documentos externos se leen con un límite, incluso si crecen durante la lectura.

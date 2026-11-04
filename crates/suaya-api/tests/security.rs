@@ -29,6 +29,7 @@ fn app() -> axum::Router {
     let config = Config {
         credentials,
         targets: Default::default(),
+        network_targets: Default::default(),
     };
     let state = AppState::new(config, db).unwrap();
     router(state)
@@ -140,6 +141,7 @@ async fn ownership_checked_on_read_delete_and_list() {
             targets: None,
         }],
         targets: Default::default(),
+        network_targets: Default::default(),
     };
     let state = AppState::new(config, Connection::open(&file).unwrap()).unwrap();
     let db = Connection::open(&file).unwrap();
@@ -209,7 +211,8 @@ fn rejects_expired_config_and_duplicate_tokens() {
         AppState::new(
             Config {
                 credentials: vec![c],
-                targets: Default::default()
+                targets: Default::default(),
+                network_targets: Default::default(),
             },
             Connection::open_in_memory().unwrap()
         )
@@ -238,6 +241,7 @@ async fn real_scan_persists_and_is_readable_by_owner() {
     let config = Config {
         credentials: vec![credential],
         targets: std::collections::HashMap::from([("fixture".into(), target)]),
+        network_targets: Default::default(),
     };
     let app = router(AppState::new(config, Connection::open_in_memory().unwrap()).unwrap());
     let response = call(
@@ -301,7 +305,8 @@ fn duplicate_tokens_rejected_including_hex_case() {
         AppState::new(
             Config {
                 credentials: vec![first, second],
-                targets: Default::default()
+                targets: Default::default(),
+                network_targets: Default::default(),
             },
             Connection::open_in_memory().unwrap()
         )
@@ -321,6 +326,7 @@ async fn reload_revokes_old_token_and_accepts_new_token() {
     let config = |token: &str| Config {
         credentials: vec![credential(token)],
         targets: Default::default(),
+        network_targets: Default::default(),
     };
     let state = AppState::new(config(ALICE), Connection::open_in_memory().unwrap()).unwrap();
     let app = router(state.clone());
@@ -360,6 +366,7 @@ async fn scoped_credential_cannot_scan_another_alias() {
         Config {
             credentials: vec![credential],
             targets: std::collections::HashMap::from([("fixture".into(), target)]),
+            network_targets: Default::default(),
         },
         Connection::open_in_memory().unwrap(),
     )
@@ -392,6 +399,7 @@ fn retention_removes_expired_records_without_new_scans() {
         Config {
             credentials: vec![c],
             targets: Default::default(),
+            network_targets: Default::default(),
         },
         Connection::open(&file).unwrap(),
     )
@@ -411,4 +419,130 @@ fn retention_removes_expired_records_without_new_scans() {
     drop(db);
     drop(state);
     std::fs::remove_file(file).unwrap();
+}
+
+fn app_with_network(target: &str, scope: Option<Vec<String>>) -> axum::Router {
+    let credentials = [("alice", ALICE, false, scope), ("admin", ADMIN, true, None)]
+        .into_iter()
+        .map(|(user, token, admin, targets)| Credential {
+            user: user.into(),
+            token_sha256: hex::encode(Sha256::digest(token.as_bytes())),
+            expires_at: time::OffsetDateTime::now_utc().unix_timestamp() + 3600,
+            admin,
+            targets,
+        })
+        .collect();
+    let config = Config {
+        credentials,
+        targets: Default::default(),
+        network_targets: std::collections::HashMap::from([("web".into(), target.into())]),
+    };
+    router(AppState::new(config, Connection::open_in_memory().unwrap()).unwrap())
+}
+
+#[tokio::test]
+async fn diagnose_uses_only_preconfigured_network_aliases() {
+    let port = {
+        let l = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+        l.local_addr().unwrap().port()
+    };
+    let target = format!("tls://127.0.0.1:{port}");
+
+    // Sin credencial, no hay diagnóstico.
+    let r = call(
+        app_with_network(&target, None),
+        "POST",
+        "/api/v1/diagnose",
+        None,
+        r#"{"target":"web"}"#,
+    )
+    .await;
+    assert_eq!(r.status(), StatusCode::UNAUTHORIZED);
+
+    // El cliente no puede dar una URL ni un alias desconocido.
+    for body in [
+        r#"{"target":"tls://evil.example:443"}"#,
+        r#"{"target":"web","host":"x"}"#,
+    ] {
+        let r = call(
+            app_with_network(&target, None),
+            "POST",
+            "/api/v1/diagnose",
+            Some(ALICE),
+            body,
+        )
+        .await;
+        assert!(r.status().is_client_error(), "{body}: {}", r.status());
+    }
+
+    // Un alcance de alias que no incluye el servicio se rechaza.
+    let r = call(
+        app_with_network(&target, Some(vec![])),
+        "POST",
+        "/api/v1/diagnose",
+        Some(ALICE),
+        r#"{"target":"web"}"#,
+    )
+    .await;
+    assert_eq!(r.status(), StatusCode::FORBIDDEN);
+
+    // Diagnóstico real contra un puerto cerrado: hallazgo crítico, no error del servidor.
+    let r = call(
+        app_with_network(&target, None),
+        "POST",
+        "/api/v1/diagnose",
+        Some(ALICE),
+        r#"{"target":"web"}"#,
+    )
+    .await;
+    assert_eq!(r.status(), StatusCode::OK);
+    let body = http_body_util::BodyExt::collect(r.into_body())
+        .await
+        .unwrap()
+        .to_bytes();
+    let v: serde_json::Value = serde_json::from_slice(&body).unwrap();
+    assert_eq!(v["target"], "web");
+    assert_eq!(v["worst"], "critico");
+    assert_eq!(v["diagnosis"]["hallazgos"][0]["codigo"], "CON-TCP");
+
+    // La configuración lista los alias de red solo a administradores.
+    let r = call(
+        app_with_network(&target, None),
+        "GET",
+        "/api/v1/config",
+        Some(ADMIN),
+        "",
+    )
+    .await;
+    let body = http_body_util::BodyExt::collect(r.into_body())
+        .await
+        .unwrap()
+        .to_bytes();
+    let v: serde_json::Value = serde_json::from_slice(&body).unwrap();
+    assert_eq!(v["network_targets"], json!(["web"]));
+}
+
+#[test]
+fn invalid_network_targets_are_rejected_at_startup() {
+    for (alias, target) in [
+        ("web", "ftp://x"),
+        ("bad alias", "tls://x:443"),
+        ("web", "x:puerto"),
+    ] {
+        let config = Config {
+            credentials: vec![Credential {
+                user: "admin".into(),
+                token_sha256: hex::encode(Sha256::digest(ADMIN.as_bytes())),
+                expires_at: i64::MAX,
+                admin: true,
+                targets: None,
+            }],
+            targets: Default::default(),
+            network_targets: std::collections::HashMap::from([(alias.into(), target.into())]),
+        };
+        assert!(
+            AppState::new(config, Connection::open_in_memory().unwrap()).is_err(),
+            "{alias}={target}"
+        );
+    }
 }

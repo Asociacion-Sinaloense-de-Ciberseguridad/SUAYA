@@ -8947,7 +8947,7 @@
   "metadata": {
     "component": {
       "bom-ref": "sistema",
-      "name": "Sistema escaneado",
+      "name": "Sistema demo",
       "type": "application"
     },
     "lifecycles": [
@@ -8989,7 +8989,7 @@
         "value": "0"
       }
     ],
-    "timestamp": "2026-10-20T16:09:15Z",
+    "timestamp": "2026-10-31T01:53:00Z",
     "tools": {
       "components": [
         {
@@ -9003,12 +9003,12 @@
           ],
           "name": "Suaya",
           "type": "application",
-          "version": "1.5.0"
+          "version": "1.6.0"
         }
       ]
     }
   },
-  "serialNumber": "urn:uuid:4d6152ec-904d-40f8-bd08-2ea08e5d33d0",
+  "serialNumber": "urn:uuid:305125ec-a776-4af9-a1c6-e0786b5e9cb2",
   "specVersion": "1.7",
   "version": 1
 }

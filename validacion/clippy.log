@@ -1,4 +1,4 @@
-    Checking suaya-red v1.5.0 (/private/tmp/suaya-v1.5/crates/suaya-red)
-    Checking suaya-api v1.5.0 (/private/tmp/suaya-v1.5/crates/suaya-api)
-    Checking suaya v1.5.0 (/private/tmp/suaya-v1.5/crates/suaya-cli)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.74s
+    Checking suaya-red v1.6.0 (/Users/enriquerangel/Documents/Quantum/SUAYA/suaya v1.6/crates/suaya-red)
+    Checking suaya-api v1.6.0 (/Users/enriquerangel/Documents/Quantum/SUAYA/suaya v1.6/crates/suaya-api)
+    Checking suaya v1.6.0 (/Users/enriquerangel/Documents/Quantum/SUAYA/suaya v1.6/crates/suaya-cli)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.15s

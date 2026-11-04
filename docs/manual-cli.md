@@ -73,6 +73,13 @@ suaya verificar inventario.cbom.json --llave-publica equipo-seguridad.publica.js
 # Inventariar un clúster de Kubernetes en vivo (solo lecturas)
 suaya kubernetes --contexto produccion -r reporte-k8s.md
 
+# Diagnosticar conectividad e intercambio de llaves y certificados
+suaya diagnosticar www.ejemplo.mx smtp://correo.ejemplo.mx ssh://bastion.ejemplo.mx:22 --json diagnostico.json
+suaya diagnosticar tls://interno.ejemplo.mx:8443 --ca autoridad-interna.pem --fallar-en alto
+
+# ... o agregar esos hallazgos al CBOM del sondeo
+suaya sondear www.ejemplo.mx --diagnostico
+
 # Combinar archivos y red en un solo inventario
 suaya escanear /etc --objetivo tls://localhost:443 --objetivo ssh://localhost:22
 
@@ -146,6 +153,21 @@ Para SSH, lee el `KEXINIT` que el servidor envía en claro antes de cualquier in
 Con `smtp://`, `imap://`, `pop3://`, `ldap://`, `postgres://` o `mysql://`, Suaya habla lo mínimo de ese protocolo para pedir el cambio a TLS (`STARTTLS`, `STLS`, la operación extendida StartTLS de LDAP o el `SSLRequest` de PostgreSQL y MySQL) y después sondea igual que un servicio TLS directo. Si el servidor responde pero no ofrece TLS, eso queda en el inventario como protocolo en claro.
 
 > **Uso responsable.** Suaya sondea únicamente los servicios que usted indica de forma explícita, uno por uno; no descubre ni recorre rangos de red. Sondee solo sistemas que administre o que tenga autorización expresa para evaluar. Cada objetivo recibe unas veinte conexiones breves.
+
+### Diagnóstico de conectividad e intercambio de llaves y certificados
+
+`suaya diagnosticar` responde a qué obtiene realmente un cliente al conectarse, como complemento del sondeo (que inventaría lo que el servicio ofrece):
+
+- **Conectividad**: tiempo de resolución, cada dirección IPv4 e IPv6 (hasta ocho) con su estado TCP (abierto, rechazado, tiempo agotado, inalcanzable) y latencia, el preámbulo STARTTLS y la duración del saludo. Si solo fallan las direcciones IPv6, se informa con nivel bajo porque puede deberse al equipo que diagnostica.
+- **Intercambio de llaves TLS**: dos saludos completos con rustls y aws-lc-rs. El cliente moderno ofrece X25519MLKEM768 primero; el clásico, solo grupos vulnerables a cómputo cuántico. De cada uno registra versión, suite, grupo negociado, si el servidor pidió un `HelloRetryRequest`, ALPN (solo en los puertos 443 y 8443) y el esquema de firma del `CertificateVerify`, verificado con la llave del certificado.
+- **Intercambio de certificados**: valida la cadena como un cliente estándar con las autoridades del sistema y, con `--ca`, una autoridad propia; comprueba el nombre (SAN), la vigencia de cada certificado, el orden, si se envía la raíz, la llave y la firma según la base de conocimiento, el tamaño total (que crecerá con ML-DSA) y el engrapado OCSP.
+- **SSH**: identificación, `KEXINIT`, intercambios híbridos poscuánticos, «strict KEX» (mitigación de Terrapin, CVE-2023-48795) y llaves de host que solo se anuncian con SHA-1 o DSA.
+
+Cada hallazgo tiene un nivel (`critico`, `alto`, `medio`, `bajo`, `info`) y un código estable (por ejemplo `CON-TCP`, `KEX-CLASICO`, `KEX-HRR`, `CERT-NOMBRE`, `CERT-VENCE`, `CERT-INCOMPLETA`, `SSH-TERRAPIN`). `--fallar-en NIVEL` devuelve el código 2 si aparece un hallazgo de ese nivel o más grave; un objetivo inalcanzable es un hallazgo crítico, no un error. `--json` escribe el diagnóstico completo, `-d` muestra el detalle de cada certificado.
+
+Con `--diagnostico`, `sondear`, `escanear --objetivo` y `kubernetes --sondear-ingress` ejecutan además el diagnóstico y agregan los hallazgos no informativos al protocolo del CBOM como `suaya:advertencia` con el prefijo «Diagnóstico (CÓDIGO)».
+
+El diagnóstico usa una conexión por dirección más entre dos y cuatro saludos por objetivo TLS (el del cliente moderno se repite una vez si falla y el clásico funciona). Completa el saludo y cierra sin enviar datos de aplicación; la validación se registra, nunca se usa para confiar en la conexión.
 
 ### Kubernetes en vivo
 

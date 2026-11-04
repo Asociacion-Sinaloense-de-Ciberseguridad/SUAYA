@@ -8,6 +8,7 @@ license.workspace = true
 suaya-core.workspace = true
 suaya-escaneo.workspace = true
 suaya-cbom.workspace = true
+suaya-red.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 sha2.workspace = true

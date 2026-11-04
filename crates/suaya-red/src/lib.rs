@@ -10,10 +10,15 @@
 //!   acepta (incluidos los híbridos con ML-KEM) y cuál prefiere. Prueba las
 //!   versiones de TLS y obtiene la cadena de certificados.
 //!
+//! - **Diagnóstico** ([`diagnostico`]): conectividad por dirección y lo que
+//!   obtiene realmente un cliente: saludos TLS completos, grupo negociado,
+//!   validación estándar de la cadena de certificados y extensiones SSH.
+//!
 //! Uso responsable: sondee solo sistemas que administre o que tenga
 //! autorización expresa para evaluar. Cada objetivo recibe unas veinte
 //! conexiones breves y secuenciales.
 
+pub mod diagnostico;
 pub mod http;
 pub mod kubernetes;
 pub mod registro;
@@ -26,6 +31,7 @@ use std::time::Duration;
 
 use suaya_core::{Activo, Conocimiento};
 
+pub use diagnostico::{Diagnostico, Nivel, diagnosticar};
 pub use ssh::KexInit;
 pub use starttls::Starttls;
 pub use tls::{Respuesta, client_hello, leer_respuesta};
@@ -163,6 +169,10 @@ pub struct Opciones {
     pub capacidad_tls: String,
     /// Obtener la cadena de certificados con un saludo TLS completo.
     pub certificados: bool,
+    /// Agregar los hallazgos del diagnóstico como advertencias del protocolo.
+    pub diagnostico: bool,
+    /// Autoridades adicionales (PEM) para validar cadenas en el diagnóstico.
+    pub autoridad_pem: Option<Vec<u8>>,
 }
 
 impl Default for Opciones {
@@ -171,6 +181,8 @@ impl Default for Opciones {
             tiempo_limite: Duration::from_secs(5),
             capacidad_tls: "servidores-web".into(),
             certificados: true,
+            diagnostico: false,
+            autoridad_pem: None,
         }
     }
 }
@@ -185,6 +197,10 @@ pub struct Resultado {
 
 pub fn sondear(objetivos: &[Objetivo], c: &Conocimiento, op: &Opciones) -> Resultado {
     let mut r = Resultado::default();
+    let verificador = op
+        .diagnostico
+        .then(|| diagnostico::verificador_estandar(op))
+        .flatten();
     for o in objetivos {
         // Con STARTTLS, una primera conexión confirma que el servidor ofrece
         // TLS; si responde en claro sin ofrecerlo, eso es el hallazgo.
@@ -228,7 +244,18 @@ pub fn sondear(objetivos: &[Objetivo], c: &Conocimiento, op: &Opciones) -> Resul
             Protocolo::Tls => tls::sondear(o, c, op),
         };
         match salida {
-            Ok((activos, avisos)) => {
+            Ok((mut activos, avisos)) => {
+                if op.diagnostico {
+                    let d = diagnostico::diagnosticar_uno(o, c, op, verificador.as_ref());
+                    if let Some(p) = activos
+                        .iter_mut()
+                        .find(|a| a.referencia.starts_with("protocolo:"))
+                    {
+                        for h in d.hallazgos.iter().filter(|h| h.nivel != Nivel::Info) {
+                            p.advertir(format!("Diagnóstico ({}): {}", h.codigo, h.mensaje));
+                        }
+                    }
+                }
                 r.activos.extend(activos);
                 r.avisos.extend(
                     avisos
