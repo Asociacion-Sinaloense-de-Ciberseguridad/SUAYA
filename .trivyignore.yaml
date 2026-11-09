@@ -1,0 +1,14 @@
+# Excepciones del análisis de la imagen de contenedor con Trivy
+# (ci.yml las carga con --ignorefile). Cada entrada lleva su justificación y
+# una fecha de caducidad: al vencer, el análisis vuelve a fallar.
+vulnerabilities:
+  - id: CVE-2026-84782
+    statement: >-
+      Lectura fuera de límites en la retransmisión DTLS de OpenSSL (libssl3).
+      Suaya no enlaza OpenSSL: usa AWS-LC y rustls, y Cargo.lock no contiene
+      openssl-sys ni native-tls; tampoco usa DTLS. libssl3 solo viene en la
+      imagen base distroless cc-debian12, cuya última publicación aún trae
+      3.0.20-1~deb12u2; Debian lo corrigió en 3.0.22-1~deb12u2. Al publicarse
+      una imagen corregida, actualizar su resumen en el Dockerfile y retirar
+      esta excepción.
+    expired_at: 2026-12-15

@@ -8,7 +8,7 @@ La versión 1.6 agrega el **diagnóstico de conectividad e intercambio de llaves
 
 El repositorio requiere acceso de lectura mientras sea privado. Las versiones se identifican con etiquetas (`v1.6.0`, `v1.5.0`); use la más reciente, porque la 1.5.0 contiene dependencias con avisos de seguridad corregidos en la 1.6.0.
 
-**Binarios:** descargue el paquete de su plataforma desde la página de [publicaciones](https://github.com/Asociacion-Sinaloense-de-Ciberseguridad/SUAYA/releases), si la versión ya está publicada, y compruébelo con su `SHA256SUMS`.
+**Binarios:** descargue el paquete de su plataforma desde la página de [publicaciones](https://github.com/Asociacion-Sinaloense-de-Ciberseguridad/SUAYA/releases), si la versión ya está publicada, y compruébelo con su `SHA256SUMS`. Mientras el repositorio sea privado, las publicaciones no llevan atestación de procedencia: GitHub solo la admite en repositorios públicos o con Enterprise Cloud.
 
 **Desde fuentes** (requiere Rust 1.89 o posterior y, según la plataforma, un compilador de C y CMake para AWS-LC):
 
