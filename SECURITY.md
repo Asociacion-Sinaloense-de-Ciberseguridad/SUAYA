@@ -20,7 +20,7 @@ Nos comprometemos a confirmar la recepción en un máximo de 5 días hábiles y 
 - Las dependencias se revisan antes de incorporarse y se mantienen al mínimo.
 - La integración continua fija las acciones de GitHub por su *commit*.
 - `cargo-deny` revisa en cada cambio los avisos de RustSec, las licencias y el origen de las dependencias.
-- Las compilaciones son reproducibles y cada publicación lleva procedencia SLSA firmada con Sigstore y, opcionalmente, la firma híbrida de Suaya (ML-DSA-65 y Ed25519). Ver [docs/publicacion.md](docs/publicacion.md).
+- Las compilaciones son reproducibles y, cuando el repositorio es público, cada publicación lleva procedencia SLSA firmada con Sigstore; siempre incluye SHA256SUMS y, opcionalmente, la firma híbrida de Suaya (ML-DSA-65 y Ed25519). Ver [docs/publicacion.md](docs/publicacion.md).
 - El [modelo de amenazas](docs/modelo-de-amenazas.md) describe qué se protege y de quién; [docs/auditoria.md](docs/auditoria.md), el alcance propuesto para una auditoría externa, que todavía no se ha realizado.
 
 ## Versiones con soporte

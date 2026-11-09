@@ -47,6 +47,10 @@ jobs:
         with:
           toolchain: "1.99.1"
           targets: ${{ matrix.objetivo }}
+      # scripts/manifest-build.py usa tomllib; ubuntu-22.04 trae Python 3.10. v7.0.0
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.13"
       - name: Compilar de forma reproducible
         shell: bash
         run: |
@@ -64,6 +68,9 @@ jobs:
       - name: Empaquetar
         id: paquete
         shell: bash
+        # Python lee la salida de cargo metadata en UTF-8 también en Windows.
+        env:
+          PYTHONUTF8: "1"
         run: |
           version=${GITHUB_REF_NAME#v}
           nombre=suaya-$version-${{ matrix.objetivo }}
@@ -85,7 +92,10 @@ jobs:
               || tar -czf "$nombre.tar.gz" "$nombre"
             echo "archivo=$nombre.tar.gz" >> "$GITHUB_OUTPUT"
           fi
+      # GitHub solo admite atestaciones en repositorios públicos salvo con
+      # Enterprise Cloud; en un repositorio privado se omiten.
       - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8
+        if: ${{ !github.event.repository.private }}
         with:
           subject-path: ${{ steps.paquete.outputs.archivo }}
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
@@ -130,6 +140,7 @@ jobs:
           dpkg-deb --contents target/debian/suaya-api_*.deb
           dpkg-deb --contents target/debian/suaya_*.deb
       - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8
+        if: ${{ !github.event.repository.private }}
         with:
           subject-path: |
             target/debian/*.deb

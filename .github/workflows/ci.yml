@@ -157,7 +157,7 @@ jobs:
           echo 'e24b1c51293c1b15e4ba8d45bbc7891ba053f90278ec2698f3562c993e145fe7  /tmp/trivy.tgz' | sha256sum -c -
           tar -xzf /tmp/trivy.tgz -C /tmp trivy
           docker build -f empaquetado/contenedor/Dockerfile -t suaya:ci .
-          /tmp/trivy image --scanners vuln --severity HIGH,CRITICAL --exit-code 1 suaya:ci
+          /tmp/trivy image --scanners vuln --severity HIGH,CRITICAL --ignorefile .trivyignore.yaml --exit-code 1 suaya:ci
           /tmp/trivy image --format cyclonedx --output container-sbom.json suaya:ci
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:

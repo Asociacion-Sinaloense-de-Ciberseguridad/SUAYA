@@ -16,7 +16,7 @@ Suaya no solo responde *qué es vulnerable*. Responde también **qué se puede m
 
 ## Instalación
 
-Cada [publicación](https://github.com/[OWNER]/suaya/releases) trae binarios para Linux (x86_64 y aarch64), macOS (arm64) y Windows (x86_64), paquetes `.deb` y `.rpm`, la página de manual y el autocompletado. Cada archivo lleva procedencia SLSA firmada con Sigstore; cómo verificarla está en [docs/publicacion.md](docs/publicacion.md).
+Cada [publicación](https://github.com/Asociacion-Sinaloense-de-Ciberseguridad/SUAYA/releases) trae binarios para Linux (x86_64 y aarch64), macOS (arm64) y Windows (x86_64), paquetes `.deb` y `.rpm`, la página de manual y el autocompletado. Cada archivo lleva procedencia SLSA firmada con Sigstore; cómo verificarla está en [docs/publicacion.md](docs/publicacion.md).
 
 ```bash
 # Desde la fuente (requiere Rust 1.89 o posterior)

@@ -4,6 +4,23 @@ Inventario criptográfico real, CBOM CycloneDX 1.7, evaluación poscuántica y f
 
 La versión 1.7 amplía la cobertura (servicios declarados como datos, configuración del sistema, registro de Windows, nube e infraestructura como código, OpenPGP, almacenes Java, Secure Boot, LUKS, Active Directory, ejecutables, aplicaciones Java y Android, y el llavero de macOS), sondea IKEv2, DNS (DNSSEC, DKIM, CAA, TLSA) e identidad federada (OIDC y SAML), agrega el **contexto de la organización** (sistemas, desigualdad de Mosca y excepciones), **recetas de corrección**, SARIF, CSV, JSON Lines, tickets, inventario PCI DSS, tendencias, métricas para Prometheus, integraciones de CI, un panel web y el portugués. Detalle en el [registro de cambios](CHANGELOG.md), el [manual de la CLI](docs/manual-cli.md) y las [integraciones](docs/integraciones.md); validación y límites en el [cierre 1.7](docs/cierre-1.7.md). La 1.6 agregó el diagnóstico de conectividad e intercambio de llaves y certificados ([cierre 1.6](docs/cierre-1.6.md)). La 1.5 corrigió los cinco hallazgos de la auditoría 1.4 e incorpora límites, trazabilidad y gates adicionales. Consulte [cierre 1.5](docs/cierre-1.5.md) y [operación 1.5](docs/operacion-1.5.md) para cambios de compatibilidad y validación. Los informes 1.3/1.4 se conservan como antecedentes; no describen el estado actual.
 
+## Instalación
+
+El repositorio requiere acceso de lectura mientras sea privado. Las versiones se identifican con etiquetas (`v1.7.0`, `v1.6.0`, `v1.5.0`); use la más reciente.
+
+**Binarios:** descargue el paquete de su plataforma desde la página de [publicaciones](https://github.com/Asociacion-Sinaloense-de-Ciberseguridad/SUAYA/releases), si la versión ya está publicada, y compruébelo con su `SHA256SUMS`. Mientras el repositorio sea privado, las publicaciones no llevan atestación de procedencia: GitHub solo la admite en repositorios públicos o con Enterprise Cloud.
+
+**Desde fuentes** (requiere Rust 1.89 o posterior y, según la plataforma, un compilador de C y CMake para AWS-LC):
+
+```sh
+git clone --branch v1.7.0 https://github.com/Asociacion-Sinaloense-de-Ciberseguridad/SUAYA.git
+cd SUAYA
+cargo build --release --locked -p suaya -p suaya-api
+./target/release/suaya --version
+```
+
+La compilación en Windows no se ha validado en esta entrega. Guía de uso completa: [manual 1.7](docs/manual-1.7.md) y [manual de macOS](docs/manual-macos.md).
+
 ## Compilar y verificar
 
 Rust 1.99.1 es el toolchain utilizado para validar esta entrega. En macOS se requieren las herramientas de Xcode. La GUI requiere macOS 13 o posterior; compilar en el sistema destino.
@@ -30,7 +47,7 @@ El paquete local tiene firma ad-hoc; la publicación pública requiere Developer
 
 ## CLI
 
-La entrega incluye `bin/suaya` y `bin/suaya-api` listos para macOS arm64. Las rutas `target/release/` de los ejemplos se usan al compilar desde fuentes; puede sustituirlas por `bin/`.
+Las rutas `target/release/` de los ejemplos se usan al compilar desde fuentes; si instaló un paquete, sustitúyalas por la ubicación de sus binarios.
 
 ```sh
 ./target/release/suaya escanear pruebas/fixtures/sistema-demo -o inventario.json -r reporte.html
