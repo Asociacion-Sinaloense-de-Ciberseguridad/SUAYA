@@ -21,6 +21,7 @@ yaml-rust2 = { version = "0.13.0", default-features = false }
 rustls-native-certs = "0.8.3"
 sha2.workspace = true
 hex.workspace = true
+time.workspace = true
 
 [lints]
 workspace = true

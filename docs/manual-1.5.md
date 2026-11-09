@@ -12,7 +12,7 @@ Suaya analiza sistemas en busca de criptografía obsoleta o insegura, inventaria
 
 ```bash
 # Desde fuente
-git clone https://github.com/Asociacion-Sinaloense-de-Ciberseguridad/SUAYA && cd SUAYA
+git clone https://github.com/[OWNER]/suaya && cd suaya
 cargo build --release
 
 # Desde paquete
@@ -265,7 +265,7 @@ sha256sum --check --ignore-missing SHA256SUMS
 **Verificar procedencia:**
 
 ```bash
-gh attestation verify suaya-1.5.0-x86_64-unknown-linux-gnu.tar.gz --repo Asociacion-Sinaloense-de-Ciberseguridad/SUAYA
+gh attestation verify suaya-1.5.0-x86_64-unknown-linux-gnu.tar.gz --repo [OWNER]/suaya
 ```
 
 **Verificar firma híbrida:**
@@ -277,7 +277,7 @@ suaya verificar SHA256SUMS --llave-publica suaya-publicacion.publica.json
 ## Compilación reproducible
 
 ```bash
-git clone https://github.com/Asociacion-Sinaloense-de-Ciberseguridad/SUAYA && cd SUAYA
+git clone https://github.com/[OWNER]/suaya && cd suaya
 git checkout v1.5.0
 ./scripts/compilacion-reproducible.sh
 ```

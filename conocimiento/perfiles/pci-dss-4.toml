@@ -1,0 +1,33 @@
+# Perfil de política: criptografía robusta de PCI DSS v4.0.1.
+#
+# PCI DSS exige «criptografía robusta» (al menos 112 bits de seguridad
+# efectiva: RSA de 2048 bits, curvas de 224 bits o más, AES) y prohíbe SSL y
+# TLS 1.0; TLS 1.1 tampoco se considera robusto. El requisito 12.3.3 pide
+# documentar y revisar al menos cada 12 meses las suites y protocolos en uso,
+# vigilar la viabilidad de los algoritmos y tener una estrategia ante cambios
+# previsibles, lo que incluye la amenaza cuántica (vea «suaya reporte
+# --formato pci»). PCI DSS aún no exige algoritmos poscuánticos.
+#
+# Interpretación de Suaya, no un texto del PCI SSC: verifique la versión
+# vigente del estándar y la guía de su QSA.
+
+[perfil]
+id = "pci-dss-4"
+nombre = "PCI DSS v4.0.1 (criptografía robusta)"
+referencia = "PCI Security Standards Council, PCI DSS v4.0.1 (junio de 2024): requisitos 3, 4 y 12.3.3"
+predeterminado = "sin-evaluar"
+ignorar_primitivas = ["kdf"]
+
+[[regla]]
+riesgos = ["roto-clasico", "obsoleto"]
+estado = "no-conforme"
+nota = "No es criptografía robusta según PCI DSS (por ejemplo, SSL, TLS 1.0 o 1.1, 3DES, RC4, MD5, SHA-1 en firmas o llaves cortas)."
+
+[[regla]]
+riesgos = ["vulnerable-cuantico"]
+estado = "conforme"
+nota = "Robusto hoy. El requisito 12.3.3 pide una estrategia documentada ante cambios previsibles, como la migración poscuántica."
+
+[[regla]]
+riesgos = ["debilitado-grover", "hibrido-pq", "resistente-cuantico"]
+estado = "conforme"

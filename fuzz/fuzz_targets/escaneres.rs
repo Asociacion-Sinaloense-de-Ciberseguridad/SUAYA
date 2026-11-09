@@ -14,6 +14,14 @@ const NOMBRES: &[&str] = &[
     "my.cnf", "main.cf", "java.security", "crypttab", "wg0.conf", "x.ovpn", "swanctl.conf",
     "x.p12", "secret.yaml", "x.py", "X.java", "x.go", "x.ts", "x.cs", "x.rs", "x.c", "go.mod",
     "Cargo.lock", "package-lock.json", "pom.xml", "requirements.txt", "release", "x.der",
+    // 1.7
+    "openssl.cnf", "krb5.conf", "x.reg", "main.tf", "plantilla.json", "x.bicep", "x.asc",
+    "pubring.kbx", "x.jks", "x.jceks", "db.esl", "PK.auth", ".config", "x.ldif", "x.efi",
+    "x.jar", "x.apk", "X.class", "server.properties", "application.yml", "server.xml",
+    "mongod.conf", "redis.conf", "elasticsearch.yml", "rabbitmq.conf", "mosquitto.conf",
+    "vault.hcl", "traefik.yml", "Caddyfile", "ldap.conf", "grafana.ini", "sqlnet.ora",
+    "dovecot.conf", "Info.plist", "application.ini", "x.php", "x.rb", "x.swift", "x.dart",
+    "x.ps1", "x.sh", "Dockerfile", "policies.json", "x.cbom.json",
 ];
 
 struct Estado {

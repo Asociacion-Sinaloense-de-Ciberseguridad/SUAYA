@@ -14,6 +14,7 @@ def main():
     p.add_argument('--network-target', action='append', default=[], help='alias=tls://host:puerto (o ssh://, smtp://...) para /api/v1/diagnose')
     p.add_argument('--user', required=True, action='append', help='nombre:admin o nombre:analyst')
     p.add_argument('--days', type=int, default=30)
+    p.add_argument('--organization', type=pathlib.Path, help='contexto de la organización (TOML) que se aplica a todos los escaneos')
     a = p.parse_args()
     if not 1 <= a.days <= 90: p.error('days debe estar entre 1 y 90')
     users = {}; targets = {}
@@ -38,7 +39,10 @@ def main():
     if a.directory.is_symlink() or a.directory.stat().st_mode & 0o077: p.error('directorio debe ser privado (0700) y no symlink')
     if any((a.directory / f).exists() for f in ('config.json', 'tokens.json')): p.error('configuración existente; no se sobrescribe')
     tokens = {name: secrets.token_urlsafe(48) for name in users}
+    organization = str(a.organization.resolve(strict=True)) if a.organization else None
+    if organization and not pathlib.Path(organization).is_file(): p.error('organization debe ser un archivo regular')
     config = {'targets': targets, 'network_targets': network, 'credentials': [dict(user=name, token_sha256=hashlib.sha256(tokens[name].encode()).hexdigest(), expires_at=int(time.time())+a.days*86400, admin=role=='admin', targets=list(targets)+list(network)) for name,role in users.items()]}
+    if organization: config['organization'] = organization
     private_file(a.directory / 'config.json', config)
     private_file(a.directory / 'tokens.json', tokens)
     print(f'Configuración: {a.directory / "config.json"}\nTokens privados: {a.directory / "tokens.json"}')

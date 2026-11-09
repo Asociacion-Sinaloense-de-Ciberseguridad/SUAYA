@@ -227,3 +227,108 @@ fn diagnosticar_puerto_cerrado_json_y_umbral() {
     let s = correr(suaya().args(["diagnosticar", &objetivo, "--fallar-en", "grave"]));
     assert_eq!(s.status.code(), Some(1));
 }
+
+#[test]
+fn contexto_organizacional_y_excepciones() {
+    let d = directorio("contexto");
+    let contexto = d.join("contexto.toml");
+    std::fs::write(
+        &contexto,
+        r#"
+[organizacion]
+horizonte_cuantico = 2035
+
+[[sistema]]
+nombre = "Heredados"
+responsable = "operaciones@ejemplo.mx"
+criticidad = "baja"
+rutas = ["legado/**"]
+
+[[excepcion]]
+id = "EXC-1"
+justificacion = "Se retira en 2027."
+vence = "2027-06-30"
+rutas = ["legado/**"]
+"#,
+    )
+    .unwrap();
+    let legado = demo().join("legado");
+    let cbom = d.join("cbom.json");
+    // Sin contexto hay hallazgos críticos; con la excepción vigente no cuentan.
+    let s = correr(
+        suaya()
+            .arg("escanear")
+            .arg(&legado)
+            .args(["--fallar-en", "1", "-o"])
+            .arg(&cbom),
+    );
+    assert_eq!(s.status.code(), Some(2));
+    let s = correr(
+        suaya()
+            .arg("escanear")
+            .arg(&legado)
+            .args(["--fallar-en", "1", "--organizacion"])
+            .arg(&contexto)
+            .arg("-o")
+            .arg(&cbom)
+            .arg("-r")
+            .arg(d.join("reporte.md")),
+    );
+    assert_eq!(
+        s.status.code(),
+        Some(0),
+        "{}",
+        String::from_utf8_lossy(&s.stdout)
+    );
+    let texto = String::from_utf8_lossy(&s.stdout);
+    assert!(texto.contains("excepción EXC-1"), "{texto}");
+    let v: serde_json::Value = serde_json::from_slice(&std::fs::read(&cbom).unwrap()).unwrap();
+    let propiedades = |c: &serde_json::Value, nombre: &str| -> Vec<String> {
+        c["properties"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .filter(|p| p["name"] == nombre)
+            .filter_map(|p| p["value"].as_str().map(str::to_string))
+            .collect()
+    };
+    assert!(propiedades(&v["metadata"], "suaya:horizonte-cuantico") == vec!["2035".to_string()]);
+    let componentes = v["components"].as_array().unwrap();
+    assert!(
+        componentes
+            .iter()
+            .any(|c| propiedades(c, "suaya:sistema") == vec!["Heredados".to_string()])
+    );
+    assert!(
+        componentes
+            .iter()
+            .any(|c| propiedades(c, "suaya:excepcion") == vec!["EXC-1".to_string()])
+    );
+    let reporte = std::fs::read_to_string(d.join("reporte.md")).unwrap();
+    assert!(
+        reporte.contains("## Contexto de la organización"),
+        "{reporte}"
+    );
+    assert!(
+        reporte.contains("| EXC-1 | 2027-06-30 | Vigente |"),
+        "{reporte}"
+    );
+
+    // Un contexto inválido es un error de uso, no un resultado parcial.
+    std::fs::write(
+        &contexto,
+        "[[excepcion]]\nid = \"X\"\njustificacion = \"j\"\nvence = \"mañana\"\nrutas = [\"a\"]\n",
+    )
+    .unwrap();
+    let s = correr(
+        suaya()
+            .arg("escanear")
+            .arg(&legado)
+            .arg("--organizacion")
+            .arg(&contexto)
+            .arg("-o")
+            .arg(&cbom),
+    );
+    assert_eq!(s.status.code(), Some(1));
+    assert!(String::from_utf8_lossy(&s.stderr).contains("fecha de vencimiento"));
+}

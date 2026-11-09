@@ -184,6 +184,17 @@ fn capacidad_del_certificado(cert: &X509Certificate) -> &'static str {
     "sin-clasificar"
 }
 
+/// Analiza un certificado DER hallado dentro de otro archivo (un almacén de
+/// llaves), con la capacidad que se deduce de sus usos.
+pub(crate) fn certificado_en_archivo(
+    der: &[u8],
+    a: &Archivo,
+    c: &Conocimiento,
+    almacen: bool,
+) -> Result<Vec<Activo>, String> {
+    analizar_certificado(der, a, None, c, almacen)
+}
+
 fn analizar_certificado(
     der: &[u8],
     a: &Archivo,
@@ -422,6 +433,23 @@ pub fn resumen_certificado(der: &[u8], c: &Conocimiento) -> Result<ResumenCertif
         sujeto_der: cert.subject().as_raw().to_vec(),
         emisor_der: cert.issuer().as_raw().to_vec(),
     })
+}
+
+/// Algoritmo (id de la base), nombre y tamaño de una llave
+/// pública en SubjectPublicKeyInfo DER (por ejemplo, una llave DKIM).
+pub fn llave_de_spki(
+    der: &[u8],
+    c: &Conocimiento,
+) -> Option<(Option<String>, String, Option<u32>)> {
+    let (_, spki) = SubjectPublicKeyInfo::from_der(der).ok()?;
+    let (def, respaldo) = def_de_spki(&spki, c);
+    let tamano = spki
+        .parsed()
+        .ok()
+        .map(|p| p.key_size() as u32)
+        .filter(|&t| t > 0);
+    let nombre = def.map_or(respaldo, |d| d.nombre.clone());
+    Some((def.map(|d| d.id.clone()), nombre, tamano))
 }
 
 /// Resuelve la definición del algoritmo de una SubjectPublicKeyInfo.

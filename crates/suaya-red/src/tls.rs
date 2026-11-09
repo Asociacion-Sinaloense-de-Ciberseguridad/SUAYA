@@ -26,8 +26,12 @@ const SUITES_13: &[u16] = &[0x1301, 0x1302, 0x1303];
 /// Suites de TLS 1.2 e inferiores, amplias a propósito para detectar versiones.
 const SUITES_12: &[u16] = &[
     0xC02B, 0xC02F, 0xC02C, 0xC030, 0xCCA9, 0xCCA8, 0xC009, 0xC013, 0xC00A, 0xC014, 0x009C, 0x009D,
-    0x002F, 0x0035, 0x0033, 0x0039, 0x000A,
+    0x002F, 0x0035, 0x0033, 0x0039, 0x000A, 0x009E, 0x009F, 0xCCAA, 0xC023, 0xC024, 0xC027, 0xC028,
+    0x003C, 0x003D, 0x0067, 0x006B, 0xC012, 0xC008, 0x0016, 0x0005, 0x0004, 0xC011, 0xC007, 0x0041,
+    0x0084, 0xC0AC, 0xC0AD, 0x0002, 0x0001,
 ];
+/// Conexiones adicionales como máximo para enumerar las suites de TLS 1.2.
+const MAXIMO_ENUMERACION: usize = 40;
 /// Esquemas de firma ofrecidos, incluidos ML-DSA (0x0904 a 0x0906).
 const FIRMAS: &[u16] = &[
     0x0403, 0x0503, 0x0603, 0x0804, 0x0805, 0x0806, 0x0401, 0x0501, 0x0601, 0x0807, 0x0808, 0x0904,
@@ -61,6 +65,30 @@ const NOMBRES_SUITES: &[(u16, &str)] = &[
     (0x0033, "TLS_DHE_RSA_WITH_AES_128_CBC_SHA"),
     (0x0039, "TLS_DHE_RSA_WITH_AES_256_CBC_SHA"),
     (0x000A, "TLS_RSA_WITH_3DES_EDE_CBC_SHA"),
+    (0x009E, "TLS_DHE_RSA_WITH_AES_128_GCM_SHA256"),
+    (0x009F, "TLS_DHE_RSA_WITH_AES_256_GCM_SHA384"),
+    (0xCCAA, "TLS_DHE_RSA_WITH_CHACHA20_POLY1305_SHA256"),
+    (0xC023, "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256"),
+    (0xC024, "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384"),
+    (0xC027, "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"),
+    (0xC028, "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384"),
+    (0x003C, "TLS_RSA_WITH_AES_128_CBC_SHA256"),
+    (0x003D, "TLS_RSA_WITH_AES_256_CBC_SHA256"),
+    (0x0067, "TLS_DHE_RSA_WITH_AES_128_CBC_SHA256"),
+    (0x006B, "TLS_DHE_RSA_WITH_AES_256_CBC_SHA256"),
+    (0xC012, "TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA"),
+    (0xC008, "TLS_ECDHE_ECDSA_WITH_3DES_EDE_CBC_SHA"),
+    (0x0016, "TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA"),
+    (0x0005, "TLS_RSA_WITH_RC4_128_SHA"),
+    (0x0004, "TLS_RSA_WITH_RC4_128_MD5"),
+    (0xC011, "TLS_ECDHE_RSA_WITH_RC4_128_SHA"),
+    (0xC007, "TLS_ECDHE_ECDSA_WITH_RC4_128_SHA"),
+    (0x0041, "TLS_RSA_WITH_CAMELLIA_128_CBC_SHA"),
+    (0x0084, "TLS_RSA_WITH_CAMELLIA_256_CBC_SHA"),
+    (0xC0AC, "TLS_ECDHE_ECDSA_WITH_AES_128_CCM"),
+    (0xC0AD, "TLS_ECDHE_ECDSA_WITH_AES_256_CCM"),
+    (0x0002, "TLS_RSA_WITH_NULL_SHA"),
+    (0x0001, "TLS_RSA_WITH_NULL_MD5"),
 ];
 
 fn nombre_suite(codigo: u16) -> String {
@@ -295,6 +323,8 @@ pub(crate) struct Observacion {
     pub grupos: Vec<u16>,
     /// Versiones anteriores a 1.3 aceptadas, con la suite elegida.
     pub heredadas: Vec<(&'static str, u16)>,
+    /// Todas las suites de TLS 1.2 que el servidor aceptó, en orden de elección.
+    pub suites_12: Vec<u16>,
     pub certificados: Vec<Vec<u8>>,
 }
 
@@ -379,6 +409,32 @@ pub(crate) fn sondear(
     if !obs.tls13 && obs.heredadas.is_empty() {
         return Err("el servicio no aceptó ninguna versión de TLS ofrecida".into());
     }
+    // Enumeración de las suites de TLS 1.2: se retira la elegida y se vuelve a
+    // preguntar hasta que el servidor no acepte ninguna de las restantes.
+    if let Some((_, primera)) = obs.heredadas.iter().find(|(n, _)| *n == "TLSv1.2") {
+        obs.suites_12.push(*primera);
+        let mut restantes: Vec<u16> = SUITES_12.iter().copied().filter(|x| x != primera).collect();
+        for _ in 0..MAXIMO_ENUMERACION {
+            if restantes.is_empty() {
+                break;
+            }
+            match preguntar(
+                o,
+                op,
+                &client_hello(sni, 0x0303, &restantes, GRUPOS_HEREDADOS, false),
+            ) {
+                Ok(Respuesta::Saludo {
+                    version: 0x0303,
+                    suite,
+                    ..
+                }) if restantes.contains(&suite) => {
+                    obs.suites_12.push(suite);
+                    restantes.retain(|x| *x != suite);
+                }
+                _ => break,
+            }
+        }
+    }
     if op.certificados {
         match obtener_certificados(o, op) {
             Ok(v) => obs.certificados = v,
@@ -443,7 +499,11 @@ pub(crate) fn activos(
             tipo_protocolo: "tls".into(),
             versiones: versiones.clone(),
             grupos: nombres_grupos.clone(),
-            cifrados: suite_12.map(nombre_suite).into_iter().collect(),
+            cifrados: if obs.suites_12.is_empty() {
+                suite_12.map(nombre_suite).into_iter().collect()
+            } else {
+                obs.suites_12.iter().map(|s| nombre_suite(*s)).collect()
+            },
         },
     )
     .con_contexto(capacidad, Garantia::Confidencialidad)
@@ -483,6 +543,50 @@ pub(crate) fn activos(
             protocolo.advertir("En TLS 1.2 elige una suite con 3DES (Sweet32).");
             candidatos.push(Riesgo::RotoClasico);
         }
+    }
+    // Lo que acepta aunque no lo elija primero: un cliente antiguo puede llegar ahí.
+    let aceptadas: Vec<String> = obs.suites_12.iter().map(|s| nombre_suite(*s)).collect();
+    let con = |f: &dyn Fn(&str) -> bool| {
+        aceptadas
+            .iter()
+            .filter(|n| f(n))
+            .cloned()
+            .collect::<Vec<_>>()
+    };
+    let rc4 = con(&|n| n.contains("RC4"));
+    let nulas = con(&|n| n.contains("NULL"));
+    let triple = con(&|n| n.contains("3DES"));
+    let estaticas = con(&|n| n.starts_with("TLS_RSA_"));
+    if !rc4.is_empty() || !nulas.is_empty() {
+        protocolo.advertir(format!(
+            "En TLS 1.2 acepta suites rotas: {}.",
+            rc4.iter()
+                .chain(&nulas)
+                .cloned()
+                .collect::<Vec<_>>()
+                .join(", ")
+        ));
+        candidatos.push(Riesgo::RotoClasico);
+    }
+    if !triple.is_empty() && suite_12.is_some_and(|s| !nombre_suite(s).contains("3DES")) {
+        protocolo.advertir(format!(
+            "En TLS 1.2 también acepta 3DES (Sweet32): {}.",
+            triple.join(", ")
+        ));
+        candidatos.push(Riesgo::RotoClasico);
+    }
+    if !estaticas.is_empty() && suite_12.is_some_and(|s| !nombre_suite(s).starts_with("TLS_RSA_")) {
+        protocolo.advertir(format!(
+            "En TLS 1.2 también acepta intercambio RSA estático, sin secreto perfecto hacia adelante: {}.",
+            estaticas.join(", ")
+        ));
+    }
+    if obs.suites_12.len() > 1 {
+        protocolo.advertir(format!(
+            "Acepta {} suites de TLS 1.2 de las {} que Suaya ofrece.",
+            obs.suites_12.len(),
+            SUITES_12.len()
+        ));
     }
 
     // Riesgo por grupos.
@@ -573,6 +677,85 @@ pub(crate) fn activos(
 #[derive(Debug)]
 pub(crate) struct SinVerificar(pub(crate) Arc<rustls::crypto::CryptoProvider>);
 
+/// Familias de esquemas de firma para pedir, una a la vez, la cadena que el
+/// servidor reserva a cada tipo de cliente (un servidor puede tener un
+/// certificado RSA, otro ECDSA y otro ML-DSA).
+pub(crate) const FAMILIAS_FIRMA: &[(&str, &[rustls::SignatureScheme])] = &[
+    (
+        "ECDSA",
+        &[
+            rustls::SignatureScheme::ECDSA_NISTP256_SHA256,
+            rustls::SignatureScheme::ECDSA_NISTP384_SHA384,
+            rustls::SignatureScheme::ECDSA_NISTP521_SHA512,
+        ],
+    ),
+    (
+        "RSA",
+        &[
+            rustls::SignatureScheme::RSA_PSS_SHA256,
+            rustls::SignatureScheme::RSA_PSS_SHA384,
+            rustls::SignatureScheme::RSA_PSS_SHA512,
+            rustls::SignatureScheme::RSA_PKCS1_SHA256,
+            rustls::SignatureScheme::RSA_PKCS1_SHA384,
+            rustls::SignatureScheme::RSA_PKCS1_SHA512,
+        ],
+    ),
+    (
+        "EdDSA",
+        &[
+            rustls::SignatureScheme::ED25519,
+            rustls::SignatureScheme::ED448,
+        ],
+    ),
+    (
+        "ML-DSA",
+        &[
+            rustls::SignatureScheme::ML_DSA_44,
+            rustls::SignatureScheme::ML_DSA_65,
+            rustls::SignatureScheme::ML_DSA_87,
+        ],
+    ),
+];
+
+/// Como [`SinVerificar`], pero anuncia solo una familia de esquemas.
+#[derive(Debug)]
+pub(crate) struct SoloFamilia(pub(crate) &'static [rustls::SignatureScheme]);
+
+impl rustls::client::danger::ServerCertVerifier for SoloFamilia {
+    fn verify_server_cert(
+        &self,
+        _: &rustls::pki_types::CertificateDer<'_>,
+        _: &[rustls::pki_types::CertificateDer<'_>],
+        _: &rustls::pki_types::ServerName<'_>,
+        _: &[u8],
+        _: rustls::pki_types::UnixTime,
+    ) -> Result<rustls::client::danger::ServerCertVerified, rustls::Error> {
+        Ok(rustls::client::danger::ServerCertVerified::assertion())
+    }
+
+    fn verify_tls12_signature(
+        &self,
+        _: &[u8],
+        _: &rustls::pki_types::CertificateDer<'_>,
+        _: &rustls::DigitallySignedStruct,
+    ) -> Result<rustls::client::danger::HandshakeSignatureValid, rustls::Error> {
+        Ok(rustls::client::danger::HandshakeSignatureValid::assertion())
+    }
+
+    fn verify_tls13_signature(
+        &self,
+        _: &[u8],
+        _: &rustls::pki_types::CertificateDer<'_>,
+        _: &rustls::DigitallySignedStruct,
+    ) -> Result<rustls::client::danger::HandshakeSignatureValid, rustls::Error> {
+        Ok(rustls::client::danger::HandshakeSignatureValid::assertion())
+    }
+
+    fn supported_verify_schemes(&self) -> Vec<rustls::SignatureScheme> {
+        self.0.to_vec()
+    }
+}
+
 impl rustls::client::danger::ServerCertVerifier for SinVerificar {
     fn verify_server_cert(
         &self,
@@ -625,11 +808,37 @@ fn obtener_certificados(o: &Objetivo, op: &Opciones) -> Result<Vec<Vec<u8>>, Str
     // aws-lc-rs permite completar saludos con X25519MLKEM768, de modo que la
     // cadena se obtiene también de servidores que solo aceptan híbridos.
     let proveedor = Arc::new(rustls::crypto::aws_lc_rs::default_provider());
-    let config = rustls::ClientConfig::builder_with_provider(proveedor.clone())
+    let mut cadena = saludo_con_verificador(o, op, Arc::new(SinVerificar(proveedor.clone())))?;
+    // Una cadena más por familia de firma, si el servidor tiene otra hoja.
+    let mut hojas: Vec<Vec<u8>> = cadena.first().cloned().into_iter().collect();
+    for (_, esquemas) in FAMILIAS_FIRMA {
+        if let Ok(otra) = saludo_con_verificador(o, op, Arc::new(SoloFamilia(esquemas)))
+            && let Some(hoja) = otra.first()
+            && !hojas.contains(hoja)
+        {
+            hojas.push(hoja.clone());
+            for der in otra {
+                if !cadena.contains(&der) {
+                    cadena.push(der);
+                }
+            }
+        }
+    }
+    Ok(cadena)
+}
+
+/// Saludo completo con un verificador dado; devuelve la cadena presentada.
+pub(crate) fn saludo_con_verificador(
+    o: &Objetivo,
+    op: &Opciones,
+    verificador: Arc<dyn rustls::client::danger::ServerCertVerifier>,
+) -> Result<Vec<Vec<u8>>, String> {
+    let proveedor = Arc::new(rustls::crypto::aws_lc_rs::default_provider());
+    let config = rustls::ClientConfig::builder_with_provider(proveedor)
         .with_safe_default_protocol_versions()
         .map_err(|e| e.to_string())?
         .dangerous()
-        .with_custom_certificate_verifier(Arc::new(SinVerificar(proveedor)))
+        .with_custom_certificate_verifier(verificador)
         .with_no_client_auth();
     let nombre =
         rustls::pki_types::ServerName::try_from(o.host.clone()).map_err(|e| e.to_string())?;

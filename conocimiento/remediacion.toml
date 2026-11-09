@@ -1,0 +1,435 @@
+# Suaya: recetas de corrección.
+#
+# Cada receta dice cómo corregir un tipo de hallazgo. El reporte las muestra
+# junto a los activos que cubren y `suaya diagnosticar` junto a sus hallazgos.
+# Como el resto del conocimiento, viven como datos: se actualizan sin
+# recompilar y pueden sustituirse con `--base-conocimiento <directorio>`.
+#
+# Se aplica la primera receta que coincide, en el orden del archivo: de lo
+# específico a lo general. Una receta coincide con un activo si cumple todos
+# los criterios que declara:
+#   algoritmos   identificadores de algoritmos.toml
+#   tipos        algorithm | certificate | related-crypto-material | protocol | library
+#   riesgos      roto-clasico | obsoleto | vulnerable-cuantico | debilitado-grover | desconocido
+#   capacidades  identificadores de madurez.toml
+#   garantias    confidencialidad | autenticacion | integridad
+# Una receta sin criterios de activo solo se usa por `hallazgos` (códigos del
+# diagnóstico, p. ej. CERT-VENCE).
+#
+# Los pasos citan versiones y directivas vigentes al cierre de esta edición;
+# verifíquelas contra la documentación de su producto antes de aplicarlas.
+
+[meta]
+version = "2026.11.0"
+descripcion = "Recetas de corrección para Suaya"
+
+[[receta]]
+id = "tls-hibrido"
+titulo = "Habilitar el intercambio híbrido X25519MLKEM768 en TLS 1.3"
+titulo_en = "Enable the X25519MLKEM768 hybrid key exchange in TLS 1.3"
+algoritmos = ["x25519", "x448", "ecdh-p256", "ecdh-p384", "ecdh-p521", "ecdh", "ffdh", "ecdh-brainpoolp256r1", "ecdh-brainpoolp384r1", "ecdh-brainpoolp512r1"]
+capacidades = ["servidores-web", "conectividad-nube", "navegadores-web"]
+hallazgos = ["KEX-CLASICO"]
+pasos = [
+  "Actualice la biblioteca TLS a una versión con ML-KEM: OpenSSL 3.5 o posterior, BoringSSL, AWS-LC, Go 1.24 o posterior (lo activa por omisión) o rustls 0.23 con aws-lc-rs.",
+  "nginx: ssl_protocols TLSv1.2 TLSv1.3; y ssl_ecdh_curve X25519MLKEM768:X25519:prime256v1;",
+  "Apache httpd: SSLOpenSSLConfCmd Groups X25519MLKEM768:X25519:prime256v1",
+  "HAProxy (sección global): ssl-default-bind-curves X25519MLKEM768:X25519:P-256",
+  "Verifique con suaya diagnosticar tls://servidor:443: el cliente moderno debe negociar X25519MLKEM768.",
+]
+pasos_en = [
+  "Upgrade the TLS library to a version with ML-KEM: OpenSSL 3.5 or later, BoringSSL, AWS-LC, Go 1.24 or later (enabled by default) or rustls 0.23 with aws-lc-rs.",
+  "nginx: ssl_protocols TLSv1.2 TLSv1.3; and ssl_ecdh_curve X25519MLKEM768:X25519:prime256v1;",
+  "Apache httpd: SSLOpenSSLConfCmd Groups X25519MLKEM768:X25519:prime256v1",
+  "HAProxy (global section): ssl-default-bind-curves X25519MLKEM768:X25519:P-256",
+  "Verify with suaya diagnosticar tls://server:443: the modern client must negotiate X25519MLKEM768.",
+]
+referencias = ["https://datatracker.ietf.org/doc/draft-ietf-tls-ecdhe-mlkem/"]
+
+[[receta]]
+id = "vpn-hibrido"
+titulo = "Intercambio híbrido en SSH, IPsec y WireGuard"
+titulo_en = "Hybrid key exchange in SSH, IPsec and WireGuard"
+algoritmos = ["x25519", "x448", "ecdh-p256", "ecdh-p384", "ecdh-p521", "ecdh", "ffdh", "ecdh-brainpoolp256r1", "ecdh-brainpoolp384r1", "ecdh-brainpoolp512r1"]
+capacidades = ["vpn-cifrado-red"]
+hallazgos = ["SSH-KEX-CLASICO", "IKE-CLASICO"]
+pasos = [
+  "OpenSSH 9.9 o posterior: KexAlgorithms mlkem768x25519-sha256,sntrup761x25519-sha512@openssh.com,curve25519-sha256 (OpenSSH 10.0 ya prefiere mlkem768x25519-sha256).",
+  "strongSwan 6.0 o posterior (IKEv2, RFC 9370): agregue un intercambio adicional a las propuestas, p. ej. aes256gcm16-prfsha384-ecp384-ke1_mlkem768.",
+  "WireGuard: agregue una llave precompartida poscuántica, p. ej. con Rosenpass.",
+  "Verifique con suaya diagnosticar ssh://host:22 o ike://host.",
+]
+pasos_en = [
+  "OpenSSH 9.9 or later: KexAlgorithms mlkem768x25519-sha256,sntrup761x25519-sha512@openssh.com,curve25519-sha256 (OpenSSH 10.0 already prefers mlkem768x25519-sha256).",
+  "strongSwan 6.0 or later (IKEv2, RFC 9370): add an additional key exchange to the proposals, e.g. aes256gcm16-prfsha384-ecp384-ke1_mlkem768.",
+  "WireGuard: add a post-quantum preshared key, e.g. with Rosenpass.",
+  "Verify with suaya diagnosticar ssh://host:22 or ike://host.",
+]
+referencias = ["https://www.rfc-editor.org/rfc/rfc9370"]
+
+[[receta]]
+id = "tls-versiones"
+titulo = "Retirar SSL 3.0, TLS 1.0 y TLS 1.1"
+titulo_en = "Retire SSL 3.0, TLS 1.0 and TLS 1.1"
+algoritmos = ["ssl-2.0", "ssl-3.0", "tls-1.0", "tls-1.1"]
+pasos = [
+  "nginx: ssl_protocols TLSv1.2 TLSv1.3;",
+  "Apache httpd: SSLProtocol -all +TLSv1.2 +TLSv1.3",
+  "HAProxy (sección global): ssl-default-bind-options ssl-min-ver TLSv1.2",
+  "Windows (SChannel): desactive los protocolos en HKLM\\SYSTEM\\CurrentControlSet\\Control\\SecurityProviders\\SCHANNEL\\Protocols.",
+  "Java: agregue SSLv3, TLSv1 y TLSv1.1 a jdk.tls.disabledAlgorithms en java.security.",
+]
+pasos_en = [
+  "nginx: ssl_protocols TLSv1.2 TLSv1.3;",
+  "Apache httpd: SSLProtocol -all +TLSv1.2 +TLSv1.3",
+  "HAProxy (global section): ssl-default-bind-options ssl-min-ver TLSv1.2",
+  "Windows (SChannel): disable the protocols under HKLM\\SYSTEM\\CurrentControlSet\\Control\\SecurityProviders\\SCHANNEL\\Protocols.",
+  "Java: add SSLv3, TLSv1 and TLSv1.1 to jdk.tls.disabledAlgorithms in java.security.",
+]
+referencias = ["https://www.rfc-editor.org/rfc/rfc8996"]
+
+[[receta]]
+id = "tls13"
+titulo = "Habilitar TLS 1.3"
+titulo_en = "Enable TLS 1.3"
+algoritmos = ["tls-1.2"]
+hallazgos = ["KEX-TLS12"]
+pasos = [
+  "El intercambio híbrido con ML-KEM solo existe en TLS 1.3: habilítelo junto a TLS 1.2 mientras haya clientes que lo necesiten.",
+  "nginx: ssl_protocols TLSv1.2 TLSv1.3; · Apache httpd: SSLProtocol -all +TLSv1.2 +TLSv1.3",
+  "Si el producto no admite TLS 1.3, planifique su actualización o reemplazo.",
+]
+pasos_en = [
+  "The hybrid ML-KEM key exchange only exists in TLS 1.3: enable it next to TLS 1.2 while clients still need it.",
+  "nginx: ssl_protocols TLSv1.2 TLSv1.3; · Apache httpd: SSLProtocol -all +TLSv1.2 +TLSv1.3",
+  "If the product does not support TLS 1.3, plan its upgrade or replacement.",
+]
+
+[[receta]]
+id = "cifrados-rotos"
+titulo = "Retirar cifrados rotos (3DES, DES, RC4, RC2, Blowfish, ECB)"
+titulo_en = "Retire broken ciphers (3DES, DES, RC4, RC2, Blowfish, ECB)"
+algoritmos = ["3des-cbc", "des", "rc4", "rc2", "blowfish-cbc", "cast5", "idea", "modo-ecb"]
+hallazgos = ["IKE-3DES"]
+pasos = [
+  "TLS: use solo suites AEAD, p. ej. ECDHE+AESGCM:ECDHE+CHACHA20, y quite las listas heredadas con 3DES o RC4.",
+  "OpenSSH: Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr",
+  "OpenVPN 2.5 o posterior: data-ciphers AES-256-GCM:CHACHA20-POLY1305",
+  "PKCS #12: vuelva a exportar con openssl pkcs12 -export -keypbe AES-256-CBC -certpbe AES-256-CBC -macalg sha256.",
+  "Código: use AES-GCM o ChaCha20-Poly1305 de una biblioteca reconocida.",
+]
+pasos_en = [
+  "TLS: use only AEAD suites, e.g. ECDHE+AESGCM:ECDHE+CHACHA20, and remove legacy lists with 3DES or RC4.",
+  "OpenSSH: Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr",
+  "OpenVPN 2.5 or later: data-ciphers AES-256-GCM:CHACHA20-POLY1305",
+  "PKCS #12: export again with openssl pkcs12 -export -keypbe AES-256-CBC -certpbe AES-256-CBC -macalg sha256.",
+  "Code: use AES-GCM or ChaCha20-Poly1305 from a well-known library.",
+]
+
+[[receta]]
+id = "hashes-rotos"
+titulo = "Reemplazar MD5 y SHA-1"
+titulo_en = "Replace MD5 and SHA-1"
+algoritmos = ["md5", "md4", "sha1", "hmac-md5", "rsassa-pkcs1-md5", "rsassa-pkcs1-sha1", "ecdsa-sha1", "md5-crypt"]
+hallazgos = ["IKE-SHA1", "DKIM-SHA1", "DNSSEC-DS-SHA1", "CERT-FIRMA", "IDP-ALGORITMO"]
+pasos = [
+  "Integridad y firmas: use SHA-256 o SHA-3; en firmas, RSA-PSS, ECDSA o ML-DSA con SHA-256 o superior.",
+  "Contraseñas: no use digestiones rápidas; use Argon2id (o scrypt o bcrypt donde no haya Argon2).",
+  "Certificados firmados con SHA-1: reemítalos con SHA-256.",
+  "DNSSEC: publique DS con SHA-256 (tipo 2) y retire los de SHA-1 (RFC 9905).",
+]
+pasos_en = [
+  "Integrity and signatures: use SHA-256 or SHA-3; for signatures, RSA-PSS, ECDSA or ML-DSA with SHA-256 or stronger.",
+  "Passwords: do not use fast digests; use Argon2id (or scrypt or bcrypt where Argon2 is not available).",
+  "Certificates signed with SHA-1: reissue them with SHA-256.",
+  "DNSSEC: publish DS records with SHA-256 (type 2) and retire the SHA-1 ones (RFC 9905).",
+]
+
+[[receta]]
+id = "dh-roto"
+titulo = "Retirar grupos Diffie-Hellman de 1024 y 1536 bits"
+titulo_en = "Retire 1024- and 1536-bit Diffie-Hellman groups"
+algoritmos = ["ffdh-1024", "ffdh-sha1"]
+hallazgos = ["IKE-DH-ROTO"]
+pasos = [
+  "Use grupos de al menos 2048 bits (ffdhe2048 o superior, RFC 7919) o curvas (X25519, P-256), y prefiera el intercambio híbrido con ML-KEM.",
+  "OpenSSH: quite diffie-hellman-group1-sha1 y diffie-hellman-group14-sha1 de KexAlgorithms.",
+  "IKEv2: quite modp1024 y modp1536 de las propuestas.",
+]
+pasos_en = [
+  "Use groups of at least 2048 bits (ffdhe2048 or larger, RFC 7919) or curves (X25519, P-256), and prefer the hybrid ML-KEM key exchange.",
+  "OpenSSH: remove diffie-hellman-group1-sha1 and diffie-hellman-group14-sha1 from KexAlgorithms.",
+  "IKEv2: remove modp1024 and modp1536 from the proposals.",
+]
+
+[[receta]]
+id = "rsa-corta"
+titulo = "Reemplazar llaves RSA de menos de 2048 bits"
+titulo_en = "Replace RSA keys shorter than 2048 bits"
+algoritmos = ["rsa"]
+riesgos = ["roto-clasico"]
+hallazgos = ["CERT-LLAVE", "DKIM-RSA-CORTA", "DNSSEC-RSA-CORTA", "IDP-RSA-CORTA"]
+pasos = [
+  "Genere llaves nuevas de al menos 3072 bits (o ECDSA P-256) y reemita los certificados: openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:3072 -out llave.pem",
+  "DKIM: opendkim-genkey -b 2048 -s selector-nuevo, publique el registro nuevo y retire el anterior.",
+  "Aproveche la reemisión para planificar ML-DSA o certificados compuestos.",
+]
+pasos_en = [
+  "Generate new keys of at least 3072 bits (or ECDSA P-256) and reissue the certificates: openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:3072 -out key.pem",
+  "DKIM: opendkim-genkey -b 2048 -s new-selector, publish the new record and retire the old one.",
+  "Use the reissue to plan ML-DSA or composite certificates.",
+]
+
+[[receta]]
+id = "dns"
+titulo = "DNSSEC y DKIM"
+titulo_en = "DNSSEC and DKIM"
+capacidades = ["infraestructura-dns"]
+hallazgos = ["DNS-SIN-DNSSEC", "DNSSEC-SIN-DS", "DNSSEC-CLASICO", "DNSSEC-ROTO", "DNSSEC-RRSIG-VENCIDA", "DNSSEC-ALGORITMO", "DNS-SIN-CAA", "DKIM-PRUEBAS"]
+pasos = [
+  "Firme la zona con ECDSAP256SHA256 (13) o ED25519 (15) y publique el DS en el registro del dominio padre.",
+  "Automatice la renovación de las firmas RRSIG y la rotación de llaves, y supervise su vencimiento.",
+  "Publique un registro CAA con las autoridades que pueden emitir para el dominio.",
+  "DKIM: use RSA de 2048 bits o Ed25519 (RFC 8463) y rote los selectores periódicamente.",
+  "Dé seguimiento a ML-DSA-44 (algoritmo 18 de IANA) en sus servidores autoritativos y resolvedores antes de adoptarlo.",
+]
+pasos_en = [
+  "Sign the zone with ECDSAP256SHA256 (13) or ED25519 (15) and publish the DS record at the parent registry.",
+  "Automate RRSIG renewal and key rollover, and monitor their expiry.",
+  "Publish a CAA record listing the authorities allowed to issue for the domain.",
+  "DKIM: use 2048-bit RSA or Ed25519 (RFC 8463) and rotate selectors periodically.",
+  "Track ML-DSA-44 (IANA algorithm 18) support in your authoritative servers and resolvers before adopting it.",
+]
+referencias = ["https://www.iana.org/assignments/dns-sec-alg-numbers/"]
+
+[[receta]]
+id = "identidad"
+titulo = "Tokens y aserciones de identidad federada"
+titulo_en = "Federated identity tokens and assertions"
+capacidades = ["identidad-federada"]
+hallazgos = ["IDP-ALG-NONE", "IDP-RSA15", "IDP-CLASICO", "IDP-CIFRADO-CLASICO", "IDP-METADATOS-VENCIDOS", "IDP-CERT-VENCIDO"]
+pasos = [
+  "Firme tokens con ES256 o PS256 mientras llega ML-DSA; nunca acepte «none» ni cifre con RSA1_5.",
+  "Publique las llaves en un JWKS con «kid» y rótelas periódicamente.",
+  "SAML: firme con rsa-sha256 o superior, retire SHA-1 y renueve los metadatos antes de validUntil.",
+  "Pida a su proveedor de identidad el calendario de soporte de ML-DSA para JOSE (RFC 9964).",
+]
+pasos_en = [
+  "Sign tokens with ES256 or PS256 until ML-DSA arrives; never accept \"none\" or encrypt with RSA1_5.",
+  "Publish keys in a JWKS with a \"kid\" and rotate them periodically.",
+  "SAML: sign with rsa-sha256 or stronger, retire SHA-1 and renew the metadata before validUntil.",
+  "Ask your identity provider for its ML-DSA support schedule for JOSE (RFC 9964).",
+]
+referencias = ["https://www.rfc-editor.org/rfc/rfc9964"]
+
+[[receta]]
+id = "firma-codigo-pq"
+titulo = "Firma de código y arranque con algoritmos poscuánticos"
+titulo_en = "Post-quantum code and boot signing"
+capacidades = ["firma-codigo", "aseguramiento-plataforma"]
+riesgos = ["vulnerable-cuantico"]
+pasos = [
+  "CNSA 2.0 pide LMS o XMSS (NIST SP 800-208) para firmware y ML-DSA para software: verifique el soporte de su cadena de arranque y de sus herramientas de firma.",
+  "UEFI Secure Boot: migre a las CA de Microsoft de 2023 (las de 2011 vencieron en 2026) y documente las llaves de cada fabricante.",
+  "Conserve las llaves de firma en un HSM y registre qué artefactos firma cada una.",
+]
+pasos_en = [
+  "CNSA 2.0 calls for LMS or XMSS (NIST SP 800-208) for firmware and ML-DSA for software: check support in your boot chain and signing tools.",
+  "UEFI Secure Boot: move to the 2023 Microsoft CAs (the 2011 ones expired in 2026) and document each vendor's keys.",
+  "Keep signing keys in an HSM and record which artifacts each one signs.",
+]
+
+[[receta]]
+id = "bibliotecas"
+titulo = "Actualizar la biblioteca criptográfica"
+titulo_en = "Upgrade the cryptographic library"
+tipos = ["library"]
+pasos = [
+  "Actualice a una versión con soporte vigente que ofrezca ML-KEM y ML-DSA (la nota de la biblioteca indica desde cuál).",
+  "Fije la versión en el manifiesto o archivo de bloqueo del proyecto y vuelva a escanear.",
+]
+pasos_en = [
+  "Upgrade to a supported version that offers ML-KEM and ML-DSA (the library note says from which one).",
+  "Pin the version in the project manifest or lock file and scan again.",
+]
+
+[[receta]]
+id = "codigo-pq"
+titulo = "Usar ML-KEM y ML-DSA desde el código"
+titulo_en = "Use ML-KEM and ML-DSA from code"
+capacidades = ["codigo-aplicacion"]
+riesgos = ["vulnerable-cuantico"]
+pasos = [
+  "Cifrado e intercambio de llaves: use ML-KEM (FIPS 203), de preferencia en modo híbrido con X25519.",
+  "Firmas: use ML-DSA (FIPS 204) o SLH-DSA (FIPS 205).",
+  "Bibliotecas con estas API: OpenSSL 3.5, Go 1.24 (crypto/mlkem), Java 24 (javax.crypto.KEM), .NET 10 y Bouncy Castle.",
+  "Concentre las llamadas criptográficas en un módulo propio: cambiar de algoritmo será un cambio de configuración.",
+]
+pasos_en = [
+  "Encryption and key exchange: use ML-KEM (FIPS 203), preferably in hybrid mode with X25519.",
+  "Signatures: use ML-DSA (FIPS 204) or SLH-DSA (FIPS 205).",
+  "Libraries with these APIs: OpenSSL 3.5, Go 1.24 (crypto/mlkem), Java 24 (javax.crypto.KEM), .NET 10 and Bouncy Castle.",
+  "Keep cryptographic calls in one module of your own: changing algorithms becomes a configuration change.",
+]
+
+[[receta]]
+id = "firmas-pq"
+titulo = "Planificar certificados y firmas ML-DSA"
+titulo_en = "Plan ML-DSA certificates and signatures"
+riesgos = ["vulnerable-cuantico"]
+garantias = ["autenticacion"]
+hallazgos = ["CERT-LLAVE-CUANTICA", "KEX-FIRMA", "SSH-LLAVE-HOST"]
+pasos = [
+  "Identifique quién valida cada certificado: los clientes deben aceptar ML-DSA (FIPS 204) o certificados compuestos antes de cambiar la cadena.",
+  "Pruebe la emisión con OpenSSL 3.5 o posterior: openssl req -x509 -newkey ML-DSA-65 -keyout llave.pem -out cert.pem -days 90 -subj /CN=prueba",
+  "Mientras tanto, automatice la renovación (ACME): facilita cambiar de algoritmo.",
+]
+pasos_en = [
+  "Find out who validates each certificate: clients must accept ML-DSA (FIPS 204) or composite certificates before the chain changes.",
+  "Test issuance with OpenSSL 3.5 or later: openssl req -x509 -newkey ML-DSA-65 -keyout key.pem -out cert.pem -days 90 -subj /CN=test",
+  "Meanwhile, automate renewal (ACME): it makes changing algorithms easier.",
+]
+
+[[receta]]
+id = "vigencia-certificados"
+titulo = "Automatizar la renovación de certificados"
+titulo_en = "Automate certificate renewal"
+hallazgos = ["CERT-VENCE", "CERT-VENCIDO", "CERT-VIGENCIA", "CERT-RENOVACION", "CERT-INTERMEDIO-VENCIDO"]
+pasos = [
+  "Emita y renueve con ACME (RFC 8555), p. ej. certbot, acme.sh, Caddy o cert-manager.",
+  "Los certificados públicos no pueden durar más de 200 días desde el 15 de marzo de 2026, 100 desde el 15 de marzo de 2027 y 47 desde el 15 de marzo de 2029 (CA/Browser Forum, SC-081v3).",
+  "Supervise el vencimiento: suaya diagnosticar --metricas exporta los días restantes para Prometheus.",
+]
+pasos_en = [
+  "Issue and renew with ACME (RFC 8555), e.g. certbot, acme.sh, Caddy or cert-manager.",
+  "Public certificates cannot last more than 200 days from March 15, 2026, 100 from March 15, 2027 and 47 from March 15, 2029 (CA/Browser Forum, SC-081v3).",
+  "Monitor expiry: suaya diagnosticar --metricas exports the remaining days for Prometheus.",
+]
+referencias = ["https://www.rfc-editor.org/rfc/rfc8555"]
+
+[[receta]]
+id = "cadena-certificados"
+titulo = "Servir una cadena de certificados válida"
+titulo_en = "Serve a valid certificate chain"
+hallazgos = ["CERT-CADENA", "CERT-INCOMPLETA", "CERT-ORDEN", "CERT-NOMBRE", "CERT-RAIZ", "CERT-AUTOFIRMADO", "CERT-TAMANO"]
+pasos = [
+  "Sirva el certificado del servidor seguido de sus intermedios, en orden y sin la raíz (nginx: ssl_certificate con fullchain.pem).",
+  "El nombre del servidor debe aparecer en subjectAltName.",
+  "Use una autoridad que reconozcan sus clientes; reserve los autofirmados para pruebas.",
+]
+pasos_en = [
+  "Serve the server certificate followed by its intermediates, in order and without the root (nginx: ssl_certificate with fullchain.pem).",
+  "The server name must appear in subjectAltName.",
+  "Use an authority your clients trust; keep self-signed certificates for testing.",
+]
+
+[[receta]]
+id = "ocsp"
+titulo = "Engrapado OCSP"
+titulo_en = "OCSP stapling"
+hallazgos = ["CERT-OCSP"]
+pasos = [
+  "Si su autoridad publica OCSP, active el engrapado (nginx: ssl_stapling on; ssl_stapling_verify on;).",
+  "Algunas autoridades públicas ya dejaron OCSP y solo publican CRL: en ese caso no hay nada que engrapar.",
+]
+pasos_en = [
+  "If your authority publishes OCSP, enable stapling (nginx: ssl_stapling on; ssl_stapling_verify on;).",
+  "Some public authorities have dropped OCSP and only publish CRLs: in that case there is nothing to staple.",
+]
+
+[[receta]]
+id = "ssh-terrapin"
+titulo = "Mitigar Terrapin y retirar SSH 1"
+titulo_en = "Mitigate Terrapin and retire SSH 1"
+hallazgos = ["SSH-TERRAPIN", "SSH-V1"]
+pasos = [
+  "Actualice OpenSSH a 9.6 o posterior (intercambio estricto, kex-strict) o retire chacha20-poly1305@openssh.com y los MAC -etm con cifrados CBC (CVE-2023-48795).",
+  "Desactive el protocolo SSH 1 en servidores y clientes heredados.",
+]
+pasos_en = [
+  "Upgrade OpenSSH to 9.6 or later (strict key exchange, kex-strict) or remove chacha20-poly1305@openssh.com and the -etm MACs with CBC ciphers (CVE-2023-48795).",
+  "Disable the SSH 1 protocol on legacy servers and clients.",
+]
+
+[[receta]]
+id = "general-roto"
+titulo = "Corregir de inmediato"
+titulo_en = "Fix immediately"
+riesgos = ["roto-clasico"]
+pasos = [
+  "Ubique el componente en las ubicaciones del reporte y sustitúyalo por una alternativa vigente: AES-GCM, SHA-256, RSA-3072, ECDSA P-256 o, donde ya sea posible, ML-KEM y ML-DSA.",
+  "Si es una llave o un certificado, reemítalo; si es una configuración, cámbiela y vuelva a escanear.",
+]
+pasos_en = [
+  "Find the component at the locations in the report and replace it with a current alternative: AES-GCM, SHA-256, RSA-3072, ECDSA P-256 or, where already possible, ML-KEM and ML-DSA.",
+  "If it is a key or a certificate, reissue it; if it is a configuration, change it and scan again.",
+]
+
+[[receta]]
+id = "general-obsoleto"
+titulo = "Reemplazar lo obsoleto"
+titulo_en = "Replace what is deprecated"
+riesgos = ["obsoleto"]
+pasos = [
+  "Los estándares vigentes ya lo retiraron: planifique su reemplazo en el próximo ciclo de cambios.",
+  "Cuando lo sustituya, elija ya un esquema híbrido o poscuántico si el ecosistema lo permite.",
+]
+pasos_en = [
+  "Current standards have already retired it: plan its replacement in the next change cycle.",
+  "When replacing it, choose a hybrid or post-quantum scheme if the ecosystem allows it.",
+]
+
+[[receta]]
+id = "general-confidencialidad"
+titulo = "Proteger la confidencialidad con ML-KEM"
+titulo_en = "Protect confidentiality with ML-KEM"
+riesgos = ["vulnerable-cuantico"]
+garantias = ["confidencialidad"]
+pasos = [
+  "Lo que hoy se captura cifrado podrá descifrarse con una computadora cuántica: priorice el intercambio híbrido con ML-KEM (FIPS 203).",
+  "Empiece por los sistemas con datos de vida larga (desigualdad de Mosca, opción --organizacion).",
+]
+pasos_en = [
+  "What is captured encrypted today could be decrypted with a quantum computer: prioritize the hybrid ML-KEM key exchange (FIPS 203).",
+  "Start with the systems whose data lives long (Mosca's inequality, --organizacion option).",
+]
+
+[[receta]]
+id = "general-autenticacion"
+titulo = "Planificar firmas poscuánticas"
+titulo_en = "Plan post-quantum signatures"
+riesgos = ["vulnerable-cuantico"]
+pasos = [
+  "Una computadora cuántica podría falsificar estas firmas cuando exista: planifique ML-DSA (FIPS 204) o SLH-DSA (FIPS 205).",
+  "Documente quién valida cada firma: es lo que determina el ritmo de la migración.",
+]
+pasos_en = [
+  "A quantum computer could forge these signatures once it exists: plan ML-DSA (FIPS 204) or SLH-DSA (FIPS 205).",
+  "Document who validates each signature: that sets the pace of the migration.",
+]
+
+[[receta]]
+id = "grover"
+titulo = "Ampliar los parámetros simétricos"
+titulo_en = "Widen symmetric parameters"
+riesgos = ["debilitado-grover"]
+pasos = [
+  "Para datos de vida larga, use llaves simétricas de 256 bits (AES-256) y digestiones de 384 bits o más.",
+]
+pasos_en = [
+  "For long-lived data, use 256-bit symmetric keys (AES-256) and digests of 384 bits or more.",
+]
+
+[[receta]]
+id = "desconocido"
+titulo = "Revisar manualmente"
+titulo_en = "Review manually"
+riesgos = ["desconocido"]
+pasos = [
+  "Suaya no pudo identificar el algoritmo o sus parámetros: revise el componente en sus ubicaciones.",
+  "Si es criptografía propia o no estándar, sustitúyala por una biblioteca reconocida.",
+]
+pasos_en = [
+  "Suaya could not identify the algorithm or its parameters: review the component at its locations.",
+  "If it is homegrown or non-standard cryptography, replace it with a well-known library.",
+]

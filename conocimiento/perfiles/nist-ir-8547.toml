@@ -32,5 +32,15 @@ estado = "conforme"
 nota = "Aceptado por NIST (categoría de seguridad 1)."
 
 [[regla]]
+algoritmos = ["fn-dsa-512", "fn-dsa-1024", "hqc-128", "hqc-192", "hqc-256"]
+estado = "sin-evaluar"
+nota = "Estándar de NIST en borrador (FIPS 206 o FIPS 207): se podrá evaluar cuando se publique la versión final."
+
+[[regla]]
+algoritmos = ["frodokem", "classic-mceliece"]
+estado = "no-conforme"
+nota = "No es un algoritmo aprobado por NIST."
+
+[[regla]]
 riesgos = ["hibrido-pq", "resistente-cuantico"]
 estado = "conforme"

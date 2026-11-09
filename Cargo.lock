@@ -1468,7 +1468,7 @@ checksum = "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f"
 
 [[package]]
 name = "suaya"
-version = "1.6.0"
+version = "1.7.0"
 dependencies = [
  "anyhow",
  "clap",
@@ -1485,7 +1485,7 @@ dependencies = [
 
 [[package]]
 name = "suaya-api"
-version = "1.6.0"
+version = "1.7.0"
 dependencies = [
  "anyhow",
  "axum",
@@ -1509,11 +1509,12 @@ dependencies = [
 
 [[package]]
 name = "suaya-cbom"
-version = "1.6.0"
+version = "1.7.0"
 dependencies = [
  "aws-lc-rs",
  "base64",
  "hex",
+ "serde",
  "serde_json",
  "sha2",
  "suaya-core",
@@ -1524,7 +1525,7 @@ dependencies = [
 
 [[package]]
 name = "suaya-core"
-version = "1.6.0"
+version = "1.7.0"
 dependencies = [
  "regex",
  "serde",
@@ -1534,9 +1535,10 @@ dependencies = [
 
 [[package]]
 name = "suaya-escaneo"
-version = "1.6.0"
+version = "1.7.0"
 dependencies = [
  "aho-corasick",
+ "aws-lc-rs",
  "base64",
  "ed25519-dalek",
  "flate2",
@@ -1557,7 +1559,7 @@ dependencies = [
 
 [[package]]
 name = "suaya-red"
-version = "1.6.0"
+version = "1.7.0"
 dependencies = [
  "base64",
  "hex",

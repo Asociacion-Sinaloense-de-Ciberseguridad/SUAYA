@@ -1,0 +1,250 @@
+# Suaya: dónde declara cada servicio su configuración de TLS.
+#
+# Un escáner genérico lee estos datos: para agregar un producto basta con
+# describir sus archivos y claves aquí, sin recompilar (también con
+# --base-conocimiento). Las claves se buscan como «clave = valor»,
+# «clave: valor», «clave valor» o como atributo XML «clave="valor"»; sin
+# distinguir mayúsculas; «*» en una clave equivale a cualquier texto.
+#
+# [[servicio]]
+#   id, nombre
+#   archivos             nombres de archivo (minúsculas); «*» como comodín
+#   pistas               al menos una debe aparecer en el contenido
+#   capacidad            capacidad tecnológica de madurez.toml
+#   versiones            claves que listan las versiones habilitadas
+#                        (un elemento con «!» o «-» delante la excluye)
+#   version_minima       claves con la versión mínima (un segundo valor es la máxima)
+#   version_maxima       claves con la versión máxima
+#   versiones_excluidas  claves que listan versiones deshabilitadas
+#   cifrados             claves con suites o cifradores
+#   grupos               claves con grupos o curvas de intercambio de llaves
+#   algoritmos           listas de algoritmos: { clave, espacio } (alias de algoritmos.toml)
+#   avisos               { clave, valores, texto, riesgo }: valores peligrosos
+#   nota                 advertencia fija
+
+[meta]
+version = "2026.11.0"
+descripcion = "Configuración TLS de servicios declarada en archivos"
+
+[[servicio]]
+id = "kafka"
+nombre = "Apache Kafka"
+archivos = ["*.properties"]
+pistas = ["ssl.enabled.protocols", "ssl.cipher.suites", "security.inter.broker.protocol"]
+capacidad = "servidores-web"
+versiones = ["ssl.enabled.protocols"]
+cifrados = ["ssl.cipher.suites"]
+avisos = [
+  { clave = "security.inter.broker.protocol", valores = ["plaintext", "sasl_plaintext"], texto = "La comunicación entre brokers viaja sin TLS.", riesgo = "roto-clasico" },
+  { clave = "ssl.endpoint.identification.algorithm", valores = ["", "\"\""], texto = "Desactiva la verificación del nombre del servidor en los clientes de Kafka.", riesgo = "roto-clasico" },
+]
+
+[[servicio]]
+id = "spring-boot"
+nombre = "Spring Boot"
+archivos = ["application*.properties", "application*.yml", "application*.yaml", "bootstrap*.yml"]
+pistas = ["enabled-protocols", "server.ssl", "ssl:"]
+capacidad = "servidores-web"
+versiones = ["server.ssl.enabled-protocols", "enabled-protocols"]
+cifrados = ["server.ssl.ciphers", "ciphers"]
+
+[[servicio]]
+id = "tomcat"
+nombre = "Apache Tomcat"
+archivos = ["server.xml"]
+pistas = ["SSLEnabled", "SSLHostConfig", "sslProtocol"]
+capacidad = "servidores-web"
+versiones = ["SSLEnabledProtocols", "sslEnabledProtocols", "protocols"]
+cifrados = ["ciphers"]
+avisos = [
+  { clave = "certificateVerification", valores = ["optionalNoCA"], texto = "certificateVerification=optionalNoCA acepta certificados de cliente sin validar su emisor.", riesgo = "roto-clasico" },
+]
+
+[[servicio]]
+id = "wildfly"
+nombre = "WildFly / JBoss EAP"
+archivos = ["standalone*.xml", "domain.xml", "host.xml"]
+pistas = ["ssl-context", "server-ssl-context"]
+capacidad = "servidores-web"
+versiones = ["protocols", "enabled-protocols"]
+cifrados = ["cipher-suite-filter", "cipher-suite-names"]
+
+[[servicio]]
+id = "dovecot"
+nombre = "Dovecot"
+archivos = ["dovecot.conf", "10-ssl.conf"]
+pistas = ["ssl_min_protocol", "ssl_protocols", "ssl_cipher_list"]
+capacidad = "servidores-web"
+versiones = ["ssl_protocols"]
+version_minima = ["ssl_min_protocol"]
+cifrados = ["ssl_cipher_list", "ssl_cipher_suites"]
+grupos = ["ssl_curve_list"]
+avisos = [
+  { clave = "ssl", valores = ["no"], texto = "Dovecot con «ssl = no» acepta IMAP y POP3 sin cifrar.", riesgo = "roto-clasico" },
+]
+
+[[servicio]]
+id = "exim"
+nombre = "Exim"
+archivos = ["exim.conf", "exim4.conf", "exim4.conf.template", "configure"]
+pistas = ["tls_require_ciphers", "tls_advertise_hosts"]
+capacidad = "servidores-web"
+cifrados = ["tls_require_ciphers"]
+
+[[servicio]]
+id = "mongodb"
+nombre = "MongoDB"
+archivos = ["mongod.conf", "mongos.conf"]
+pistas = ["tls:", "ssl:", "disabledProtocols"]
+capacidad = "servidores-web"
+versiones_excluidas = ["disabledProtocols"]
+avisos = [
+  { clave = "mode", valores = ["disabled", "allowtls", "allowssl", "prefertls", "preferssl"], texto = "MongoDB acepta conexiones sin TLS (net.tls.mode distinto de requireTLS).", riesgo = "roto-clasico" },
+  { clave = "allowInvalidCertificates", valores = ["true"], texto = "allowInvalidCertificates acepta certificados inválidos.", riesgo = "roto-clasico" },
+]
+
+[[servicio]]
+id = "redis"
+nombre = "Redis / Valkey"
+archivos = ["redis.conf", "sentinel.conf", "valkey.conf"]
+pistas = ["tls-port", "tls-protocols", "tls-ciphers"]
+capacidad = "servidores-web"
+versiones = ["tls-protocols"]
+cifrados = ["tls-ciphers", "tls-ciphersuites"]
+
+[[servicio]]
+id = "elasticsearch"
+nombre = "Elasticsearch, Kibana o Logstash"
+archivos = ["elasticsearch.yml", "kibana.yml", "logstash.yml"]
+pistas = ["supported_protocols", "supportedProtocols", "verification_mode", "verificationMode"]
+capacidad = "servidores-web"
+versiones = ["*supported_protocols", "*supportedProtocols"]
+cifrados = ["*cipher_suites", "*cipherSuites"]
+avisos = [
+  { clave = "*verification_mode", valores = ["none"], texto = "verification_mode: none desactiva la verificación de certificados.", riesgo = "roto-clasico" },
+  { clave = "*verificationMode", valores = ["none"], texto = "verificationMode: none desactiva la verificación de certificados.", riesgo = "roto-clasico" },
+]
+
+[[servicio]]
+id = "rabbitmq"
+nombre = "RabbitMQ"
+archivos = ["rabbitmq.conf"]
+pistas = ["ssl_options"]
+capacidad = "servidores-web"
+versiones = ["ssl_options.versions.*"]
+cifrados = ["ssl_options.ciphers.*"]
+avisos = [
+  { clave = "ssl_options.verify", valores = ["verify_none"], texto = "ssl_options.verify = verify_none no verifica a los clientes.", riesgo = "obsoleto" },
+]
+
+[[servicio]]
+id = "mosquitto"
+nombre = "Mosquitto (MQTT)"
+archivos = ["mosquitto.conf", "*.mosquitto.conf"]
+pistas = ["tls_version", "certfile", "ciphers"]
+capacidad = "servidores-web"
+versiones = ["tls_version"]
+cifrados = ["ciphers", "ciphers_tls1.3"]
+
+[[servicio]]
+id = "hashicorp"
+nombre = "HashiCorp Vault, Consul o Nomad"
+archivos = ["*.hcl"]
+pistas = ["tls_min_version", "tls_cipher_suites"]
+capacidad = "servidores-web"
+version_minima = ["tls_min_version"]
+version_maxima = ["tls_max_version"]
+cifrados = ["tls_cipher_suites"]
+avisos = [
+  { clave = "tls_disable", valores = ["true", "1"], texto = "tls_disable desactiva TLS en el listener.", riesgo = "roto-clasico" },
+]
+
+[[servicio]]
+id = "traefik"
+nombre = "Traefik"
+archivos = ["traefik.yml", "traefik.yaml", "traefik.toml", "dynamic.yml", "dynamic.yaml", "*.traefik.yml"]
+pistas = ["minVersion", "cipherSuites", "curvePreferences"]
+capacidad = "servidores-web"
+version_minima = ["minVersion"]
+version_maxima = ["maxVersion"]
+cifrados = ["cipherSuites"]
+grupos = ["curvePreferences"]
+
+[[servicio]]
+id = "envoy"
+nombre = "Envoy o Istio"
+archivos = ["*.yaml", "*.yml", "*.json"]
+pistas = ["tls_minimum_protocol_version", "minProtocolVersion", "ecdh_curves"]
+capacidad = "servidores-web"
+version_minima = ["tls_minimum_protocol_version", "minProtocolVersion"]
+version_maxima = ["tls_maximum_protocol_version", "maxProtocolVersion"]
+cifrados = ["cipher_suites", "cipherSuites"]
+grupos = ["ecdh_curves", "ecdhCurves"]
+
+[[servicio]]
+id = "ingress-nginx"
+nombre = "ingress-nginx (ConfigMap)"
+archivos = ["*.yaml", "*.yml"]
+pistas = ["ssl-protocols", "ssl-ecdh-curve"]
+capacidad = "servidores-web"
+versiones = ["ssl-protocols"]
+cifrados = ["ssl-ciphers"]
+grupos = ["ssl-ecdh-curve"]
+
+[[servicio]]
+id = "kubernetes-componentes"
+nombre = "Componente de Kubernetes (kubelet o API)"
+archivos = ["*.yaml", "*.yml", "*.json"]
+pistas = ["tlsMinVersion", "tlsCipherSuites"]
+capacidad = "servidores-web"
+version_minima = ["tlsMinVersion"]
+cifrados = ["tlsCipherSuites"]
+
+[[servicio]]
+id = "caddy"
+nombre = "Caddy"
+archivos = ["caddyfile", "*.caddyfile"]
+pistas = ["protocols", "curves"]
+capacidad = "servidores-web"
+version_minima = ["protocols"]
+cifrados = ["ciphers"]
+grupos = ["curves"]
+
+[[servicio]]
+id = "openldap"
+nombre = "OpenLDAP"
+archivos = ["slapd.conf", "ldap.conf", "*.ldif"]
+pistas = ["TLSProtocolMin", "olcTLSProtocolMin", "TLS_PROTOCOL_MIN", "TLS_REQCERT", "TLSCipherSuite"]
+capacidad = "servidores-web"
+version_minima = ["TLSProtocolMin", "olcTLSProtocolMin", "TLS_PROTOCOL_MIN"]
+cifrados = ["TLSCipherSuite", "olcTLSCipherSuite", "TLS_CIPHER_SUITE"]
+avisos = [
+  { clave = "TLS_REQCERT", valores = ["never", "allow"], texto = "TLS_REQCERT never/allow: el cliente LDAP no exige un certificado válido del servidor.", riesgo = "roto-clasico" },
+]
+
+[[servicio]]
+id = "grafana"
+nombre = "Grafana"
+archivos = ["grafana.ini", "custom.ini"]
+pistas = ["min_tls_version"]
+capacidad = "servidores-web"
+version_minima = ["min_tls_version"]
+
+[[servicio]]
+id = "oracle-net"
+nombre = "Oracle Net (sqlnet.ora)"
+archivos = ["sqlnet.ora"]
+pistas = ["SQLNET.", "SSL_VERSION", "SSL_CIPHER_SUITES"]
+capacidad = "servidores-web"
+versiones = ["SSL_VERSION"]
+cifrados = ["SSL_CIPHER_SUITES"]
+algoritmos = [
+  { clave = "SQLNET.ENCRYPTION_TYPES_SERVER", espacio = "oracle" },
+  { clave = "SQLNET.ENCRYPTION_TYPES_CLIENT", espacio = "oracle" },
+  { clave = "SQLNET.CRYPTO_CHECKSUM_TYPES_SERVER", espacio = "oracle" },
+  { clave = "SQLNET.CRYPTO_CHECKSUM_TYPES_CLIENT", espacio = "oracle" },
+]
+avisos = [
+  { clave = "SQLNET.ENCRYPTION_SERVER", valores = ["rejected", "accepted"], texto = "SQLNET.ENCRYPTION_SERVER no exige cifrado de red: el tráfico de la base de datos puede viajar en claro.", riesgo = "roto-clasico" },
+  { clave = "SQLNET.ALLOWED_LOGON_VERSION_SERVER", valores = ["8", "9", "10", "11"], texto = "Admite verificadores de contraseña antiguos (basados en DES o SHA-1): use 12 o 12a.", riesgo = "obsoleto" },
+]

@@ -86,6 +86,49 @@ pub struct SeccionCumplimiento {
     pub no_conformes_restantes: usize,
 }
 
+/// Una receta de corrección y los activos que cubre.
+pub struct FilaReceta {
+    pub titulo: String,
+    pub pasos: Vec<String>,
+    pub referencias: Vec<String>,
+    pub activos: usize,
+    /// La prioridad más urgente de sus activos.
+    pub prioridad: u8,
+    pub ejemplos: Vec<String>,
+}
+
+/// Un sistema de la organización (`--organizacion`).
+pub struct FilaSistema {
+    pub nombre: String,
+    pub responsable: String,
+    pub criticidad: String,
+    pub exposicion: String,
+    pub activos: usize,
+    /// Prioridad crítica o alta.
+    pub urgentes: usize,
+    /// Expuestos según la desigualdad de Mosca.
+    pub expuestos: usize,
+}
+
+/// Una excepción declarada y los activos que cubre.
+pub struct FilaExcepcion {
+    pub id: String,
+    pub vence: String,
+    pub vigente: bool,
+    pub justificacion: String,
+    pub aprobada_por: String,
+    pub activos: usize,
+}
+
+pub struct SeccionOrganizacion {
+    pub horizonte: Option<i32>,
+    pub sistemas: Vec<FilaSistema>,
+    pub sin_sistema: usize,
+    /// (activo, sistemas, años de exposición).
+    pub expuestos: Vec<(String, String, i32)>,
+    pub excepciones: Vec<FilaExcepcion>,
+}
+
 /// Todo lo que dice el reporte, ya calculado y en el idioma actual.
 pub struct Modelo {
     pub sistema: String,
@@ -105,6 +148,8 @@ pub struct Modelo {
     pub capacidades: Vec<FilaCapacidad>,
     pub secciones: Vec<Seccion>,
     pub cumplimiento: Option<SeccionCumplimiento>,
+    pub organizacion: Option<SeccionOrganizacion>,
+    pub recetas: Vec<FilaReceta>,
     /// (certificados raíz, (riesgo, cantidad)).
     pub almacen: Option<(usize, Vec<(String, usize)>)>,
     pub conformes: Vec<String>,
@@ -303,6 +348,105 @@ impl Modelo {
             }
         });
 
+        let organizacion = (!cbom.sistemas.is_empty() || !cbom.excepciones.is_empty()).then(|| {
+            let hoy = fecha_de(&cbom.fecha);
+            let sistemas = cbom
+                .sistemas
+                .iter()
+                .map(|x| {
+                    let suyos: Vec<&Registro> = regs
+                        .iter()
+                        .filter(|r| r.sistemas.contains(&x.nombre))
+                        .collect();
+                    FilaSistema {
+                        nombre: x.nombre.clone(),
+                        responsable: x.responsable.clone(),
+                        criticidad: match x.criticidad.as_str() {
+                            "alta" => tx("Alta", "High").into(),
+                            "media" => tx("Media", "Medium").into(),
+                            "baja" => tx("Baja", "Low").into(),
+                            _ => String::new(),
+                        },
+                        exposicion: match x.exposicion.as_str() {
+                            "internet" => "Internet".into(),
+                            "interna" => tx("Interna", "Internal").into(),
+                            _ => String::new(),
+                        },
+                        activos: suyos.len(),
+                        urgentes: suyos.iter().filter(|r| r.prioridad <= 2).count(),
+                        expuestos: suyos
+                            .iter()
+                            .filter(|r| r.holgura_mosca.is_some_and(|h| h < 0))
+                            .count(),
+                    }
+                })
+                .collect();
+            let mut expuestos: Vec<(String, String, i32)> = regs
+                .iter()
+                .filter_map(|r| {
+                    let h = r.holgura_mosca.filter(|h| *h < 0)?;
+                    Some((tr(&r.nombre), r.sistemas.join(", "), -h))
+                })
+                .collect();
+            expuestos.sort_by(|a, b| b.2.cmp(&a.2).then_with(|| a.0.cmp(&b.0)));
+            let excepciones = cbom
+                .excepciones
+                .iter()
+                .map(|e| FilaExcepcion {
+                    id: e.id.clone(),
+                    vence: e.vence.clone(),
+                    vigente: hoy.as_deref().is_none_or(|h| e.vence.as_str() >= h),
+                    justificacion: e.justificacion.clone(),
+                    aprobada_por: e.aprobada_por.clone(),
+                    activos: regs
+                        .iter()
+                        .filter(|r| r.excepcion.as_ref().is_some_and(|(id, _, _)| *id == e.id))
+                        .count(),
+                })
+                .collect();
+            SeccionOrganizacion {
+                horizonte: cbom.horizonte_cuantico,
+                sistemas,
+                sin_sistema: regs.iter().filter(|r| r.sistemas.is_empty()).count(),
+                expuestos,
+                excepciones,
+            }
+        });
+
+        // Recetas de corrección de lo que requiere acción.
+        let mut por_receta: BTreeMap<&str, (&suaya_core::Receta, Vec<&Registro>)> = BTreeMap::new();
+        for r in regs.iter().filter(|r| (1..=4).contains(&r.prioridad)) {
+            if let Some(x) = r.receta(c) {
+                por_receta
+                    .entry(x.id.as_str())
+                    .or_insert((x, Vec::new()))
+                    .1
+                    .push(r);
+            }
+        }
+        let mut recetas: Vec<FilaReceta> = por_receta
+            .into_values()
+            .map(|(x, lista)| {
+                let mut ejemplos: Vec<String> = lista.iter().map(|r| tr(&r.nombre)).collect();
+                ejemplos.sort();
+                ejemplos.dedup();
+                ejemplos.truncate(6);
+                FilaReceta {
+                    titulo: x.titulo().to_string(),
+                    pasos: x.pasos().to_vec(),
+                    referencias: x.referencias.clone(),
+                    activos: lista.len(),
+                    prioridad: lista.iter().map(|r| r.prioridad).min().unwrap_or(9),
+                    ejemplos,
+                }
+            })
+            .collect();
+        recetas.sort_by(|a, b| {
+            a.prioridad
+                .cmp(&b.prioridad)
+                .then(b.activos.cmp(&a.activos))
+        });
+
         let almacen_regs: Vec<&Registro> = regs
             .iter()
             .filter(|r| r.capacidad == ALMACEN && r.prioridad >= 3)
@@ -368,6 +512,8 @@ impl Modelo {
             capacidades,
             secciones,
             cumplimiento,
+            organizacion,
+            recetas,
             almacen,
             conformes,
             notas_conformes,
@@ -395,6 +541,62 @@ impl Modelo {
     }
 }
 
+fn aviso_parcial() -> &'static str {
+    tx(
+        "Cobertura parcial o no declarada. No interpretar ausencia de hallazgos como ausencia de riesgo.",
+        "Partial or undeclared coverage. Do not read an absence of findings as an absence of risk.",
+    )
+}
+
+fn texto_recetas() -> &'static str {
+    tx(
+        "Pasos de corrección de la base de conocimiento (remediacion.toml) para los hallazgos de este reporte, de lo más urgente a lo menos. Verifique cada directiva contra la documentación de su producto antes de aplicarla.",
+        "Remediation steps from the knowledge base (remediacion.toml) for the findings in this report, from most to least urgent. Check each directive against your product documentation before applying it.",
+    )
+}
+
+fn resumen_receta(x: &FilaReceta) -> String {
+    let (n, p, ejemplos) = (
+        x.activos,
+        etiqueta_prioridad(x.prioridad).to_lowercase(),
+        x.ejemplos.join(", "),
+    );
+    if n == 1 {
+        t!(
+            "Se aplica a 1 activo (prioridad {p}): {ejemplos}.",
+            "Applies to 1 asset ({p} priority): {ejemplos}."
+        )
+    } else {
+        t!(
+            "Se aplica a {n} activos (prioridad más urgente: {p}), p. ej. {ejemplos}.",
+            "Applies to {n} assets (most urgent priority: {p}), e.g. {ejemplos}."
+        )
+    }
+}
+
+/// Fecha AAAA-MM-DD de una marca de tiempo RFC 3339.
+fn fecha_de(marca: &str) -> Option<String> {
+    marca
+        .get(..10)
+        .filter(|f| f.as_bytes().get(4) == Some(&b'-'))
+        .map(str::to_string)
+}
+
+impl SeccionOrganizacion {
+    fn introduccion(&self) -> String {
+        let mut t = tx(
+            "El contexto declarado por la organización asigna cada activo a sus sistemas y responsables. La desigualdad de Mosca (x + y > z) compara cuántos años deben seguir confidenciales los datos (x) más lo que tarda la migración (y) con los años que faltan para una computadora cuántica relevante (z): si se cumple, lo que hoy se captura cifrado podrá descifrarse mientras siga siendo valioso.",
+            "The context declared by the organization assigns each asset to its systems and owners. Mosca's inequality (x + y > z) compares how many years the data must stay confidential (x) plus how long the migration takes (y) with the years left until a relevant quantum computer (z): if it holds, what is captured encrypted today can be decrypted while it is still valuable.",
+        )
+        .to_string();
+        if let Some(h) = self.horizonte {
+            t.push(' ');
+            t.push_str(&t!("Horizonte supuesto: {h}.", "Assumed horizon: {h}."));
+        }
+        t
+    }
+}
+
 fn capitalizar(t: &str) -> String {
     let mut c = t.chars();
     match c.next() {
@@ -412,7 +614,7 @@ pub fn reporte_markdown(cbom: &CbomLeido, c: &Conocimiento) -> String {
     let m = Modelo::desde(cbom, c);
     let mut s = String::new();
     if cbom.estado != "completed" {
-        s.push_str("**Cobertura parcial o no declarada. No interpretar ausencia de hallazgos como ausencia de riesgo.**\n\n");
+        let _ = writeln!(s, "**{}**\n", aviso_parcial());
     }
     let _ = writeln!(
         s,
@@ -514,6 +716,104 @@ pub fn reporte_markdown(cbom: &CbomLeido, c: &Conocimiento) -> String {
     }
     let _ = writeln!(s);
 
+    if let Some(o) = &m.organizacion {
+        let _ = writeln!(
+            s,
+            "## {}\n",
+            tx("Contexto de la organización", "Organizational context")
+        );
+        let _ = writeln!(s, "{}\n", o.introduccion());
+        if !o.sistemas.is_empty() {
+            let _ = writeln!(
+                s,
+                "| {} | {} | {} | {} | {} | {} | {} |\n|---|---|---|---|---:|---:|---:|",
+                tx("Sistema", "System"),
+                tx("Responsable", "Owner"),
+                tx("Criticidad", "Criticality"),
+                tx("Exposición", "Exposure"),
+                tx("Activos", "Assets"),
+                tx("Críticos o altos", "Critical or high"),
+                tx("Expuestos (Mosca)", "Exposed (Mosca)")
+            );
+            for f in &o.sistemas {
+                let _ = writeln!(
+                    s,
+                    "| {} | {} | {} | {} | {} | {} | {} |",
+                    celda(&f.nombre),
+                    celda(&f.responsable),
+                    f.criticidad,
+                    f.exposicion,
+                    f.activos,
+                    f.urgentes,
+                    f.expuestos
+                );
+            }
+            let _ = writeln!(s);
+            if o.sin_sistema > 0 {
+                let n = o.sin_sistema;
+                let _ = writeln!(
+                    s,
+                    "{}\n",
+                    t!(
+                        "{n} activos no corresponden a ningún sistema declarado.",
+                        "{n} assets do not belong to any declared system."
+                    )
+                );
+            }
+        }
+        if !o.expuestos.is_empty() {
+            let _ = writeln!(
+                s,
+                "### {}\n",
+                tx(
+                    "Expuestos a «capturar ahora, descifrar después»",
+                    "Exposed to \"harvest now, decrypt later\""
+                )
+            );
+            let _ = writeln!(
+                s,
+                "| {} | {} | {} |\n|---|---|---:|",
+                tx("Activo", "Asset"),
+                tx("Sistemas", "Systems"),
+                tx("Años de exposición", "Years of exposure")
+            );
+            for (activo, sistemas, anios) in o.expuestos.iter().take(25) {
+                let _ = writeln!(s, "| {} | {} | {anios} |", celda(activo), celda(sistemas));
+            }
+            let _ = writeln!(s);
+        }
+        if !o.excepciones.is_empty() {
+            let _ = writeln!(s, "### {}\n", tx("Excepciones", "Exceptions"));
+            let _ = writeln!(
+                s,
+                "| {} | {} | {} | {} | {} | {} |\n|---|---|---|---|---|---:|",
+                tx("Excepción", "Exception"),
+                tx("Vence", "Expires"),
+                tx("Estado", "Status"),
+                tx("Justificación", "Justification"),
+                tx("Aprobada por", "Approved by"),
+                tx("Activos", "Assets")
+            );
+            for e in &o.excepciones {
+                let _ = writeln!(
+                    s,
+                    "| {} | {} | {} | {} | {} | {} |",
+                    celda(&e.id),
+                    e.vence,
+                    if e.vigente {
+                        tx("Vigente", "Active")
+                    } else {
+                        tx("Vencida", "Expired")
+                    },
+                    celda(&e.justificacion),
+                    celda(&e.aprobada_por),
+                    e.activos
+                );
+            }
+            let _ = writeln!(s);
+        }
+    }
+
     let _ = writeln!(
         s,
         "## {}\n",
@@ -560,6 +860,27 @@ pub fn reporte_markdown(cbom: &CbomLeido, c: &Conocimiento) -> String {
                 } else {
                     let _ = writeln!(s, "- **{}**: {texto}", celda(nombre));
                 }
+            }
+            let _ = writeln!(s);
+        }
+    }
+
+    if !m.recetas.is_empty() {
+        let _ = writeln!(s, "## {}\n", tx("Cómo corregir", "How to fix"));
+        let _ = writeln!(s, "{}\n", texto_recetas());
+        for x in &m.recetas {
+            let _ = writeln!(s, "### {}\n", x.titulo);
+            let _ = writeln!(s, "{}\n", resumen_receta(x));
+            for (i, paso) in x.pasos.iter().enumerate() {
+                let _ = writeln!(s, "{}. {paso}", i + 1);
+            }
+            if !x.referencias.is_empty() {
+                let _ = writeln!(
+                    s,
+                    "\n{}: {}",
+                    tx("Referencias", "References"),
+                    x.referencias.join(", ")
+                );
             }
             let _ = writeln!(s);
         }
@@ -848,7 +1169,7 @@ pub fn reporte_html(cbom: &CbomLeido, c: &Conocimiento) -> String {
         esc(&m.sistema)
     );
     if cbom.estado != "completed" {
-        s.push_str("<p role=\"status\">Cobertura parcial o no declarada. No interpretar ausencia de hallazgos como ausencia de riesgo.</p>");
+        let _ = write!(s, "<p role=\"status\">{}</p>", esc(aviso_parcial()));
     }
     let _ = write!(
         s,
@@ -938,6 +1259,106 @@ pub fn reporte_html(cbom: &CbomLeido, c: &Conocimiento) -> String {
     }
     s.push_str("</tbody></table></div></section>");
 
+    if let Some(o) = &m.organizacion {
+        let _ = write!(
+            s,
+            "<section><h2>{}</h2><p>{}</p>",
+            tx("Contexto de la organización", "Organizational context"),
+            en_linea(&o.introduccion())
+        );
+        if !o.sistemas.is_empty() {
+            let _ = write!(
+                s,
+                r#"<div class="tabla"><table><thead><tr><th>{}</th><th>{}</th><th>{}</th><th>{}</th><th class="n">{}</th><th class="n">{}</th><th class="n">{}</th></tr></thead><tbody>"#,
+                tx("Sistema", "System"),
+                tx("Responsable", "Owner"),
+                tx("Criticidad", "Criticality"),
+                tx("Exposición", "Exposure"),
+                tx("Activos", "Assets"),
+                tx("Críticos o altos", "Critical or high"),
+                tx("Expuestos (Mosca)", "Exposed (Mosca)")
+            );
+            for f in &o.sistemas {
+                let _ = write!(
+                    s,
+                    r#"<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td class="n">{}</td><td class="n">{}</td><td class="n">{}</td></tr>"#,
+                    esc(&f.nombre),
+                    esc(&f.responsable),
+                    esc(&f.criticidad),
+                    esc(&f.exposicion),
+                    f.activos,
+                    f.urgentes,
+                    f.expuestos
+                );
+            }
+            s.push_str("</tbody></table></div>");
+            if o.sin_sistema > 0 {
+                let n = o.sin_sistema;
+                let _ = write!(
+                    s,
+                    "<p>{}</p>",
+                    esc(&t!(
+                        "{n} activos no corresponden a ningún sistema declarado.",
+                        "{n} assets do not belong to any declared system."
+                    ))
+                );
+            }
+        }
+        if !o.expuestos.is_empty() {
+            let _ = write!(
+                s,
+                r#"<h3>{}</h3><div class="tabla"><table><thead><tr><th>{}</th><th>{}</th><th class="n">{}</th></tr></thead><tbody>"#,
+                esc(tx(
+                    "Expuestos a «capturar ahora, descifrar después»",
+                    "Exposed to \"harvest now, decrypt later\""
+                )),
+                tx("Activo", "Asset"),
+                tx("Sistemas", "Systems"),
+                tx("Años de exposición", "Years of exposure")
+            );
+            for (activo, sistemas, anios) in o.expuestos.iter().take(25) {
+                let _ = write!(
+                    s,
+                    r#"<tr><td>{}</td><td>{}</td><td class="n">{anios}</td></tr>"#,
+                    esc(activo),
+                    esc(sistemas)
+                );
+            }
+            s.push_str("</tbody></table></div>");
+        }
+        if !o.excepciones.is_empty() {
+            let _ = write!(
+                s,
+                r#"<h3>{}</h3><div class="tabla"><table><thead><tr><th>{}</th><th>{}</th><th>{}</th><th>{}</th><th>{}</th><th class="n">{}</th></tr></thead><tbody>"#,
+                tx("Excepciones", "Exceptions"),
+                tx("Excepción", "Exception"),
+                tx("Vence", "Expires"),
+                tx("Estado", "Status"),
+                tx("Justificación", "Justification"),
+                tx("Aprobada por", "Approved by"),
+                tx("Activos", "Assets")
+            );
+            for e in &o.excepciones {
+                let _ = write!(
+                    s,
+                    r#"<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td class="n">{}</td></tr>"#,
+                    esc(&e.id),
+                    esc(&e.vence),
+                    if e.vigente {
+                        tx("Vigente", "Active")
+                    } else {
+                        tx("Vencida", "Expired")
+                    },
+                    esc(&e.justificacion),
+                    esc(&e.aprobada_por),
+                    e.activos
+                );
+            }
+            s.push_str("</tbody></table></div>");
+        }
+        s.push_str("</section>");
+    }
+
     let _ = write!(
         s,
         "<section><h2>{}</h2>",
@@ -1002,6 +1423,42 @@ pub fn reporte_html(cbom: &CbomLeido, c: &Conocimiento) -> String {
         }
     }
     s.push_str("</section>");
+
+    if !m.recetas.is_empty() {
+        let _ = write!(
+            s,
+            "<section><h2>{}</h2><p>{}</p>",
+            tx("Cómo corregir", "How to fix"),
+            esc(texto_recetas())
+        );
+        for x in &m.recetas {
+            let _ = write!(
+                s,
+                "<h3>{}</h3><p>{}</p><ol>",
+                esc(&x.titulo),
+                esc(&resumen_receta(x))
+            );
+            for paso in &x.pasos {
+                let _ = write!(s, "<li>{}</li>", esc(paso));
+            }
+            s.push_str("</ol>");
+            if !x.referencias.is_empty() {
+                let enlaces: Vec<String> = x
+                    .referencias
+                    .iter()
+                    .filter(|u| u.starts_with("https://"))
+                    .map(|u| format!(r#"<a href="{0}">{0}</a>"#, esc(u)))
+                    .collect();
+                let _ = write!(
+                    s,
+                    "<p>{}: {}</p>",
+                    tx("Referencias", "References"),
+                    enlaces.join(", ")
+                );
+            }
+        }
+        s.push_str("</section>");
+    }
 
     if let Some(cu) = &m.cumplimiento {
         let _ = write!(

@@ -60,8 +60,8 @@ struct Cli {
     /// Muestra la versión.
     #[arg(short = 'V', long = "version", action = ArgAction::Version)]
     version: Option<bool>,
-    /// Idioma de la interfaz y de los reportes: es o en (también SUAYA_IDIOMA).
-    #[arg(long, global = true, value_name = "es|en", value_parser = ["es", "en"], hide_possible_values = true, display_order = 999)]
+    /// Idioma de la interfaz y de los reportes: es, en o pt (también SUAYA_IDIOMA).
+    #[arg(long, global = true, value_name = "es|en|pt", value_parser = ["es", "en", "pt"], hide_possible_values = true, display_order = 999)]
     idioma: Option<String>,
 }
 
@@ -126,7 +126,7 @@ enum Orden {
         /// Archivos o directorios a escanear.
         #[arg(help_heading = "Argumentos")]
         rutas: Vec<PathBuf>,
-        /// Servicio de red a sondear además de los archivos (repetible): tls://, ssh://, smtp://, imap://, pop3://, ldap://, postgres:// o mysql://host:puerto.
+        /// Servicio de red a sondear además de los archivos (repetible): tls://, ssh://, ike://, smtp://, imap://, pop3://, ldap://, postgres://, mysql://, ftp://, xmpp:// o rdp://host:puerto; dns://dominio; oidc:// o saml://host/ruta.
         #[arg(long = "objetivo", value_name = "OBJETIVO")]
         objetivos: Vec<String>,
         /// Imagen de contenedor (repetible): archivo tar de «docker save», «podman save» u OCI, o docker://registro/repositorio:etiqueta para descargarla del registro.
@@ -157,6 +157,9 @@ enum Orden {
         /// Revisa también ejecutables grandes (hasta 512 MiB) en busca de su biblioteca criptográfica y su versión.
         #[arg(long)]
         binarios: bool,
+        /// Inventaría además los certificados del llavero de macOS (raíces del sistema, llavero del sistema y del usuario); nunca lee llaves privadas.
+        #[arg(long)]
+        llavero: bool,
         /// Hilos de análisis (predeterminado: todos los núcleos).
         #[arg(long, default_value_t = 0, hide_default_value = true)]
         hilos: usize,
@@ -164,18 +167,21 @@ enum Orden {
         #[arg(long, default_value_t = 5, hide_default_value = true)]
         tamano_maximo: u64,
     },
-    /// Sondea servicios TLS, STARTTLS y SSH en la red y genera el CBOM.
+    /// Sondea servicios de red (TLS, STARTTLS, SSH, IKEv2, DNS, OpenID Connect y SAML) y genera el CBOM.
     #[command(
         visible_alias = "probe",
         override_usage = "suaya sondear [OPCIONES] <OBJETIVOS>...",
-        long_about = "Sondea servicios TLS y SSH para observar la criptografía que ofrecen realmente: \
+        long_about = "Sondea servicios de red para observar la criptografía que ofrecen realmente: \
                       versiones de TLS, grupos de intercambio de llaves (incluidos los híbridos con ML-KEM), \
-                      algoritmos SSH y la cadena de certificados.\n\n\
+                      suites de TLS 1.2, cadenas de certificados por familia de firma, algoritmos y llaves de host SSH, \
+                      grupos IKEv2 (con ML-KEM según RFC 9370), DNSSEC, DKIM, CAA y TLSA de un dominio, \
+                      y las llaves y algoritmos de proveedores OpenID Connect y SAML.\n\n\
                       Uso responsable: sondee solo sistemas que administre o que tenga autorización expresa \
-                      para evaluar. Cada objetivo recibe unas veinte conexiones breves y secuenciales."
+                      para evaluar. Un objetivo TLS recibe entre treinta y setenta conexiones breves y secuenciales; \
+                      los demás, unas pocas."
     )]
     Sondear {
-        /// Servicios a sondear: tls://, ssh://, smtp://, imap://, pop3://, ldap://, postgres:// o mysql://host:puerto, o host:puerto.
+        /// Servicios a sondear: tls://, ssh://, ike://, smtp://, imap://, pop3://, ldap://, postgres://, mysql://, ftp://, xmpp:// o rdp://host:puerto, o host:puerto; dns://dominio; oidc:// o saml://host/ruta.
         #[arg(required = true, help_heading = "Argumentos")]
         objetivos: Vec<String>,
         #[command(flatten)]
@@ -183,25 +189,32 @@ enum Orden {
         #[command(flatten)]
         red: ArgsRed,
     },
-    /// Diagnostica la conectividad y el intercambio de llaves y certificados de servicios TLS, STARTTLS y SSH.
+    /// Diagnostica la conectividad y el intercambio de llaves y certificados de servicios de red (TLS, STARTTLS, SSH, IKEv2, DNS, OpenID Connect y SAML).
     #[command(
         visible_alias = "diagnose",
         override_usage = "suaya diagnosticar [OPCIONES] <OBJETIVOS>...",
         long_about = "Diagnostica lo que obtiene realmente un cliente al conectarse: resolución del nombre, \
                       cada dirección IPv4 e IPv6 con su latencia, el preámbulo STARTTLS, dos saludos TLS completos \
                       (un cliente moderno con X25519MLKEM768 y uno solo clásico) con el grupo negociado, la suite y la firma, \
-                      y la validación estándar de la cadena de certificados (autoridad, nombre, vigencia, orden, llaves, firmas y OCSP). \
-                      En SSH, el KEXINIT con sus intercambios poscuánticos y la mitigación de Terrapin.\n\n\
+                      y la validación estándar de la cadena de certificados (autoridad, nombre, vigencia y su máximo según el CA/Browser Forum, \
+                      orden, llaves, firmas y OCSP). \
+                      En SSH, el KEXINIT con sus intercambios poscuánticos y la mitigación de Terrapin. \
+                      En IKEv2, los grupos aceptados y el intercambio adicional con ML-KEM. \
+                      En DNS, DNSSEC (llaves, delegación y firmas), CAA, TLSA y DKIM. \
+                      En OpenID Connect y SAML, los algoritmos anunciados, las llaves JWKS y los certificados de los metadatos.\n\n\
                       Uso responsable: diagnostique solo sistemas que administre o que tenga autorización expresa \
                       para evaluar. No se envían datos de aplicación."
     )]
     Diagnosticar {
-        /// Servicios a diagnosticar: tls://, ssh://, smtp://, imap://, pop3://, ldap://, postgres:// o mysql://host:puerto, o host:puerto.
+        /// Servicios a diagnosticar: tls://, ssh://, ike://, smtp://, imap://, pop3://, ldap://, postgres://, mysql://, ftp://, xmpp:// o rdp://host:puerto, o host:puerto; dns://dominio; oidc:// o saml://host/ruta.
         #[arg(required = true, help_heading = "Argumentos")]
         objetivos: Vec<String>,
         /// Escribe el diagnóstico completo en JSON.
         #[arg(long, value_name = "ARCHIVO.json")]
         json: Option<PathBuf>,
+        /// Escribe métricas en el formato de texto de Prometheus (p. ej. para el recolector de archivos de node_exporter).
+        #[arg(long, value_name = "ARCHIVO.prom")]
+        metricas: Option<PathBuf>,
         /// Termina con código 2 si hay hallazgos de este nivel o más grave: critico, alto, medio o bajo.
         #[arg(long, value_name = "NIVEL", value_parser = ["critico", "alto", "medio", "bajo"], hide_possible_values = true)]
         fallar_en: Option<String>,
@@ -254,15 +267,34 @@ enum Orden {
         /// CBOM generado por Suaya.
         #[arg(help_heading = "Argumentos")]
         cbom: PathBuf,
-        /// Archivo de salida (.md o .html); si se omite, se imprime en pantalla.
+        /// Archivo de salida; si se omite, se imprime en pantalla.
         #[arg(short = 'o', long)]
         salida: Option<PathBuf>,
-        /// Formato: md o html (predeterminado: según la extensión de la salida).
-        #[arg(long, value_parser = ["md", "html"], hide_possible_values = true)]
+        /// Formato: md, html, pci (inventario PCI DSS v4.0), sarif, csv, jsonl o tickets (predeterminado: según la extensión de la salida).
+        #[arg(long, value_parser = ["md", "html", "pci", "sarif", "csv", "jsonl", "tickets"], hide_possible_values = true)]
         formato: Option<String>,
         /// Directorio con algoritmos.toml y madurez.toml que sustituye a la base incrustada.
         #[arg(long)]
         base_conocimiento: Option<PathBuf>,
+    },
+    /// Muestra la evolución de varios CBOM en el tiempo: críticos, protegidos y vulnerables por escaneo.
+    #[command(
+        visible_alias = "trends",
+        override_usage = "suaya tendencias [OPCIONES] <CBOM>..."
+    )]
+    Tendencias {
+        /// CBOM de Suaya, de cualquier fecha (se ordenan por la del escaneo).
+        #[arg(required = true, help_heading = "Argumentos")]
+        cboms: Vec<PathBuf>,
+        /// Formato: texto, md, csv o json (predeterminado: texto).
+        #[arg(long, value_parser = ["texto", "md", "csv", "json"], hide_possible_values = true)]
+        formato: Option<String>,
+        /// Archivo de salida; si se omite, se imprime en pantalla.
+        #[arg(short = 'o', long)]
+        salida: Option<PathBuf>,
+        /// Termina con código 2 si el último escaneo tiene más hallazgos críticos o altos que el anterior.
+        #[arg(long)]
+        fallar_si_empeora: bool,
     },
     /// Compara dos CBOM para seguir el avance de una migración.
     #[command(
@@ -392,6 +424,12 @@ struct ArgsSalida {
     /// Genera además el reporte ejecutivo: HTML si termina en .html, Markdown en otro caso.
     #[arg(short, long)]
     reporte: Option<PathBuf>,
+    /// Genera además un SARIF 2.1.0 para el análisis de código (GitHub, GitLab).
+    #[arg(long, value_name = "ARCHIVO.sarif")]
+    sarif: Option<PathBuf>,
+    /// Genera además un CSV con un activo por fila.
+    #[arg(long, value_name = "ARCHIVO.csv")]
+    csv: Option<PathBuf>,
     /// Nombre del sistema evaluado.
     #[arg(short, long)]
     nombre: Option<String>,
@@ -404,9 +442,12 @@ struct ArgsSalida {
     /// Directorio con algoritmos.toml y madurez.toml que sustituye a la base incrustada.
     #[arg(long)]
     base_conocimiento: Option<PathBuf>,
-    /// Termina con código 2 si hay hallazgos de esta prioridad o más grave (1 = crítica ... 4 = baja).
+    /// Termina con código 2 si hay hallazgos de esta prioridad o más grave (1 = crítica ... 4 = baja); no cuenta los exceptuados por el contexto.
     #[arg(long, value_parser = clap::value_parser!(u8).range(1..=4))]
     fallar_en: Option<u8>,
+    /// Contexto de la organización (TOML): sistemas, responsables, criticidad, exposición, vida de los datos (Mosca) y excepciones con vencimiento.
+    #[arg(long, value_name = "ORGANIZACION.toml")]
+    organizacion: Option<PathBuf>,
     /// Muestra los avisos de lo que no se pudo interpretar o alcanzar.
     #[arg(short, long)]
     detallado: bool,
@@ -486,6 +527,17 @@ fn finalizar(
     let anio = a
         .anio
         .unwrap_or_else(|| time::OffsetDateTime::now_utc().year());
+    // El contexto va antes del perfil: sus reglas pueden depender de la
+    // criticidad de cada sistema.
+    let contexto = match &a.organizacion {
+        Some(r) => {
+            let ctx =
+                suaya_core::contexto::ArchivoContexto::cargar(r).map_err(anyhow::Error::msg)?;
+            let aplicado = ctx.aplicar(inventario, &suaya_escaneo::api::hoy());
+            Some((ctx, aplicado))
+        }
+        None => None,
+    };
     if let Some(p) = &perfil {
         p.evaluar(inventario, c, anio);
     }
@@ -504,6 +556,31 @@ fn finalizar(
     if let Some(props) = documento["metadata"]["properties"].as_array_mut() {
         props.push(serde_json::json!({"name":"suaya:estado", "value":if avisos.is_empty() {"completed"} else {"partial"}}));
         props.push(serde_json::json!({"name":"suaya:avisos", "value":avisos.len().to_string()}));
+        if let Some((ctx, _)) = &contexto {
+            props.push(serde_json::json!({"name":"suaya:horizonte-cuantico", "value":ctx.horizonte().to_string()}));
+            for x in &ctx.sistemas {
+                let valor = serde_json::json!({
+                    "nombre": x.nombre,
+                    "responsable": x.responsable,
+                    "criticidad": x.criticidad.map(|v| v.como_texto()),
+                    "exposicion": x.exposicion.map(|v| v.como_texto()),
+                    "vida_datos": x.vida_datos,
+                    "migracion": x.migracion,
+                });
+                props.push(
+                    serde_json::json!({"name":"suaya:contexto-sistema", "value":valor.to_string()}),
+                );
+            }
+            for x in &ctx.excepciones {
+                let valor = serde_json::json!({
+                    "id": x.id,
+                    "justificacion": x.justificacion,
+                    "aprobada_por": x.aprobada_por,
+                    "vence": x.vence,
+                });
+                props.push(serde_json::json!({"name":"suaya:contexto-excepcion", "value":valor.to_string()}));
+            }
+        }
     }
     let texto = serde_json::to_string_pretty(&documento)?;
     escribir_atomico(&a.salida, &texto)
@@ -516,11 +593,24 @@ fn finalizar(
             &con_sufijo(&a.salida, ".firma"),
         )?;
     }
-    if let Some(ruta_reporte) = &a.reporte {
+    if a.reporte.is_some() || a.sarif.is_some() || a.csv.is_some() {
         let leido = leer(&texto).map_err(anyhow::Error::msg)?;
-        escribir_atomico(ruta_reporte, texto_reporte(&leido, c, ruta_reporte, None)).with_context(
-            || suaya_core::t!("al escribir {}", "writing {}", ruta_reporte.display()),
-        )?;
+        let escribir = |ruta: &PathBuf, contenido: String| {
+            escribir_atomico(ruta, contenido)
+                .with_context(|| suaya_core::t!("al escribir {}", "writing {}", ruta.display()))
+        };
+        if let Some(ruta) = &a.reporte {
+            escribir(ruta, texto_reporte(&leido, c, ruta, None))?;
+        }
+        if let Some(ruta) = &a.sarif {
+            escribir(
+                ruta,
+                serde_json::to_string_pretty(&suaya_cbom::formatos::sarif(&leido, c))?,
+            )?;
+        }
+        if let Some(ruta) = &a.csv {
+            escribir(ruta, suaya_cbom::formatos::csv(&leido, c))?;
+        }
     }
 
     let activos = &inventario.activos;
@@ -543,6 +633,24 @@ fn finalizar(
             etiqueta_prioridad(p),
             activos.iter().filter(|x| prioridad(x) == p).count()
         );
+    }
+    if let Some((_, ap)) = &contexto {
+        println!();
+        decir!(
+            "  Contexto: {} activos con sistema · {} expuestos según Mosca · {} con excepción vigente · {} con excepción vencida",
+            "  Context: {} assets with a system · {} exposed per Mosca · {} with an active exception · {} with an expired exception",
+            ap.con_sistema,
+            ap.expuestos_mosca,
+            ap.excepciones_vigentes,
+            ap.excepciones_vencidas
+        );
+        if !ap.excepciones_sin_uso.is_empty() {
+            decir!(
+                "  Excepciones que no cubren ningún activo: {}",
+                "  Exceptions that cover no asset: {}",
+                ap.excepciones_sin_uso.join(", ")
+            );
+        }
     }
     if let Some(p) = &perfil {
         let n = |e: EstadoCumplimiento| {
@@ -577,8 +685,15 @@ fn finalizar(
         for x in urgentes.iter().take(12) {
             let cl = x.clasificacion.as_ref().expect("clasificado");
             let donde = x.ubicaciones.first().map(|u| u.ruta.as_str()).unwrap_or("");
+            let excepcion = x
+                .organizacion
+                .as_ref()
+                .and_then(|o| o.excepcion.as_ref())
+                .filter(|e| e.vigente)
+                .map(|e| suaya_core::t!(" · excepción {}", " · exception {}", e.id))
+                .unwrap_or_default();
             println!(
-                "  [{}] {} · {} · {}",
+                "  [{}] {} · {} · {}{excepcion}",
                 etiqueta_prioridad(cl.prioridad),
                 suaya_core::idioma::traducir(&x.nombre),
                 cl.accion.etiqueta(),
@@ -617,11 +732,19 @@ fn finalizar(
             r.display()
         );
     }
+    if let Some(r) = &a.sarif {
+        println!("SARIF: {}", r.display());
+    }
+    if let Some(r) = &a.csv {
+        println!("CSV: {}", r.display());
+    }
     if a.fallar_si_incompleto && !avisos.is_empty() {
         return Ok(ExitCode::from(4));
     }
     if let Some(umbral) = a.fallar_en
-        && activos.iter().any(|x| prioridad(x) <= umbral)
+        && activos
+            .iter()
+            .any(|x| prioridad(x) <= umbral && !suaya_core::contexto::exceptuado(x))
     {
         decir_err!(
             "Hay hallazgos de prioridad {} o más grave.",
@@ -698,16 +821,28 @@ fn texto_reporte(
     ruta: &std::path::Path,
     formato: Option<&str>,
 ) -> String {
-    let html = match formato {
-        Some(f) => f.eq_ignore_ascii_case("html"),
-        None => ruta
-            .extension()
-            .is_some_and(|e| e.eq_ignore_ascii_case("html") || e.eq_ignore_ascii_case("htm")),
-    };
-    if html {
-        reporte_html(leido, c)
-    } else {
-        reporte_markdown(leido, c)
+    use suaya_cbom::formatos;
+    let extension = ruta
+        .extension()
+        .map(|e| e.to_string_lossy().to_ascii_lowercase())
+        .unwrap_or_default();
+    let formato = formato
+        .map(str::to_ascii_lowercase)
+        .unwrap_or(match extension.as_str() {
+            "html" | "htm" => "html".into(),
+            "sarif" => "sarif".into(),
+            "csv" => "csv".into(),
+            "jsonl" | "ndjson" => "jsonl".into(),
+            _ => "md".into(),
+        });
+    match formato.as_str() {
+        "html" => reporte_html(leido, c),
+        "pci" => formatos::pci(leido, c),
+        "sarif" => serde_json::to_string_pretty(&formatos::sarif(leido, c)).unwrap_or_default(),
+        "csv" => formatos::csv(leido, c),
+        "jsonl" => formatos::jsonl(leido, c),
+        "tickets" => serde_json::to_string_pretty(&formatos::tickets(leido, c)).unwrap_or_default(),
+        _ => reporte_markdown(leido, c),
     }
 }
 
@@ -795,6 +930,7 @@ fn ejecutar(cli: Cli) -> Result<ExitCode> {
             red,
             seguir_enlaces,
             binarios,
+            llavero,
             hilos,
             tamano_maximo,
         } => {
@@ -802,10 +938,11 @@ fn ejecutar(cli: Cli) -> Result<ExitCode> {
                 && objetivos.is_empty()
                 && imagenes.is_empty()
                 && importados.is_empty()
+                && !llavero
             {
                 fallar!(
-                    "indique al menos una ruta, un --objetivo, una --imagen o un --importar",
-                    "give at least one path, --objetivo, --imagen or --importar"
+                    "indique al menos una ruta, un --objetivo, una --imagen, un --importar o --llavero",
+                    "give at least one path, --objetivo, --imagen, --importar or --llavero"
                 );
             }
             let (remotas, imagenes): (Vec<String>, Vec<String>) = imagenes
@@ -894,6 +1031,13 @@ fn ejecutar(cli: Cli) -> Result<ExitCode> {
                 clasificar(&mut resultado.inventario, &c);
                 raices.extend(objetivos.iter().map(Objetivo::ubicacion));
             }
+            if llavero {
+                let (activos, avisos) = suaya_escaneo::api::escanear_llavero(&c);
+                resultado.inventario.extender(activos);
+                resultado.avisos.extend(avisos);
+                clasificar(&mut resultado.inventario, &c);
+                raices.push("llavero".into());
+            }
             if resultado.archivos_omitidos > 0 {
                 resultado.avisos.push(format!(
                     "{} archivos omitidos por tamaño: inventario parcial",
@@ -960,6 +1104,7 @@ fn ejecutar(cli: Cli) -> Result<ExitCode> {
         Orden::Diagnosticar {
             objetivos,
             json,
+            metricas,
             fallar_en,
             ca,
             tiempo_limite,
@@ -986,9 +1131,18 @@ fn ejecutar(cli: Cli) -> Result<ExitCode> {
                     || suaya_core::t!("al escribir {}", "writing {}", ruta.display()),
                 )?;
             }
+            if let Some(ruta) = &metricas {
+                escribir_atomico(ruta, suaya_red::metricas_prometheus(&diagnosticos))
+                    .with_context(|| {
+                        suaya_core::t!("al escribir {}", "writing {}", ruta.display())
+                    })?;
+            }
             imprimir_diagnosticos(&diagnosticos, detallado);
             if let Some(json) = &json {
                 decir!("Diagnóstico JSON: {}", "Diagnosis JSON: {}", json.display());
+            }
+            if let Some(ruta) = &metricas {
+                decir!("Métricas: {}", "Metrics: {}", ruta.display());
             }
             let umbral = fallar_en.as_deref().and_then(suaya_red::Nivel::interpretar);
             let alcanzado = umbral.is_some_and(|u| {
@@ -1090,6 +1244,37 @@ fn ejecutar(cli: Cli) -> Result<ExitCode> {
                     "{}",
                     texto_reporte(&leido, &c, std::path::Path::new("-"), formato.as_deref())
                 ),
+            }
+            Ok(ExitCode::SUCCESS)
+        }
+
+        Orden::Tendencias {
+            cboms,
+            formato,
+            salida,
+            fallar_si_empeora,
+        } => {
+            use suaya_cbom::tendencias;
+            let mut leidos = Vec::new();
+            for ruta in &cboms {
+                let texto = leer_texto_limitado(ruta)
+                    .with_context(|| suaya_core::t!("al leer {}", "reading {}", ruta.display()))?;
+                leidos.push(leer(&texto).map_err(|e| anyhow::anyhow!("{}: {e}", ruta.display()))?);
+            }
+            let serie = tendencias::tendencias(&leidos);
+            let texto = match formato.as_deref() {
+                Some("md") => tendencias::como_markdown(&serie),
+                Some("csv") => tendencias::como_csv(&serie),
+                Some("json") => serde_json::to_string_pretty(&tendencias::como_json(&serie))?,
+                _ => tendencias::como_texto(&serie),
+            };
+            match &salida {
+                Some(s) => escribir_atomico(s, &texto)
+                    .with_context(|| suaya_core::t!("al escribir {}", "writing {}", s.display()))?,
+                None => print!("{texto}"),
+            }
+            if fallar_si_empeora && tendencias::empeora(&serie) {
+                return Ok(ExitCode::from(2));
             }
             Ok(ExitCode::SUCCESS)
         }
@@ -1450,6 +1635,81 @@ fn imprimir_diagnosticos(diagnosticos: &[suaya_red::Diagnostico], detallado: boo
                 );
             }
         }
+        if let Some(i) = &d.ike {
+            println!(
+                "  {}",
+                tx("Intercambio de llaves IKEv2", "IKEv2 key exchange")
+            );
+            decir!("    Grupos: {}", "    Groups: {}", i.grupos.join(", "));
+            if let Some(p) = &i.preferido {
+                decir!("    Preferido: {}", "    Preferred: {}", p);
+            }
+            if !i.elegidas.is_empty() {
+                decir!(
+                    "    Transformaciones: {}",
+                    "    Transforms: {}",
+                    i.elegidas.join(", ")
+                );
+            }
+            if let Some(m) = &i.mlkem {
+                decir!(
+                    "    Intercambio adicional: {}",
+                    "    Additional key exchange: {}",
+                    m
+                );
+            }
+        }
+        if let Some(x) = &d.dns {
+            println!("  DNS");
+            decir!("    Resolvedor: {}", "    Resolver: {}", x.resolvedor);
+            if x.validada {
+                println!(
+                    "    {}",
+                    tx(
+                        "Cadena DNSSEC validada (bit AD)",
+                        "DNSSEC chain validated (AD bit)"
+                    )
+                );
+            }
+            for (titulo, lista) in [
+                ("DNSKEY", &x.llaves),
+                ("DS", &x.delegaciones),
+                ("RRSIG", &x.firmas),
+                ("CAA", &x.caa),
+                ("TLSA", &x.tlsa),
+                ("DKIM", &x.dkim),
+            ] {
+                if !lista.is_empty() {
+                    println!("    {titulo}: {}", lista.join(" | "));
+                }
+            }
+        }
+        if let Some(x) = &d.identidad {
+            println!("  {}", tx("Identidad federada", "Federated identity"));
+            decir!("    Documento: {}", "    Document: {}", x.documento);
+            if let Some(e) = &x.emisor {
+                decir!("    Emisor: {}", "    Issuer: {}", e);
+            }
+            for a in &x.algoritmos {
+                println!("    {a}");
+            }
+            if let Some(j) = &x.jwks {
+                decir!(
+                    "    JWKS: {} ({} llaves)",
+                    "    JWKS: {} ({} keys)",
+                    j,
+                    x.llaves.len()
+                );
+                if detallado {
+                    for k in &x.llaves {
+                        println!("      {k}");
+                    }
+                }
+            }
+            for c in &x.certificados {
+                decir!("    Certificado {}", "    Certificate {}", c);
+            }
+        }
         if !d.hallazgos.is_empty() {
             println!("  {}", tx("Hallazgos", "Findings"));
             for h in &d.hallazgos {
@@ -1458,6 +1718,26 @@ fn imprimir_diagnosticos(diagnosticos: &[suaya_red::Diagnostico], detallado: boo
                     h.nivel.etiqueta(),
                     h.codigo,
                     traducir(&h.mensaje)
+                );
+            }
+        }
+        if !d.recetas.is_empty() {
+            println!("  {}", tx("Cómo corregir", "How to fix"));
+            for r in &d.recetas {
+                println!("    {} ({})", r.titulo, r.hallazgos.join(", "));
+                if detallado {
+                    for (i, paso) in r.pasos.iter().enumerate() {
+                        println!("      {}. {paso}", i + 1);
+                    }
+                }
+            }
+            if !detallado {
+                println!(
+                    "    {}",
+                    tx(
+                        "(use --detallado para ver los pasos)",
+                        "(use --detallado to see the steps)"
+                    )
                 );
             }
         }

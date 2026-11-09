@@ -1,0 +1,1087 @@
+# Suaya: catálogo de traducciones del español al portugués (Brasil).
+#
+# Cubre el reporte ejecutivo, las etiquetas (riesgo, acción, prioridad,
+# garantía, madurez y capacidades), la justificación de cada clasificación y
+# el resumen de la línea de órdenes. Lo que falte se muestra en español: el
+# texto de Suaya nunca se pierde. Cada entrada es una plantilla como en
+# en.toml: `{}` o `{nombre}` coinciden con cualquier valor.
+
+[[texto]]
+es = "Algoritmo"
+pt = "Algoritmo"
+
+[[texto]]
+es = "Certificado"
+pt = "Certificado"
+
+[[texto]]
+es = "Llave o material"
+pt = "Chave ou material"
+
+[[texto]]
+es = "Protocolo"
+pt = "Protocolo"
+
+[[texto]]
+es = "Biblioteca"
+pt = "Biblioteca"
+
+[[texto]]
+es = "Otro"
+pt = "Outro"
+
+[[texto]]
+es = "{} (y {} más)"
+pt = "{} (e mais {})"
+
+[[texto]]
+es = "llave privada asociada en `{donde}`."
+pt = "chave privada associada em `{donde}`."
+
+[[texto]]
+es = "No conforme"
+pt = "Não conforme"
+
+[[texto]]
+es = "En transición"
+pt = "Em transição"
+
+[[texto]]
+es = "Conforme"
+pt = "Conforme"
+
+[[texto]]
+es = "Sin evaluar"
+pt = "Não avaliado"
+
+[[texto]]
+es = "Alta"
+pt = "Alta"
+
+[[texto]]
+es = "Media"
+pt = "Média"
+
+[[texto]]
+es = "Baja"
+pt = "Baixa"
+
+[[texto]]
+es = "Interna"
+pt = "Interna"
+
+[[texto]]
+es = "Cada activo se evalúa en cuatro ejes: **riesgo** (roto, obsoleto, vulnerable al algoritmo de Shor, debilitado por Grover, híbrido o resistente), **garantía** (confidencialidad, autenticación o integridad), **capacidad tecnológica** y **madurez del ecosistema** para adoptar PQC. La confidencialidad se prioriza porque los datos cifrados hoy pueden almacenarse y descifrarse en el futuro."
+pt = "Cada ativo é avaliado em quatro eixos: **risco** (quebrado, obsoleto, vulnerável ao algoritmo de Shor, enfraquecido por Grover, híbrido ou resistente), **garantia** (confidencialidade, autenticação ou integridade), **capacidade tecnológica** e **maturidade do ecossistema** para adotar PQC. A confidencialidade tem prioridade porque os dados cifrados hoje podem ser armazenados e decifrados no futuro."
+
+[[texto]]
+es = "Los niveles de madurez provienen de: {fuente}, edición {edicion}, con evidencia de {evidencia}. © MITRE, aprobado para difusión pública (caso {caso}). Suaya usa sus niveles con atribución y no reproduce su texto."
+pt = "Os níveis de maturidade vêm de: {fuente}, edição {edicion}, com evidências de {evidencia}. © MITRE, aprovado para divulgação pública (caso {caso}). O Suaya usa seus níveis com atribuição e não reproduz seu texto."
+
+[[texto]]
+es = "**Alcance.** Suaya inspecciona archivos, configuraciones, código y los servicios que se le indican; no observa el tráfico real. Cuando una configuración no declara un parámetro, el resultado depende de la versión instalada del software y se marca para verificación. Suaya nunca copia material secreto al inventario."
+pt = "**Escopo.** O Suaya inspeciona arquivos, configurações, código e os serviços indicados; não observa o tráfego real. Quando uma configuração não declara um parâmetro, o resultado depende da versão instalada do software e é marcado para verificação. O Suaya nunca copia material secreto para o inventário."
+
+[[texto]]
+es = "Suaya inventarió **{} activos criptográficos**. **{}** requieren corrección inmediata porque ya son inseguros hoy, sin necesidad de una computadora cuántica. **{}** son vulnerables a cómputo cuántico y **pueden migrarse ya**, porque el ecosistema de su capacidad ofrece soluciones generales con PQC. **{}** deben planificarse con pilotos, porque solo existen componentes o versiones preliminares. **{}** ya son conformes: resistentes a cómputo cuántico o protegidos con un esquema híbrido."
+pt = "O Suaya inventariou **{} ativos criptográficos**. **{}** exigem correção imediata porque já são inseguros hoje, sem necessidade de um computador quântico. **{}** são vulneráveis à computação quântica e **podem ser migrados já**, porque o ecossistema de sua capacidade oferece soluções gerais com PQC. **{}** devem ser planejados com pilotos, porque só existem componentes ou versões preliminares. **{}** já estão conformes: resistentes à computação quântica ou protegidos com um esquema híbrido."
+
+[[texto]]
+es = "Se encontraron **{certificados} certificados raíz** en almacenes de confianza. Su reemplazo no depende de quien opera el sistema, sino de las autoridades certificadoras y del proveedor del sistema operativo, por lo que se resumen aquí y la acción recomendada es monitorear y mantener el sistema actualizado."
+pt = "Foram encontrados **{certificados} certificados raiz** em repositórios de confiança. Sua substituição não depende de quem opera o sistema, mas das autoridades certificadoras e do fornecedor do sistema operacional; por isso são resumidos aqui e a ação recomendada é monitorar e manter o sistema atualizado."
+
+[[texto]]
+es = "Cobertura parcial o no declarada. No interpretar ausencia de hallazgos como ausencia de riesgo."
+pt = "Cobertura parcial ou não declarada. Não interprete a ausência de achados como ausência de risco."
+
+[[texto]]
+es = "Pasos de corrección de la base de conocimiento (remediacion.toml) para los hallazgos de este reporte, de lo más urgente a lo menos. Verifique cada directiva contra la documentación de su producto antes de aplicarla."
+pt = "Passos de correção da base de conhecimento (remediacion.toml) para os achados deste relatório, do mais urgente ao menos urgente. Confira cada diretiva com a documentação do seu produto antes de aplicá-la."
+
+[[texto]]
+es = "Se aplica a 1 activo (prioridad {p}): {ejemplos}."
+pt = "Aplica-se a 1 ativo (prioridade {p}): {ejemplos}."
+
+[[texto]]
+es = "Se aplica a {n} activos (prioridad más urgente: {p}), p. ej. {ejemplos}."
+pt = "Aplica-se a {n} ativos (prioridade mais urgente: {p}), p. ex. {ejemplos}."
+
+[[texto]]
+es = "El contexto declarado por la organización asigna cada activo a sus sistemas y responsables. La desigualdad de Mosca (x + y > z) compara cuántos años deben seguir confidenciales los datos (x) más lo que tarda la migración (y) con los años que faltan para una computadora cuántica relevante (z): si se cumple, lo que hoy se captura cifrado podrá descifrarse mientras siga siendo valioso."
+pt = "O contexto declarado pela organização atribui cada ativo a seus sistemas e responsáveis. A desigualdade de Mosca (x + y > z) compara quantos anos os dados devem permanecer confidenciais (x) mais o tempo da migração (y) com os anos que faltam para um computador quântico relevante (z): se ela se cumpre, o que hoje é capturado cifrado poderá ser decifrado enquanto ainda tiver valor."
+
+[[texto]]
+es = "Horizonte supuesto: {h}."
+pt = "Horizonte suposto: {h}."
+
+[[texto]]
+es = "Reporte de preparación poscuántica"
+pt = "Relatório de preparação pós-quântica"
+
+[[texto]]
+es = "Sistema"
+pt = "Sistema"
+
+[[texto]]
+es = "Fecha del escaneo"
+pt = "Data da varredura"
+
+[[texto]]
+es = "Herramienta"
+pt = "Ferramenta"
+
+[[texto]]
+es = "Base de conocimiento"
+pt = "Base de conhecimento"
+
+[[texto]]
+es = "Resumen ejecutivo"
+pt = "Resumo executivo"
+
+[[texto]]
+es = "Prioridad"
+pt = "Prioridade"
+
+[[texto]]
+es = "Activos"
+pt = "Ativos"
+
+[[texto]]
+es = "Las {n} llaves privadas que tienen certificado se presentan junto a él, en las observaciones de cada prioridad."
+pt = "As {n} chaves privadas que têm certificado são apresentadas junto a ele, nas observações de cada prioridade."
+
+[[texto]]
+es = "Qué se puede migrar hoy y qué no"
+pt = "O que pode ser migrado hoje e o que não"
+
+[[texto]]
+es = "La madurez del ecosistema indica si ya existen productos para migrar cada tipo de garantía en cada capacidad tecnológica."
+pt = "A maturidade do ecossistema indica se já existem produtos para migrar cada tipo de garantia em cada capacidade tecnológica."
+
+[[texto]]
+es = "Capacidad"
+pt = "Capacidade"
+
+[[texto]]
+es = "Madurez: confidencialidad"
+pt = "Maturidade: confidencialidade"
+
+[[texto]]
+es = "Madurez: autenticación"
+pt = "Maturidade: autenticação"
+
+[[texto]]
+es = "Migrar ahora"
+pt = "Migrar agora"
+
+[[texto]]
+es = "Planificar"
+pt = "Planejar"
+
+[[texto]]
+es = "Monitorear"
+pt = "Monitorar"
+
+[[texto]]
+es = "Contexto de la organización"
+pt = "Contexto da organização"
+
+[[texto]]
+es = "Responsable"
+pt = "Responsável"
+
+[[texto]]
+es = "Criticidad"
+pt = "Criticidade"
+
+[[texto]]
+es = "Exposición"
+pt = "Exposição"
+
+[[texto]]
+es = "Críticos o altos"
+pt = "Críticos ou altos"
+
+[[texto]]
+es = "Expuestos (Mosca)"
+pt = "Expostos (Mosca)"
+
+[[texto]]
+es = "{n} activos no corresponden a ningún sistema declarado."
+pt = "{n} ativos não correspondem a nenhum sistema declarado."
+
+[[texto]]
+es = "Expuestos a «capturar ahora, descifrar después»"
+pt = "Expostos a \"capturar agora, decifrar depois\""
+
+[[texto]]
+es = "Activo"
+pt = "Ativo"
+
+[[texto]]
+es = "Sistemas"
+pt = "Sistemas"
+
+[[texto]]
+es = "Años de exposición"
+pt = "Anos de exposição"
+
+[[texto]]
+es = "Excepciones"
+pt = "Exceções"
+
+[[texto]]
+es = "Excepción"
+pt = "Exceção"
+
+[[texto]]
+es = "Vence"
+pt = "Vence"
+
+[[texto]]
+es = "Estado"
+pt = "Situação"
+
+[[texto]]
+es = "Justificación"
+pt = "Justificativa"
+
+[[texto]]
+es = "Aprobada por"
+pt = "Aprovada por"
+
+[[texto]]
+es = "Vigente"
+pt = "Vigente"
+
+[[texto]]
+es = "Vencida"
+pt = "Vencida"
+
+[[texto]]
+es = "Hallazgos que requieren acción"
+pt = "Achados que exigem ação"
+
+[[texto]]
+es = "Prioridad {etiqueta} ({n})"
+pt = "Prioridade {etiqueta} ({n})"
+
+[[texto]]
+es = "Tipo"
+pt = "Tipo"
+
+[[texto]]
+es = "Riesgo"
+pt = "Risco"
+
+[[texto]]
+es = "Acción"
+pt = "Ação"
+
+[[texto]]
+es = "Ubicación"
+pt = "Localização"
+
+[[texto]]
+es = "Observaciones"
+pt = "Observações"
+
+[[texto]]
+es = "Cómo corregir"
+pt = "Como corrigir"
+
+[[texto]]
+es = "Referencias"
+pt = "Referências"
+
+[[texto]]
+es = "Cumplimiento con"
+pt = "Conformidade com"
+
+[[texto]]
+es = "Referencia"
+pt = "Referência"
+
+[[texto]]
+es = "Calendario de migración"
+pt = "Cronograma de migração"
+
+[[texto]]
+es = "Fecha límite"
+pt = "Prazo"
+
+[[texto]]
+es = "Ejemplos"
+pt = "Exemplos"
+
+[[texto]]
+es = " y {resto} más"
+pt = " e mais {resto}"
+
+[[texto]]
+es = "Activos no conformes"
+pt = "Ativos não conformes"
+
+[[texto]]
+es = "Motivo"
+pt = "Motivo"
+
+[[texto]]
+es = "... y {n} más"
+pt = "... e mais {n}"
+
+[[texto]]
+es = "Almacén de confianza del sistema"
+pt = "Repositório de confiança do sistema"
+
+[[texto]]
+es = "Certificados"
+pt = "Certificados"
+
+[[texto]]
+es = "Activos conformes"
+pt = "Ativos conformes"
+
+[[texto]]
+es = "Metodología"
+pt = "Metodologia"
+
+[[texto]]
+es = "activos inventariados"
+pt = "ativos inventariados"
+
+[[texto]]
+es = "corregir de inmediato"
+pt = "corrigir imediatamente"
+
+[[texto]]
+es = "migrables hoy"
+pt = "migráveis hoje"
+
+[[texto]]
+es = "planificar con piloto"
+pt = "planejar com piloto"
+
+[[texto]]
+es = "ya protegidos"
+pt = "já protegidos"
+
+[[texto]]
+es = "Activos por prioridad"
+pt = "Ativos por prioridade"
+
+[[texto]]
+es = "Activos por riesgo"
+pt = "Ativos por risco"
+
+[[texto]]
+es = "Prioridad {insignia} ({n})"
+pt = "Prioridade {insignia} ({n})"
+
+[[texto]]
+es = "Estado de cumplimiento"
+pt = "Situação de conformidade"
+
+[[texto]]
+es = "Calendario de migración: activos por fecha límite"
+pt = "Cronograma de migração: ativos por prazo"
+
+[[texto]]
+es = "Generado por Suaya, software libre de inventario criptográfico (Apache-2.0). Para guardar en PDF, use Imprimir en el navegador."
+pt = "Gerado pelo Suaya, software livre de inventário criptográfico (Apache-2.0). Para salvar em PDF, use Imprimir no navegador."
+
+[[texto]]
+es = "Roto (clásico)"
+pt = "Quebrado (clássico)"
+
+[[texto]]
+es = "Obsoleto"
+pt = "Obsoleto"
+
+[[texto]]
+es = "Vulnerable a cómputo cuántico"
+pt = "Vulnerável à computação quântica"
+
+[[texto]]
+es = "Debilitado por Grover"
+pt = "Enfraquecido por Grover"
+
+[[texto]]
+es = "Híbrido poscuántico"
+pt = "Híbrido pós-quântico"
+
+[[texto]]
+es = "Resistente a cómputo cuántico"
+pt = "Resistente à computação quântica"
+
+[[texto]]
+es = "Desconocido"
+pt = "Desconhecido"
+
+[[texto]]
+es = "Confidencialidad"
+pt = "Confidencialidade"
+
+[[texto]]
+es = "Autenticación"
+pt = "Autenticação"
+
+[[texto]]
+es = "Integridad"
+pt = "Integridade"
+
+[[texto]]
+es = "No aplica"
+pt = "Não se aplica"
+
+[[texto]]
+es = "Bloqueado"
+pt = "Bloqueado"
+
+[[texto]]
+es = "Habilitado"
+pt = "Habilitado"
+
+[[texto]]
+es = "Componentes disponibles"
+pt = "Componentes disponíveis"
+
+[[texto]]
+es = "Integración preliminar"
+pt = "Integração preliminar"
+
+[[texto]]
+es = "Integración"
+pt = "Integração"
+
+[[texto]]
+es = "Integración validada"
+pt = "Integração validada"
+
+[[texto]]
+es = "Corregir de inmediato"
+pt = "Corrigir imediatamente"
+
+[[texto]]
+es = "Reemplazar"
+pt = "Substituir"
+
+[[texto]]
+es = "Planificar y hacer piloto"
+pt = "Planejar e fazer piloto"
+
+[[texto]]
+es = "Monitorear el ecosistema"
+pt = "Monitorar o ecossistema"
+
+[[texto]]
+es = "Revisar parámetros"
+pt = "Revisar parâmetros"
+
+[[texto]]
+es = "Verificar manualmente"
+pt = "Verificar manualmente"
+
+[[texto]]
+es = "Crítica"
+pt = "Crítica"
+
+[[texto]]
+es = "Informativa"
+pt = "Informativa"
+
+[[texto]]
+es = "algoritmos {v}"
+pt = "algoritmos {v}"
+
+[[texto]]
+es = "familias {v}"
+pt = "famílias {v}"
+
+[[texto]]
+es = "riesgo {v}"
+pt = "risco {v}"
+
+[[texto]]
+es = "capacidades {v}"
+pt = "capacidades {v}"
+
+[[texto]]
+es = "de al menos {t} bits"
+pt = "de pelo menos {t} bits"
+
+[[texto]]
+es = "sistemas de criticidad {v}"
+pt = "sistemas de criticidade {v}"
+
+[[texto]]
+es = "cualquier activo"
+pt = "qualquer ativo"
+
+[[texto]]
+es = "{alcance}: {estado}"
+pt = "{alcance}: {estado}"
+
+[[texto]]
+es = " hasta {p}"
+pt = " até {p}"
+
+[[texto]]
+es = "Inseguro hoy, sin necesidad de una computadora cuántica."
+pt = "Inseguro hoje, sem necessidade de um computador quântico."
+
+[[texto]]
+es = "Retirado o en retiro por los estándares vigentes."
+pt = "Retirado ou em retirada pelos padrões vigentes."
+
+[[texto]]
+es = "Vulnerable al algoritmo de Shor. En {capacidad} el ecosistema ya ofrece PQC para {garantia} ({}): la migración es accionable hoy."
+pt = "Vulnerável ao algoritmo de Shor. Em {capacidad} o ecossistema já oferece PQC para {garantia} ({}): a migração é viável hoje."
+
+[[texto]]
+es = "Vulnerable al algoritmo de Shor. En {capacidad} el ecosistema para {garantia} está en «{}»: conviene planificar y probar, aún no migrar en producción."
+pt = "Vulnerável ao algoritmo de Shor. Em {capacidad} o ecossistema para {garantia} está em \"{}\": convém planejar e testar, ainda sem migrar em produção."
+
+[[texto]]
+es = "Vulnerable al algoritmo de Shor, pero en {capacidad} aún no hay una vía de migración madura para {garantia}. Documentar y monitorear."
+pt = "Vulnerável ao algoritmo de Shor, mas em {capacidad} ainda não há um caminho de migração maduro para {garantia}. Documentar e monitorar."
+
+[[texto]]
+es = "Suaya no pudo determinar el algoritmo o sus parámetros; requiere revisión manual."
+pt = "O Suaya não conseguiu determinar o algoritmo ou seus parâmetros; requer revisão manual."
+
+[[texto]]
+es = "El algoritmo de Grover reduce su margen de seguridad; considerar llaves de 256 bits."
+pt = "O algoritmo de Grover reduz sua margem de segurança; considere chaves de 256 bits."
+
+[[texto]]
+es = "Combina protección clásica y poscuántica."
+pt = "Combina proteção clássica e pós-quântica."
+
+[[texto]]
+es = "Resistente a los ataques cuánticos conocidos."
+pt = "Resistente aos ataques quânticos conhecidos."
+
+[[texto]]
+es = "Navegadores web"
+pt = "Navegadores web"
+
+[[texto]]
+es = "Servidores web"
+pt = "Servidores web"
+
+[[texto]]
+es = "VPN y cifrado de red"
+pt = "VPN e criptografia de rede"
+
+[[texto]]
+es = "Aseguramiento de plataforma"
+pt = "Garantia de plataforma"
+
+[[texto]]
+es = "Firma de código"
+pt = "Assinatura de código"
+
+[[texto]]
+es = "Gestión de PKI y autoridades certificadoras"
+pt = "Gestão de PKI e autoridades certificadoras"
+
+[[texto]]
+es = "Cifrado de volumen"
+pt = "Criptografia de volume"
+
+[[texto]]
+es = "Conectividad a servicios en la nube"
+pt = "Conectividade com serviços em nuvem"
+
+[[texto]]
+es = "Código de aplicaciones"
+pt = "Código de aplicações"
+
+[[texto]]
+es = "Sin clasificar"
+pt = "Não classificado"
+
+[[texto]]
+es = "Infraestructura DNS (DNSSEC, DKIM, CAA y TLSA)"
+pt = "Infraestrutura DNS (DNSSEC, DKIM, CAA e TLSA)"
+
+[[texto]]
+es = "Identidad federada (OpenID Connect y SAML)"
+pt = "Identidade federada (OpenID Connect e SAML)"
+
+[[texto]]
+es = "capacidad desconocida: {} (válidas: {})"
+pt = "capacidade desconhecida: {} (válidas: {})"
+
+[[texto]]
+es = "al leer {}"
+pt = "ao ler {}"
+
+[[texto]]
+es = "al escribir {}"
+pt = "ao gravar {}"
+
+[[texto]]
+es = "{linea_resumen} · activos criptográficos: {}"
+pt = "{linea_resumen} · ativos criptográficos: {}"
+
+[[texto]]
+es = "  Contexto: {} activos con sistema · {} expuestos según Mosca · {} con excepción vigente · {} con excepción vencida"
+pt = "  Contexto: {} ativos com sistema · {} expostos segundo Mosca · {} com exceção vigente · {} com exceção vencida"
+
+[[texto]]
+es = "  Excepciones que no cubren ningún activo: {}"
+pt = "  Exceções que não cobrem nenhum ativo: {}"
+
+[[texto]]
+es = "  {}: {} no conformes · {} en transición · {} conformes{}"
+pt = "  {}: {} não conformes · {} em transição · {} conformes{}"
+
+[[texto]]
+es = " · {sin_evaluar} sin evaluar"
+pt = " · {sin_evaluar} não avaliados"
+
+[[texto]]
+es = "Atención prioritaria:"
+pt = "Atenção prioritária:"
+
+[[texto]]
+es = " · excepción {}"
+pt = " · exceção {}"
+
+[[texto]]
+es = "  ... y {} más (ver el reporte)"
+pt = "  ... e mais {} (veja o relatório)"
+
+[[texto]]
+es = "Avisos:"
+pt = "Avisos:"
+
+[[texto]]
+es = "{} avisos (use --detallado para verlos)."
+pt = "{} avisos (use --detallado para vê-los)."
+
+[[texto]]
+es = "Reporte"
+pt = "Relatório"
+
+[[texto]]
+es = "Hay hallazgos de prioridad {} o más grave."
+pt = "Há achados de prioridade {} ou mais grave."
+
+[[texto]]
+es = "al crear {} (¿ya existe?)"
+pt = "ao criar {} (já existe?)"
+
+[[texto]]
+es = "{} no es JSON"
+pt = "{} não é JSON"
+
+[[texto]]
+es = "no se pudo leer {}"
+pt = "não foi possível ler {}"
+
+[[texto]]
+es = "al cargar la base de conocimiento de {}"
+pt = "ao carregar a base de conhecimento de {}"
+
+[[texto]]
+es = "indique al menos una ruta, un --objetivo, una --imagen, un --importar o --llavero"
+pt = "indique pelo menos um caminho, um --objetivo, uma --imagen, um --importar ou --llavero"
+
+[[texto]]
+es = "la ruta no existe: {}"
+pt = "o caminho não existe: {}"
+
+[[texto]]
+es = "Descargando y analizando {imagen} ({})..."
+pt = "Baixando e analisando {imagen} ({})..."
+
+[[texto]]
+es = "Importados {n} activos de {} CBOM."
+pt = "Importados {n} ativos de {} CBOM."
+
+[[texto]]
+es = "Archivos revisados: {} · omitidos por tamaño: {} · servicios sondeados: {}"
+pt = "Arquivos revisados: {} · omitidos por tamanho: {} · serviços sondados: {}"
+
+[[texto]]
+es = "CBOM importados: {} · activos importados: {n}"
+pt = "CBOM importados: {} · ativos importados: {n}"
+
+[[texto]]
+es = "Servicios sondeados: {} · alcanzados: {alcanzados}"
+pt = "Serviços sondados: {} · alcançados: {alcanzados}"
+
+[[texto]]
+es = "Diagnóstico JSON: {}"
+pt = "Diagnóstico JSON: {}"
+
+[[texto]]
+es = "Métricas: {}"
+pt = "Métricas: {}"
+
+[[texto]]
+es = "Perfiles de política incluidos (use --perfil <id> o --perfil <archivo.toml>):"
+pt = "Perfis de política incluídos (use --perfil <id> ou --perfil <arquivo.toml>):"
+
+[[texto]]
+es = "Base de conocimiento: {}"
+pt = "Base de conhecimento: {}"
+
+[[texto]]
+es = "Algoritmos registrados: {}"
+pt = "Algoritmos registrados: {}"
+
+[[texto]]
+es = "diagnóstico de conectividad e intercambio de llaves y certificados"
+pt = "diagnóstico de conectividade e troca de chaves e certificados"
+
+[[texto]]
+es = "Conectividad"
+pt = "Conectividade"
+
+[[texto]]
+es = "    DNS: sin resolver ({})"
+pt = "    DNS: não resolvido ({})"
+
+[[texto]]
+es = "    DNS: {} ms · direcciones: {}"
+pt = "    DNS: {} ms · endereços: {}"
+
+[[texto]]
+es = "abierto en {} ms"
+pt = "aberto em {} ms"
+
+[[texto]]
+es = "rechazado"
+pt = "recusado"
+
+[[texto]]
+es = "tiempo agotado"
+pt = "tempo esgotado"
+
+[[texto]]
+es = "inalcanzable"
+pt = "inalcançável"
+
+[[texto]]
+es = "    Saludo: {} ms"
+pt = "    Handshake: {} ms"
+
+[[texto]]
+es = "Intercambio de llaves"
+pt = "Troca de chaves"
+
+[[texto]]
+es = "Cliente moderno"
+pt = "Cliente moderno"
+
+[[texto]]
+es = "Cliente clásico"
+pt = "Cliente clássico"
+
+[[texto]]
+es = "falló"
+pt = "falhou"
+
+[[texto]]
+es = "firma {} verificada"
+pt = "assinatura {} verificada"
+
+[[texto]]
+es = "firma {} no verificada"
+pt = "assinatura {} não verificada"
+
+[[texto]]
+es = "firma {}"
+pt = "assinatura {}"
+
+[[texto]]
+es = "  Certificados ({}, {} bytes)"
+pt = "  Certificados ({}, {} bytes)"
+
+[[texto]]
+es = "válida para un cliente estándar"
+pt = "válida para um cliente padrão"
+
+[[texto]]
+es = "    Validación: {}"
+pt = "    Validação: {}"
+
+[[texto]]
+es = "vence"
+pt = "vence"
+
+[[texto]]
+es = "{} días"
+pt = "{} dias"
+
+[[texto]]
+es = "       Sujeto: {}"
+pt = "       Titular: {}"
+
+[[texto]]
+es = "       Emisor: {}"
+pt = "       Emissor: {}"
+
+[[texto]]
+es = "       Nombres: {}"
+pt = "       Nomes: {}"
+
+[[texto]]
+es = "       Firma: {} · huella SHA-256 {}"
+pt = "       Assinatura: {} · impressão digital SHA-256 {}"
+
+[[texto]]
+es = "Intercambio de llaves SSH"
+pt = "Troca de chaves SSH"
+
+[[texto]]
+es = "    Llaves de host: {}"
+pt = "    Chaves de host: {}"
+
+[[texto]]
+es = "    Extensiones: {}"
+pt = "    Extensões: {}"
+
+[[texto]]
+es = "Intercambio de llaves IKEv2"
+pt = "Troca de chaves IKEv2"
+
+[[texto]]
+es = "    Grupos: {}"
+pt = "    Grupos: {}"
+
+[[texto]]
+es = "    Preferido: {}"
+pt = "    Preferido: {}"
+
+[[texto]]
+es = "    Transformaciones: {}"
+pt = "    Transformações: {}"
+
+[[texto]]
+es = "    Intercambio adicional: {}"
+pt = "    Troca adicional: {}"
+
+[[texto]]
+es = "    Resolvedor: {}"
+pt = "    Resolvedor: {}"
+
+[[texto]]
+es = "Cadena DNSSEC validada (bit AD)"
+pt = "Cadeia DNSSEC validada (bit AD)"
+
+[[texto]]
+es = "Identidad federada"
+pt = "Identidade federada"
+
+[[texto]]
+es = "    Documento: {}"
+pt = "    Documento: {}"
+
+[[texto]]
+es = "    Emisor: {}"
+pt = "    Emissor: {}"
+
+[[texto]]
+es = "    JWKS: {} ({} llaves)"
+pt = "    JWKS: {} ({} chaves)"
+
+[[texto]]
+es = "    Certificado {}"
+pt = "    Certificado {}"
+
+[[texto]]
+es = "Hallazgos"
+pt = "Achados"
+
+[[texto]]
+es = "(use --detallado para ver los pasos)"
+pt = "(use --detallado para ver os passos)"
+
+[[texto]]
+es = "Objetivos: {} · alcanzados: {} · críticos {} · altos {} · medios {} · bajos {}"
+pt = "Alvos: {} · alcançados: {} · críticos {} · altos {} · médios {} · baixos {}"
+
+[[texto]]
+es = "Ubicaciones"
+pt = "Localizações"
+
+[[texto]]
+es = "y {n} más"
+pt = "e mais {n}"
+
+[[texto]]
+es = "Inventario criptográfico para PCI DSS v4.0"
+pt = "Inventário criptográfico para o PCI DSS v4.0"
+
+[[texto]]
+es = "Fecha del inventario"
+pt = "Data do inventário"
+
+[[texto]]
+es = "Próxima revisión (12 meses)"
+pt = "Próxima revisão (12 meses)"
+
+[[texto]]
+es = "El requisito 12.3.3 pide documentar y revisar al menos una vez al año las suites y protocolos criptográficos en uso, con su propósito y ubicación, vigilar su viabilidad y tener una estrategia de respuesta ante cambios; el 4.2.1.1, mantener un inventario de las llaves y certificados de confianza con que se protege la transmisión de datos de tarjetas. Este documento se generó a partir del CBOM de Suaya; la evaluación del alcance (qué sistemas tocan datos de tarjetas) corresponde a la organización."
+pt = "O requisito 12.3.3 pede documentar e revisar pelo menos uma vez por ano as suítes e os protocolos criptográficos em uso, com seu propósito e localização, acompanhar sua viabilidade e ter uma estratégia de resposta a mudanças; o 4.2.1.1, manter um inventário das chaves e certificados confiáveis que protegem a transmissão de dados de cartão. Este documento foi gerado a partir do CBOM do Suaya; a avaliação do escopo (quais sistemas tocam dados de cartão) cabe à organização."
+
+[[texto]]
+es = "plazo {p}"
+pt = "prazo {p}"
+
+[[texto]]
+es = "Protocolos y suites criptográficas"
+pt = "Protocolos e suítes criptográficas"
+
+[[texto]]
+es = "Llaves y certificados"
+pt = "Chaves e certificados"
+
+[[texto]]
+es = "requisito {requisito}, {n} elementos"
+pt = "requisito {requisito}, {n} itens"
+
+[[texto]]
+es = "No se encontraron."
+pt = "Nenhum encontrado."
+
+[[texto]]
+es = "Elemento"
+pt = "Item"
+
+[[texto]]
+es = "Uso (capacidad / garantía)"
+pt = "Uso (capacidade / garantia)"
+
+[[texto]]
+es = "Viabilidad (riesgo)"
+pt = "Viabilidade (risco)"
+
+[[texto]]
+es = "Respuesta prevista"
+pt = "Resposta prevista"
+
+[[texto]]
+es = "Estrategia de respuesta"
+pt = "Estratégia de resposta"
+
+[[texto]]
+es = "Perfil {}: {} no conformes, {} en transición, {} conformes."
+pt = "Perfil {}: {} não conformes, {} em transição, {} conformes."
+
+[[texto]]
+es = "corregir de inmediato (inseguro hoy)"
+pt = "corrigir imediatamente (inseguro hoje)"
+
+[[texto]]
+es = "reemplazar (obsoleto)"
+pt = "substituir (obsoleto)"
+
+[[texto]]
+es = "migrar ya a criptografía poscuántica o híbrida"
+pt = "migrar já para criptografia pós-quântica ou híbrida"
+
+[[texto]]
+es = "planificar y probar la migración"
+pt = "planejar e testar a migração"
+
+[[texto]]
+es = "documentar y monitorear"
+pt = "documentar e monitorar"
+
+[[texto]]
+es = "Del {} al {}: críticos {}, altos {}, protegidos {}, vulnerables {}."
+pt = "De {} a {}: críticos {}, altos {}, protegidos {}, vulneráveis {}."
+
+[[texto]]
+es = "Tendencias de la migración poscuántica"
+pt = "Tendências da migração pós-quântica"
+
+[[texto]]
+es = "Fecha"
+pt = "Data"
+
+[[texto]]
+es = "Críticos"
+pt = "Críticos"
+
+[[texto]]
+es = "Altos"
+pt = "Altos"
+
+[[texto]]
+es = "Medios"
+pt = "Médios"
+
+[[texto]]
+es = "Bajos"
+pt = "Baixos"
+
+[[texto]]
+es = "Protegidos"
+pt = "Protegidos"
+
+[[texto]]
+es = "Vulnerables"
+pt = "Vulneráveis"
+
+[[texto]]
+es = "No conformes"
+pt = "Não conformes"
+
+[[texto]]
+es = "Comparación de inventarios"
+pt = "Comparação de inventários"
+
+[[texto]]
+es = "  anterior: {fa} ({na} activos)"
+pt = "  anterior: {fa} ({na} ativos)"
+
+[[texto]]
+es = "  actual:   {fb} ({nb} activos)"
+pt = "  atual:    {fb} ({nb} ativos)"
+
+[[texto]]
+es = "Nuevos ({n}):"
+pt = "Novos ({n}):"
+
+[[texto]]
+es = "Eliminados ({n}):"
+pt = "Removidos ({n}):"
+
+[[texto]]
+es = "Cambiados ({n}):"
+pt = "Alterados ({n}):"
+
+[[texto]]
+es = "mejora"
+pt = "melhora"
+
+[[texto]]
+es = "empeora"
+pt = "piora"
+
+[[texto]]
+es = "cambia"
+pt = "muda"
+
+[[texto]]
+es = "Corregir de inmediato: {}"
+pt = "Corrigir imediatamente: {}"
+
+[[texto]]
+es = "algoritmos {} · código {} · bibliotecas {} · servicios {} · remediación {} · madurez {} ({}, edición {})"
+pt = "algoritmos {} · código {} · bibliotecas {} · serviços {} · remediação {} · maturidade {} ({}, edição {})"
+
+[[texto]]
+es = "Sistema escaneado"
+pt = "Sistema analisado"
+
+[[texto]]
+es = "fuente no declarada"
+pt = "fonte não declarada"

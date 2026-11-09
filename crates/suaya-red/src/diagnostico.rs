@@ -15,7 +15,11 @@
 //! - **Intercambio de certificados**: valida la cadena como lo haría un
 //!   cliente estándar (autoridades del sistema y, opcionalmente, una propia),
 //!   comprueba el nombre, el orden, la vigencia, las llaves y las firmas, el
-//!   engrapado OCSP y el tamaño de la cadena.
+//!   engrapado OCSP, el tamaño de la cadena y la vigencia máxima que fija el
+//!   CA/Browser Forum.
+//! - **DNS** (`dns://`): DNSSEC, delegación, firmas, CAA, TLSA y DKIM.
+//! - **Identidad federada** (`oidc://`, `saml://`): algoritmos anunciados,
+//!   llaves JWKS y certificados de los metadatos.
 //!
 //! Suaya no envía datos de aplicación: completa el saludo, lee y cierra.
 //! Cada objetivo TLS recibe una conexión por dirección más dos saludos.
@@ -40,6 +44,15 @@ const MAXIMO_DIRECCIONES: usize = 8;
 const SALUDO_LENTO_MS: u64 = 1000;
 /// Una cadena más grande que esto se señala (crecerá con certificados ML-DSA).
 const CADENA_GRANDE: usize = 10 * 1024;
+/// Vigencia máxima, en días, de los certificados TLS de autoridades públicas
+/// según su fecha de emisión (CA/Browser Forum, boleta SC-081v3, abril de
+/// 2025): 398 días antes del 15 de marzo de 2026 y después 200, 100 y 47.
+const VIGENCIA_MAXIMA: [(&str, i64); 4] = [
+    ("0000-01-01", 398),
+    ("2026-03-15", 200),
+    ("2027-03-15", 100),
+    ("2029-03-15", 47),
+];
 
 // ---------------------------------------------------------------------------
 // Resultado
@@ -218,6 +231,55 @@ pub struct IntercambioSsh {
     pub kex_estricto: bool,
 }
 
+/// Receta de corrección para hallazgos del diagnóstico (`remediacion.toml`).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+pub struct RecetaDiag {
+    pub id: String,
+    pub titulo: String,
+    pub pasos: Vec<String>,
+    /// Hallazgos que corrige.
+    pub hallazgos: Vec<&'static str>,
+}
+
+/// Lo publicado en el DNS de un dominio.
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize)]
+pub struct IntercambioDns {
+    pub resolvedor: String,
+    /// El resolvedor validó la cadena DNSSEC (bit AD).
+    pub validada: bool,
+    pub llaves: Vec<String>,
+    pub delegaciones: Vec<String>,
+    pub firmas: Vec<String>,
+    pub caa: Vec<String>,
+    pub tlsa: Vec<String>,
+    pub dkim: Vec<String>,
+}
+
+/// Lo publicado por un proveedor de identidad (OpenID Connect o SAML).
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize)]
+pub struct IntercambioIdentidad {
+    pub documento: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub emisor: Option<String>,
+    /// Algoritmos anunciados por uso, o métodos de los metadatos SAML.
+    pub algoritmos: Vec<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub jwks: Option<String>,
+    pub llaves: Vec<String>,
+    pub certificados: Vec<String>,
+}
+
+/// Lo observado en un servidor IKEv2.
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize)]
+pub struct IntercambioIke {
+    pub grupos: Vec<String>,
+    pub preferido: Option<String>,
+    pub elegidas: Vec<String>,
+    pub mlkem: Option<String>,
+    pub acepta_3des: bool,
+    pub acepta_sha1: bool,
+}
+
 /// Diagnóstico de un objetivo.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct Diagnostico {
@@ -231,7 +293,15 @@ pub struct Diagnostico {
     pub certificados: Option<CadenaCertificados>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub ssh: Option<IntercambioSsh>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub ike: Option<IntercambioIke>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub dns: Option<IntercambioDns>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub identidad: Option<IntercambioIdentidad>,
     pub hallazgos: Vec<Hallazgo>,
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub recetas: Vec<RecetaDiag>,
 }
 
 impl Diagnostico {
@@ -241,12 +311,20 @@ impl Diagnostico {
             protocolo: match o.protocolo {
                 Protocolo::Tls => "tls",
                 Protocolo::Ssh => "ssh",
+                Protocolo::Ike => "ike",
+                Protocolo::Dns => "dns",
+                Protocolo::Oidc => "oidc",
+                Protocolo::Saml => "saml",
             },
             conectividad: Conectividad::default(),
             tls: None,
             certificados: None,
             ssh: None,
+            ike: None,
+            dns: None,
+            identidad: None,
             hallazgos: Vec::new(),
+            recetas: Vec::new(),
         }
     }
 
@@ -262,6 +340,156 @@ impl Diagnostico {
             mensaje: mensaje.into(),
         });
     }
+}
+
+// ---------------------------------------------------------------------------
+// Métricas
+// ---------------------------------------------------------------------------
+
+/// Valor de etiqueta en el formato de texto de Prometheus.
+fn etiqueta_prometheus(v: &str) -> String {
+    v.replace('\\', "\\\\")
+        .replace('"', "\\\"")
+        .replace('\n', "\\n")
+}
+
+impl Diagnostico {
+    /// Ofrece o negocia un intercambio o una firma híbrida o poscuántica.
+    pub fn poscuantico(&self) -> bool {
+        self.tls.as_ref().is_some_and(|t| {
+            matches!(
+                t.moderno.riesgo_grupo,
+                Some(Riesgo::HibridoPq | Riesgo::ResistenteCuantico)
+            )
+        }) || self.hallazgos.iter().any(|h| h.codigo.ends_with("-PQ"))
+    }
+}
+
+/// Diagnósticos en el formato de texto de Prometheus, p. ej. para el
+/// recolector de archivos de texto de node_exporter.
+pub fn metricas_prometheus(diagnosticos: &[Diagnostico]) -> String {
+    let mut s = String::new();
+    let mut metrica = |nombre: &str,
+                       ayuda_es: &'static str,
+                       ayuda_en: &'static str,
+                       filas: Vec<(String, String)>| {
+        if filas.is_empty() {
+            return;
+        }
+        let ayuda = suaya_core::idioma::tx(ayuda_es, ayuda_en);
+        s.push_str(&format!("# HELP {nombre} {ayuda}\n# TYPE {nombre} gauge\n"));
+        for (etiquetas, valor) in filas {
+            s.push_str(&format!("{nombre}{{{etiquetas}}} {valor}\n"));
+        }
+    };
+    let obj = |d: &Diagnostico| format!("objetivo=\"{}\"", etiqueta_prometheus(&d.objetivo));
+    metrica(
+        "suaya_diagnostico_info",
+        "Objetivo diagnosticado por Suaya.",
+        "Target diagnosed by Suaya.",
+        diagnosticos
+            .iter()
+            .map(|d| {
+                (
+                    format!(
+                        "{},protocolo=\"{}\",version=\"{}\"",
+                        obj(d),
+                        d.protocolo,
+                        suaya_core::VERSION
+                    ),
+                    "1".into(),
+                )
+            })
+            .collect(),
+    );
+    metrica(
+        "suaya_diagnostico_alcanzable",
+        "1 si el objetivo respondió.",
+        "1 if the target answered.",
+        diagnosticos
+            .iter()
+            .map(|d| {
+                let alcanzable = d.conectividad.alcanzable() || d.conectividad.saludo_ms.is_some();
+                (obj(d), u8::from(alcanzable).to_string())
+            })
+            .collect(),
+    );
+    metrica(
+        "suaya_diagnostico_hallazgos",
+        "Hallazgos del diagnóstico por nivel.",
+        "Diagnosis findings by level.",
+        diagnosticos
+            .iter()
+            .flat_map(|d| {
+                [
+                    Nivel::Critico,
+                    Nivel::Alto,
+                    Nivel::Medio,
+                    Nivel::Bajo,
+                    Nivel::Info,
+                ]
+                .map(|n| {
+                    (
+                        format!("{},nivel=\"{}\"", obj(d), n.como_texto()),
+                        d.hallazgos
+                            .iter()
+                            .filter(|h| h.nivel == n)
+                            .count()
+                            .to_string(),
+                    )
+                })
+            })
+            .collect(),
+    );
+    metrica(
+        "suaya_diagnostico_poscuantico",
+        "1 si el servicio ofrece o negocia criptografía híbrida o poscuántica.",
+        "1 if the service offers or negotiates hybrid or post-quantum cryptography.",
+        diagnosticos
+            .iter()
+            .map(|d| (obj(d), u8::from(d.poscuantico()).to_string()))
+            .collect(),
+    );
+    metrica(
+        "suaya_diagnostico_saludo_segundos",
+        "Duración del saludo o de la lectura del documento.",
+        "Duration of the handshake or of the document read.",
+        diagnosticos
+            .iter()
+            .filter_map(|d| {
+                d.conectividad
+                    .saludo_ms
+                    .map(|ms| (obj(d), format!("{:.3}", ms as f64 / 1000.0)))
+            })
+            .collect(),
+    );
+    metrica(
+        "suaya_diagnostico_certificado_dias_restantes",
+        "Días hasta que vence el certificado del servidor.",
+        "Days until the server certificate expires.",
+        diagnosticos
+            .iter()
+            .filter_map(|d| {
+                let hoja = d.certificados.as_ref()?.certificados.first()?;
+                Some((obj(d), hoja.dias_restantes.to_string()))
+            })
+            .collect(),
+    );
+    metrica(
+        "suaya_diagnostico_cadena_valida",
+        "1 si la cadena de certificados es válida para un cliente estándar.",
+        "1 if the certificate chain is valid for a standard client.",
+        diagnosticos
+            .iter()
+            .filter_map(|d| {
+                Some((
+                    obj(d),
+                    u8::from(d.certificados.as_ref()?.valida()).to_string(),
+                ))
+            })
+            .collect(),
+    );
+    s
 }
 
 // ---------------------------------------------------------------------------
@@ -283,7 +511,50 @@ pub(crate) fn diagnosticar_uno(
     op: &Opciones,
     verificador: Option<&Arc<WebPkiServerVerifier>>,
 ) -> Diagnostico {
+    let mut d = diagnosticar_sin_recetas(o, c, op, verificador);
+    asignar_recetas(&mut d, c);
+    d
+}
+
+/// Agrega las recetas de corrección de los hallazgos, sin repetir.
+fn asignar_recetas(d: &mut Diagnostico, c: &Conocimiento) {
+    for h in &d.hallazgos {
+        let Some(r) = c.receta_de_hallazgo(h.codigo) else {
+            continue;
+        };
+        match d.recetas.iter_mut().find(|x| x.id == r.id) {
+            Some(x) => {
+                if !x.hallazgos.contains(&h.codigo) {
+                    x.hallazgos.push(h.codigo);
+                }
+            }
+            None => d.recetas.push(RecetaDiag {
+                id: r.id.clone(),
+                titulo: r.titulo().to_string(),
+                pasos: r.pasos().to_vec(),
+                hallazgos: vec![h.codigo],
+            }),
+        }
+    }
+}
+
+fn diagnosticar_sin_recetas(
+    o: &Objetivo,
+    c: &Conocimiento,
+    op: &Opciones,
+    verificador: Option<&Arc<WebPkiServerVerifier>>,
+) -> Diagnostico {
     let mut d = Diagnostico::nuevo(o);
+    // IKE (UDP) y DNS no tienen una conexión TCP que medir.
+    match o.protocolo {
+        Protocolo::Ike => diagnosticar_ike(o, op, &mut d),
+        Protocolo::Dns => diagnosticar_dns(o, c, op, &mut d),
+        _ => {}
+    }
+    if matches!(o.protocolo, Protocolo::Ike | Protocolo::Dns) {
+        d.hallazgos.sort_by_key(|h| h.nivel);
+        return d;
+    }
     let Some(direccion) = conectividad(o, op, &mut d.conectividad) else {
         evaluar(&mut d, o);
         return d;
@@ -323,9 +594,11 @@ pub(crate) fn diagnosticar_uno(
                 ),
             }
         }
+        Protocolo::Oidc | Protocolo::Saml => diagnosticar_identidad(o, c, op, &mut d),
+        Protocolo::Ike | Protocolo::Dns => {}
         Protocolo::Tls => {
             if let Some(st) = o.starttls {
-                match conectar(direccion, op).and_then(|mut s| st.preambulo(&mut s)) {
+                match conectar(direccion, op).and_then(|mut s| st.preambulo_para(&mut s, &o.host)) {
                     Ok(()) => {
                         d.conectividad.starttls =
                             Some(format!("{}: STARTTLS aceptado", st.nombre()))
@@ -367,6 +640,556 @@ pub(crate) fn diagnosticar_uno(
     }
     evaluar(&mut d, o);
     d
+}
+
+/// IKEv2 viaja por UDP: no hay conexión que medir, solo la respuesta.
+fn diagnosticar_ike(o: &Objetivo, op: &Opciones, d: &mut Diagnostico) {
+    let inicio = Instant::now();
+    match (o.host.as_str(), o.puerto).to_socket_addrs() {
+        Ok(v) => {
+            d.conectividad.resolucion_ms = Some(ms(inicio));
+            d.conectividad.direcciones = v
+                .take(MAXIMO_DIRECCIONES)
+                .map(|x| Direccion {
+                    ip: x.ip().to_string(),
+                    familia: if x.is_ipv4() { "ipv4" } else { "ipv6" },
+                    estado: EstadoTcp::Abierto,
+                    milisegundos: None,
+                    error: Some("UDP: sin conexión que medir".into()),
+                })
+                .collect();
+        }
+        Err(e) => {
+            d.conectividad.error_resolucion = Some(e.to_string());
+            d.hallar(
+                Nivel::Critico,
+                "CON-DNS",
+                format!("No se pudo resolver {}: {e}.", o.host),
+            );
+            return;
+        }
+    }
+    let inicio = Instant::now();
+    match crate::ike::observar(o, op) {
+        Ok(obs) => {
+            d.conectividad.saludo_ms = Some(ms(inicio));
+            let nombre = |g: u16| crate::ike::nombre_grupo(g);
+            let i = IntercambioIke {
+                grupos: obs.grupos.iter().map(|g| nombre(*g)).collect(),
+                preferido: obs.preferido.map(nombre),
+                elegidas: obs
+                    .elegidas
+                    .iter()
+                    .filter_map(crate::ike::nombre_transformacion)
+                    .collect(),
+                mlkem: obs.mlkem.map(nombre),
+                acepta_3des: obs.acepta_3des,
+                acepta_sha1: obs.acepta_sha1,
+            };
+            match &i.mlkem {
+                Some(m) => d.hallar(Nivel::Info, "IKE-PQ", format!("Acepta {m} como intercambio adicional (RFC 9370): la VPN puede ser híbrida poscuántica.")),
+                None => d.hallar(Nivel::Alto, "IKE-CLASICO", "No acepta ML-KEM como intercambio adicional (RFC 9370): el tráfico de la VPN queda expuesto a «capturar ahora, descifrar después»."),
+            }
+            let rotos: Vec<&String> = i
+                .grupos
+                .iter()
+                .filter(|g| matches!(g.as_str(), "modp1024" | "modp1536"))
+                .collect();
+            if !rotos.is_empty() {
+                d.hallar(
+                    Nivel::Critico,
+                    "IKE-DH-ROTO",
+                    format!(
+                        "Acepta grupos Diffie-Hellman rotos: {}.",
+                        rotos
+                            .iter()
+                            .map(|s| s.as_str())
+                            .collect::<Vec<_>>()
+                            .join(", ")
+                    ),
+                );
+            }
+            if i.acepta_3des {
+                d.hallar(Nivel::Alto, "IKE-3DES", "Acepta 3DES para la SA de IKE.");
+            }
+            if i.acepta_sha1 {
+                d.hallar(
+                    Nivel::Medio,
+                    "IKE-SHA1",
+                    "Acepta SHA-1 como función pseudoaleatoria e integridad de IKE.",
+                );
+            }
+            d.ike = Some(i);
+        }
+        Err(e) => d.hallar(
+            Nivel::Critico,
+            "CON-UDP",
+            format!("El servidor IKEv2 no respondió por UDP: {e}."),
+        ),
+    }
+}
+
+/// Consulta el DNS del dominio y evalúa DNSSEC, CAA, TLSA y DKIM.
+fn diagnosticar_dns(o: &Objetivo, c: &Conocimiento, op: &Opciones, d: &mut Diagnostico) {
+    let inicio = Instant::now();
+    let obs = match crate::dns::observar(o, op) {
+        Ok(x) => x,
+        Err(e) => {
+            d.hallar(
+                Nivel::Critico,
+                "CON-DNS",
+                format!("No se pudo consultar el DNS de {}: {e}.", o.host),
+            );
+            return;
+        }
+    };
+    d.conectividad.resolucion_ms = Some(ms(inicio));
+    evaluar_dns(o, c, &obs, d);
+}
+
+/// Hallazgos de lo que publicó el DNS (separado de la consulta para probarlo).
+pub(crate) fn evaluar_dns(
+    o: &Objetivo,
+    c: &Conocimiento,
+    obs: &crate::dns::ObservacionDns,
+    d: &mut Diagnostico,
+) {
+    use crate::dns::{describir_tlsa, fecha, llave_dkim, mnemonico, nombre_digestion};
+    if let Ok(r) = obs.resolvedor.parse::<SocketAddr>() {
+        d.conectividad.direcciones.push(Direccion {
+            ip: r.ip().to_string(),
+            familia: if r.is_ipv4() { "ipv4" } else { "ipv6" },
+            estado: EstadoTcp::Abierto,
+            milisegundos: Some(obs.latencia_ms),
+            error: None,
+        });
+        d.conectividad.direccion_usada = Some(r.ip().to_string());
+    }
+    let riesgo_alg = |a: u8| c.por_alias("dnssec-alg", &a.to_string()).map(|x| x.riesgo);
+    if obs.consulto_dnssec {
+        if obs.llaves.is_empty() {
+            d.hallar(
+                Nivel::Medio,
+                "DNS-SIN-DNSSEC",
+                format!("{} no firma sus respuestas con DNSSEC: un atacante en la ruta puede suplantarlas.", o.host),
+            );
+        } else {
+            if obs.rechazada {
+                d.hallar(Nivel::Critico, "DNSSEC-ROTO", "El resolvedor rechaza la zona (SERVFAIL) y solo responde con la validación desactivada: la cadena DNSSEC está rota y los clientes que validan no resuelven el dominio.");
+            } else if obs.validada {
+                d.hallar(
+                    Nivel::Info,
+                    "DNSSEC-VALIDADO",
+                    "El resolvedor validó la cadena DNSSEC (bit AD).",
+                );
+            } else if obs.firmas.is_empty() {
+                d.hallar(Nivel::Info, "DNS-RESOLVEDOR", format!("El resolvedor {} no devolvió firmas RRSIG ni validó la respuesta: no admite DNSSEC. Para revisar las firmas indique un resolvedor validador con SUAYA_DNS (p. ej. SUAYA_DNS=1.1.1.1).", obs.resolvedor));
+            }
+            for f in obs.firmas.iter().filter(|f| f.expiracion < obs.ahora) {
+                d.hallar(
+                    Nivel::Critico,
+                    "DNSSEC-RRSIG-VENCIDA",
+                    format!(
+                        "La firma RRSIG del conjunto DNSKEY (etiqueta {}) venció el {}.",
+                        f.etiqueta,
+                        fecha(f.expiracion)
+                    ),
+                );
+            }
+            if obs.delegaciones.is_empty() {
+                d.hallar(Nivel::Medio, "DNSSEC-SIN-DS", "Hay llaves DNSKEY pero la zona padre no publica DS: la cadena de confianza no llega al dominio.");
+            }
+            if obs.delegaciones.iter().any(|x| x.digestion == 1) {
+                d.hallar(
+                    Nivel::Medio,
+                    "DNSSEC-DS-SHA1",
+                    "La delegación publica DS con SHA-1, que ya no debe usarse (RFC 9905).",
+                );
+            }
+            let mut algoritmos: Vec<u8> = obs.llaves.iter().map(|k| k.algoritmo).collect();
+            algoritmos.dedup();
+            for a in &algoritmos {
+                match riesgo_alg(*a) {
+                    Some(Riesgo::RotoClasico) => d.hallar(
+                        Nivel::Critico,
+                        "DNSSEC-ALGORITMO",
+                        format!("Firma con {}, inseguro hoy.", mnemonico(*a)),
+                    ),
+                    Some(Riesgo::Obsoleto) => d.hallar(
+                        Nivel::Alto,
+                        "DNSSEC-ALGORITMO",
+                        format!("Firma con {}, obsoleto.", mnemonico(*a)),
+                    ),
+                    _ => {}
+                }
+            }
+            for k in &obs.llaves {
+                if let Some(b) = k.bits
+                    && c.por_id("rsa")
+                        .is_some_and(|r| r.riesgo_para_tamano(Some(b)) == Riesgo::RotoClasico)
+                {
+                    d.hallar(
+                        Nivel::Alto,
+                        "DNSSEC-RSA-CORTA",
+                        format!("La llave {} {} es RSA de {b} bits.", k.rol(), k.etiqueta),
+                    );
+                }
+            }
+            let nombres: Vec<String> = algoritmos.iter().map(|a| mnemonico(*a)).collect();
+            if algoritmos.iter().any(|a| {
+                matches!(
+                    riesgo_alg(*a),
+                    Some(Riesgo::HibridoPq | Riesgo::ResistenteCuantico)
+                )
+            }) {
+                d.hallar(
+                    Nivel::Info,
+                    "DNSSEC-PQ",
+                    format!(
+                        "Firma la zona con un algoritmo poscuántico ({}).",
+                        nombres.join(", ")
+                    ),
+                );
+            } else {
+                d.hallar(Nivel::Bajo, "DNSSEC-CLASICO", format!("Las firmas DNSSEC usan solo algoritmos clásicos ({}): una computadora cuántica relevante podría falsificar respuestas.", nombres.join(", ")));
+            }
+        }
+        if obs.caa.is_empty() {
+            d.hallar(Nivel::Bajo, "DNS-SIN-CAA", "Sin registro CAA: cualquier autoridad certificadora puede emitir certificados para el dominio.");
+        }
+        if obs.dkim.is_empty() {
+            d.hallar(
+                Nivel::Info,
+                "DKIM-NO-HALLADO",
+                format!("No se halló DKIM en los selectores consultados ({}); indíquelos con dns://{}/selector1,selector2.", obs.selectores.join(", "), o.host),
+            );
+        }
+    }
+    let mut dkim = Vec::new();
+    for k in &obs.dkim {
+        let (id, nombre, bits) = llave_dkim(k, c);
+        dkim.push(match bits {
+            Some(b) => format!("{}: {nombre}, {b} bits", k.selector),
+            None => format!("{}: {nombre}", k.selector),
+        });
+        if id.as_deref() == Some("rsa")
+            && let Some(b) = bits
+        {
+            if b < 1024 {
+                d.hallar(Nivel::Critico, "DKIM-RSA-CORTA", format!("La llave DKIM {} es RSA de {b} bits: RFC 8301 exige al menos 1024 y los verificadores la rechazan.", k.selector));
+            } else if b < 2048 {
+                d.hallar(
+                    Nivel::Alto,
+                    "DKIM-RSA-CORTA",
+                    format!(
+                        "La llave DKIM {} es RSA de {b} bits: use al menos 2048.",
+                        k.selector
+                    ),
+                );
+            }
+        }
+        if k.digestiones.iter().any(|h| h == "sha1") {
+            d.hallar(
+                Nivel::Medio,
+                "DKIM-SHA1",
+                format!(
+                    "La llave DKIM {} acepta rsa-sha1, que RFC 8301 prohíbe.",
+                    k.selector
+                ),
+            );
+        }
+        if k.pruebas {
+            d.hallar(
+                Nivel::Bajo,
+                "DKIM-PRUEBAS",
+                format!("La llave DKIM {} está en modo de prueba (t=y).", k.selector),
+            );
+        }
+    }
+    for t in &obs.tlsa {
+        d.hallar(
+            Nivel::Info,
+            "DNS-TLSA",
+            format!("Publica TLSA en {} ({}).", t.nombre, describir_tlsa(t)),
+        );
+    }
+    for e in &obs.errores {
+        d.hallar(
+            Nivel::Bajo,
+            "DNS-CONSULTA",
+            format!("Consulta fallida: {e}."),
+        );
+    }
+    d.dns = Some(IntercambioDns {
+        resolvedor: obs.resolvedor.clone(),
+        validada: obs.validada,
+        llaves: obs
+            .llaves
+            .iter()
+            .map(|k| match k.bits {
+                Some(b) => format!(
+                    "{} {} {} ({b} bits)",
+                    k.rol(),
+                    k.etiqueta,
+                    mnemonico(k.algoritmo)
+                ),
+                None => format!("{} {} {}", k.rol(), k.etiqueta, mnemonico(k.algoritmo)),
+            })
+            .collect(),
+        delegaciones: obs
+            .delegaciones
+            .iter()
+            .map(|x| {
+                format!(
+                    "DS {} {} {}",
+                    x.etiqueta,
+                    mnemonico(x.algoritmo),
+                    nombre_digestion(x.digestion)
+                )
+            })
+            .collect(),
+        firmas: obs
+            .firmas
+            .iter()
+            .map(|f| {
+                format!(
+                    "RRSIG {} {} {} → {}",
+                    f.etiqueta,
+                    mnemonico(f.algoritmo),
+                    fecha(f.inicio),
+                    fecha(f.expiracion)
+                )
+            })
+            .collect(),
+        caa: obs.caa.clone(),
+        tlsa: obs
+            .tlsa
+            .iter()
+            .map(|t| format!("{}: {}", t.nombre, describir_tlsa(t)))
+            .collect(),
+        dkim,
+    });
+}
+
+/// Lee el documento del proveedor de identidad y evalúa sus algoritmos.
+fn diagnosticar_identidad(o: &Objetivo, c: &Conocimiento, op: &Opciones, d: &mut Diagnostico) {
+    let inicio = Instant::now();
+    let obs = match crate::identidad::observar(o, op) {
+        Ok(x) => x,
+        Err(e) => {
+            d.hallar(
+                Nivel::Critico,
+                "IDP-DOCUMENTO",
+                format!("No se pudo leer el documento del proveedor de identidad: {e}."),
+            );
+            return;
+        }
+    };
+    d.conectividad.saludo_ms = Some(ms(inicio));
+    evaluar_identidad(c, &obs, d);
+}
+
+/// Hallazgos de lo que publica un proveedor de identidad.
+pub(crate) fn evaluar_identidad(
+    c: &Conocimiento,
+    obs: &crate::identidad::ObservacionIdentidad,
+    d: &mut Diagnostico,
+) {
+    let mut firmas: Vec<(String, Riesgo)> = Vec::new();
+    let mut algoritmos = Vec::new();
+    for a in &obs.anuncios {
+        algoritmos.push(format!("{}: {}", a.uso, a.algoritmos.join(", ")));
+        for alg in &a.algoritmos {
+            if alg.eq_ignore_ascii_case("none") {
+                if a.uso.starts_with("id_token") || a.uso.starts_with("userinfo") {
+                    d.hallar(
+                        Nivel::Critico,
+                        "IDP-ALG-NONE",
+                        format!("{} acepta «none»: tokens de identidad sin firma.", a.uso),
+                    );
+                }
+                continue;
+            }
+            if alg.eq_ignore_ascii_case("RSA1_5") {
+                d.hallar(
+                    Nivel::Alto,
+                    "IDP-RSA15",
+                    format!(
+                        "{} anuncia RSA1_5 (PKCS #1 v1.5), expuesto a ataques de oráculo.",
+                        a.uso
+                    ),
+                );
+            }
+            if let Some(def) = c.por_alias("jose", alg) {
+                if a.confidencialidad {
+                    if def.riesgo == Riesgo::VulnerableCuantico {
+                        d.hallar(Nivel::Medio, "IDP-CIFRADO-CLASICO", format!("{} usa {alg}: los tokens cifrados quedan expuestos a «capturar ahora, descifrar después».", a.uso));
+                    }
+                } else {
+                    firmas.push((alg.clone(), def.riesgo));
+                }
+            }
+        }
+    }
+    let mut llaves = Vec::new();
+    for k in &obs.llaves {
+        let mut texto = format!("{}: {}", k.kid.as_deref().unwrap_or("-"), k.kty);
+        if let Some(p) = &k.parametro {
+            texto.push_str(&format!(" {p}"));
+        }
+        match &k.alg {
+            Some(a) => {
+                texto.push_str(&format!(", {a}"));
+                if let Some(def) = c.por_alias("jose", a) {
+                    firmas.push((a.clone(), def.riesgo));
+                }
+            }
+            // Sin «alg», el tipo de llave basta para saber que la firma es clásica.
+            None if matches!(k.kty.as_str(), "RSA" | "EC" | "OKP") => {
+                firmas.push((k.kty.clone(), Riesgo::VulnerableCuantico));
+            }
+            None => {}
+        }
+        if k.kty.eq_ignore_ascii_case("RSA") && k.bits.is_some_and(|b| b < 2048) {
+            d.hallar(
+                Nivel::Alto,
+                "IDP-RSA-CORTA",
+                format!(
+                    "La llave {} del JWKS es RSA de {} bits.",
+                    k.kid.as_deref().unwrap_or("sin kid"),
+                    k.bits.unwrap_or(0)
+                ),
+            );
+        }
+        llaves.push(texto);
+    }
+    for (elemento, uri) in &obs.metodos {
+        algoritmos.push(format!("{elemento}: {uri}"));
+        let Some(def) = c.por_alias("xmldsig", uri) else {
+            continue;
+        };
+        if uri.ends_with("#rsa-1_5") {
+            d.hallar(
+                Nivel::Alto,
+                "IDP-RSA15",
+                "Los metadatos anuncian cifrado RSA PKCS #1 v1.5, expuesto a ataques de oráculo.",
+            );
+        }
+        if matches!(def.riesgo, Riesgo::RotoClasico | Riesgo::Obsoleto) {
+            d.hallar(
+                Nivel::Alto,
+                "IDP-ALGORITMO",
+                format!("{elemento} usa {}, inseguro hoy.", def.nombre),
+            );
+        }
+        if elemento != "DigestMethod" && elemento != "EncryptionMethod" {
+            firmas.push((def.nombre.clone(), def.riesgo));
+        }
+    }
+    let mut certificados = Vec::new();
+    for x in &obs.certificados {
+        let Ok(r) = resumen_certificado(&x.der, c) else {
+            continue;
+        };
+        let uso = x.uso.as_deref().unwrap_or("-");
+        let llave = match r.tamano_llave {
+            Some(t) if !r.algoritmo_llave.contains(&t.to_string()) => {
+                format!("{} {t}", r.algoritmo_llave)
+            }
+            _ => r.algoritmo_llave.clone(),
+        };
+        certificados.push(format!(
+            "({uso}) {} · {llave} · → {}",
+            r.nombre,
+            r.no_despues.get(..10).unwrap_or(&r.no_despues)
+        ));
+        if r.dias_restantes < 0 {
+            d.hallar(
+                Nivel::Medio,
+                "IDP-CERT-VENCIDO",
+                format!(
+                    "El certificado {uso} «{}» de los metadatos venció el {}.",
+                    r.nombre, r.no_despues
+                ),
+            );
+        }
+        firmas.push((r.algoritmo_llave.clone(), r.riesgo_llave));
+    }
+    let hoy = crate::dns::fecha(crate::dns::ahora());
+    if let Some(v) = &obs.vigencia
+        && v.get(..10).is_some_and(|f| f < hoy.as_str())
+    {
+        d.hallar(
+            Nivel::Alto,
+            "IDP-METADATOS-VENCIDOS",
+            format!("Los metadatos vencieron (validUntil {v})."),
+        );
+    }
+    if let Some(externo) = &obs.jwks_externo {
+        d.hallar(
+            Nivel::Info,
+            "IDP-JWKS-EXTERNO",
+            format!(
+                "jwks_uri apunta fuera del objetivo ({externo}); sondéelo como objetivo explícito."
+            ),
+        );
+    }
+    for e in &obs.errores {
+        d.hallar(Nivel::Medio, "IDP-JWKS", format!("{e}."));
+    }
+    let pq = firmas
+        .iter()
+        .any(|(_, r)| matches!(r, Riesgo::HibridoPq | Riesgo::ResistenteCuantico));
+    let mut clasicas: Vec<String> = firmas
+        .iter()
+        .filter(|(_, r)| *r == Riesgo::VulnerableCuantico)
+        .map(|(n, _)| n.clone())
+        .collect();
+    clasicas.sort();
+    clasicas.dedup();
+    if pq {
+        d.hallar(
+            Nivel::Info,
+            "IDP-PQ",
+            "Anuncia firmas poscuánticas (ML-DSA, RFC 9964).",
+        );
+    } else if !clasicas.is_empty() {
+        d.hallar(Nivel::Bajo, "IDP-CLASICO", format!("Los tokens y aserciones se firman solo con algoritmos clásicos ({}): una computadora cuántica relevante podría falsificarlos.", clasicas.join(", ")));
+    }
+    d.identidad = Some(IntercambioIdentidad {
+        documento: obs.documento.clone(),
+        emisor: obs.emisor.clone(),
+        algoritmos,
+        jwks: obs.jwks.clone(),
+        llaves,
+        certificados,
+    });
+}
+
+/// Días desde 1970-01-01 de una fecha «AAAA-MM-DD…» (calendario civil).
+fn dias_civiles(fecha: &str) -> Option<i64> {
+    let a: i64 = fecha.get(..4)?.parse().ok()?;
+    let m: i64 = fecha.get(5..7)?.parse().ok()?;
+    let d: i64 = fecha.get(8..10)?.parse().ok()?;
+    if !(1..=12).contains(&m) || !(1..=31).contains(&d) {
+        return None;
+    }
+    let a = if m <= 2 { a - 1 } else { a };
+    let era = a.div_euclid(400);
+    let anio_era = a - era * 400;
+    let dia_anio = (153 * (m + if m > 2 { -3 } else { 9 }) + 2) / 5 + d - 1;
+    let dia_era = anio_era * 365 + anio_era / 4 - anio_era / 100 + dia_anio;
+    Some(era * 146_097 + dia_era - 719_468)
+}
+
+/// Vigencia máxima permitida a un certificado emitido en `emision` y la
+/// siguiente etapa del calendario, si la hay.
+fn vigencia_maxima(emision: &str) -> (i64, Option<(&'static str, i64)>) {
+    let i = VIGENCIA_MAXIMA
+        .iter()
+        .rposition(|(desde, _)| *desde <= emision)
+        .unwrap_or(0);
+    (VIGENCIA_MAXIMA[i].1, VIGENCIA_MAXIMA.get(i + 1).copied())
 }
 
 fn ms(desde: Instant) -> u64 {
@@ -649,7 +1472,7 @@ fn saludo_tls(
             rustls::ClientConnection::new(Arc::new(config), nombre).map_err(describir)?;
         let mut socket = conectar(direccion, op)?;
         if let Some(st) = o.starttls {
-            st.preambulo(&mut socket)?;
+            st.preambulo_para(&mut socket, &o.host)?;
         }
         let inicio = Instant::now();
         while conexion.is_handshaking() {
@@ -980,6 +1803,34 @@ fn evaluar_certificados(d: &mut Diagnostico, k: &CadenaCertificados, o: &Objetiv
             "El servidor presenta un certificado autofirmado.",
         );
     }
+    // El calendario del CA/Browser Forum solo obliga a autoridades públicas.
+    if k.valida()
+        && !hoja.autofirmado
+        && let (Some(desde), Some(hasta)) =
+            (dias_civiles(&hoja.no_antes), dias_civiles(&hoja.no_despues))
+    {
+        let vigencia = hasta - desde;
+        let (maxima, siguiente) = vigencia_maxima(&hoja.no_antes);
+        if vigencia > maxima {
+            d.hallar(
+                Nivel::Medio,
+                "CERT-VIGENCIA",
+                format!(
+                    "El certificado del servidor tiene una vigencia de {vigencia} días, mayor que los {maxima} que el CA/Browser Forum permite a los emitidos en esa fecha: los clientes pueden rechazarlo."
+                ),
+            );
+        } else if let Some((fecha, dias)) = siguiente
+            && vigencia > dias
+        {
+            d.hallar(
+                Nivel::Info,
+                "CERT-RENOVACION",
+                format!(
+                    "Vigencia de {vigencia} días: los certificados emitidos desde el {fecha} no podrán durar más de {dias}; automatice la renovación (ACME)."
+                ),
+            );
+        }
+    }
     let llave = match hoja.tamano_llave {
         Some(t) => format!("{} de {t} bits", hoja.algoritmo_llave),
         None => hoja.algoritmo_llave.clone(),
@@ -1147,6 +1998,236 @@ mod pruebas {
             huella_sha256: "00".into(),
             bytes: 800,
         }
+    }
+
+    #[test]
+    fn evaluacion_de_dns() {
+        use crate::dns::pruebas::{Zona, opciones, resolvedor_simulado, zona_ejemplo};
+        let c = Conocimiento::embebido();
+        let ahora = 1_793_000_000u32;
+        let o = objetivo("dns://ejemplo.mx");
+        let obs = crate::dns::observar_con(
+            resolvedor_simulado(zona_ejemplo(ahora)),
+            &o,
+            &opciones(),
+            ahora as i64,
+        )
+        .unwrap();
+        let mut d = Diagnostico::nuevo(&o);
+        evaluar_dns(&o, &c, &obs, &mut d);
+        let cs = codigos(&d);
+        for esperado in [
+            "DNSSEC-VALIDADO",
+            "DNSSEC-RRSIG-VENCIDA",
+            "DNSSEC-DS-SHA1",
+            "DNSSEC-CLASICO",
+            "DKIM-SHA1",
+            "DNS-TLSA",
+        ] {
+            assert!(cs.contains(&esperado), "{esperado}: {cs:?}");
+        }
+        assert!(
+            !cs.contains(&"DNS-SIN-CAA") && !cs.contains(&"DNSSEC-SIN-DS"),
+            "{cs:?}"
+        );
+        let x = d.dns.as_ref().unwrap();
+        assert_eq!(x.llaves.len(), 2);
+        assert!(
+            x.dkim
+                .iter()
+                .any(|k| k.starts_with("selector1: RSA") && k.ends_with("2048 bits")),
+            "{:?}",
+            x.dkim
+        );
+        assert_eq!(d.conectividad.direcciones.len(), 1);
+
+        // Cadena rota: el resolvedor solo responde con la validación desactivada.
+        let mut z = zona_ejemplo(ahora);
+        z.rota = true;
+        let obs = crate::dns::observar_con(resolvedor_simulado(z), &o, &opciones(), ahora as i64)
+            .unwrap();
+        let mut d = Diagnostico::nuevo(&o);
+        evaluar_dns(&o, &c, &obs, &mut d);
+        assert!(codigos(&d).contains(&"DNSSEC-ROTO"));
+
+        // Sin DNSSEC, sin CAA y sin DKIM; un resolvedor que no valida.
+        let z = Zona {
+            registros: vec![("ejemplo.mx".into(), 16, vec![4, b'h', b'o', b'l', b'a'])],
+            rota: false,
+            autenticada: false,
+        };
+        let obs = crate::dns::observar_con(resolvedor_simulado(z), &o, &opciones(), ahora as i64)
+            .unwrap();
+        let mut d = Diagnostico::nuevo(&o);
+        evaluar_dns(&o, &c, &obs, &mut d);
+        let cs = codigos(&d);
+        for esperado in ["DNS-SIN-DNSSEC", "DNS-SIN-CAA", "DKIM-NO-HALLADO"] {
+            assert!(cs.contains(&esperado), "{esperado}: {cs:?}");
+        }
+    }
+
+    #[test]
+    fn evaluacion_de_identidad() {
+        use crate::identidad::{Anuncio, CertificadoSaml, LlaveJwk, ObservacionIdentidad};
+        let c = Conocimiento::embebido();
+        let vencido = {
+            let k = rcgen::KeyPair::generate().unwrap();
+            let mut p = rcgen::CertificateParams::new(vec!["idp.ejemplo.mx".into()]).unwrap();
+            p.not_before = time::OffsetDateTime::from_unix_timestamp(1_500_000_000).unwrap();
+            p.not_after = time::OffsetDateTime::from_unix_timestamp(1_600_000_000).unwrap();
+            p.self_signed(&k).unwrap().der().to_vec()
+        };
+        let obs = ObservacionIdentidad {
+            documento: "https://login.ejemplo.mx/.well-known/openid-configuration".into(),
+            anuncios: vec![
+                Anuncio {
+                    uso: "id_token (firma)".into(),
+                    confidencialidad: false,
+                    algoritmos: vec!["RS256".into(), "none".into()],
+                },
+                Anuncio {
+                    uso: "id_token (cifrado de llave)".into(),
+                    confidencialidad: true,
+                    algoritmos: vec!["RSA1_5".into(), "RSA-OAEP".into()],
+                },
+            ],
+            llaves: vec![LlaveJwk {
+                kid: Some("viejo".into()),
+                kty: "RSA".into(),
+                alg: None,
+                parametro: Some("1024 bits".into()),
+                bits: Some(1024),
+            }],
+            certificados: vec![CertificadoSaml {
+                uso: Some("signing".into()),
+                der: vencido,
+            }],
+            metodos: vec![(
+                "SignatureMethod".into(),
+                "http://www.w3.org/2000/09/xmldsig#rsa-sha1".into(),
+            )],
+            vigencia: Some("2020-01-01T00:00:00Z".into()),
+            jwks_externo: Some("https://llaves.otro.example/certs".into()),
+            errores: vec!["https://login.ejemplo.mx/certs: estado HTTP 500".into()],
+            ..Default::default()
+        };
+        let mut d = Diagnostico::nuevo(&objetivo("oidc://login.ejemplo.mx"));
+        evaluar_identidad(&c, &obs, &mut d);
+        let cs = codigos(&d);
+        for esperado in [
+            "IDP-ALG-NONE",
+            "IDP-RSA15",
+            "IDP-CIFRADO-CLASICO",
+            "IDP-RSA-CORTA",
+            "IDP-ALGORITMO",
+            "IDP-CERT-VENCIDO",
+            "IDP-METADATOS-VENCIDOS",
+            "IDP-JWKS-EXTERNO",
+            "IDP-JWKS",
+            "IDP-CLASICO",
+        ] {
+            assert!(cs.contains(&esperado), "{esperado}: {cs:?}");
+        }
+        assert!(!cs.contains(&"IDP-PQ"));
+        let x = d.identidad.as_ref().unwrap();
+        assert!(
+            x.certificados[0].starts_with("(signing) "),
+            "{:?}",
+            x.certificados
+        );
+
+        // Con ML-DSA anunciado, la firma poscuántica sustituye al aviso clásico.
+        let obs = ObservacionIdentidad {
+            anuncios: vec![Anuncio {
+                uso: "id_token (firma)".into(),
+                confidencialidad: false,
+                algoritmos: vec!["ML-DSA-65".into()],
+            }],
+            ..Default::default()
+        };
+        let mut d = Diagnostico::nuevo(&objetivo("oidc://login.ejemplo.mx"));
+        evaluar_identidad(&c, &obs, &mut d);
+        assert_eq!(codigos(&d), vec!["IDP-PQ"]);
+    }
+
+    #[test]
+    fn metricas_en_formato_prometheus() {
+        let o = objetivo("tls://srv.ejemplo.mx:443");
+        let mut d = alcanzado(&o);
+        d.objetivo = "tls://a\"b".into();
+        d.conectividad.saludo_ms = Some(1250);
+        d.hallar(Nivel::Alto, "KEX-TLS12", "x");
+        d.hallar(Nivel::Info, "IKE-PQ", "y");
+        d.certificados = Some(CadenaCertificados {
+            certificados: vec![certificado(42)],
+            ..Default::default()
+        });
+        let m = metricas_prometheus(&[d]);
+        assert!(
+            m.contains("# TYPE suaya_diagnostico_hallazgos gauge"),
+            "{m}"
+        );
+        assert!(
+            m.contains("suaya_diagnostico_hallazgos{objetivo=\"tls://a\\\"b\",nivel=\"alto\"} 1"),
+            "{m}"
+        );
+        assert!(
+            m.contains("suaya_diagnostico_saludo_segundos{objetivo=\"tls://a\\\"b\"} 1.250"),
+            "{m}"
+        );
+        assert!(
+            m.contains(
+                "suaya_diagnostico_certificado_dias_restantes{objetivo=\"tls://a\\\"b\"} 42"
+            ),
+            "{m}"
+        );
+        assert!(
+            m.contains("suaya_diagnostico_poscuantico{objetivo=\"tls://a\\\"b\"} 1"),
+            "{m}"
+        );
+        assert!(
+            m.contains("suaya_diagnostico_cadena_valida{objetivo=\"tls://a\\\"b\"} 1"),
+            "{m}"
+        );
+    }
+
+    #[test]
+    fn calendario_de_vigencia_del_ca_b_forum() {
+        assert_eq!(dias_civiles("1970-01-01"), Some(0));
+        assert_eq!(dias_civiles("2000-03-01T00:00:00Z"), Some(11_017));
+        assert_eq!(dias_civiles("2026-13-01"), None);
+        assert_eq!(
+            vigencia_maxima("2025-06-01T00:00:00Z"),
+            (398, Some(("2026-03-15", 200)))
+        );
+        assert_eq!(
+            vigencia_maxima("2026-03-15T00:00:00Z"),
+            (200, Some(("2027-03-15", 100)))
+        );
+        assert_eq!(vigencia_maxima("2029-04-01T00:00:00Z"), (47, None));
+
+        let o = objetivo("tls://srv.ejemplo.mx:443");
+        let mut d = alcanzado(&o);
+        let mut k = CadenaCertificados {
+            ocsp_engrapado: true,
+            orden_correcto: true,
+            certificados: vec![certificado(200)],
+            ..Default::default()
+        };
+        k.certificados[0].no_antes = "2026-04-01T00:00:00Z".into();
+        k.certificados[0].no_despues = "2027-04-01T00:00:00Z".into();
+        evaluar_certificados(&mut d, &k, &o);
+        assert!(codigos(&d).contains(&"CERT-VIGENCIA"), "{:?}", codigos(&d));
+
+        let mut d = alcanzado(&o);
+        k.certificados[0].no_despues = "2026-10-01T00:00:00Z".into();
+        evaluar_certificados(&mut d, &k, &o);
+        assert!(
+            codigos(&d).contains(&"CERT-RENOVACION"),
+            "{:?}",
+            codigos(&d)
+        );
+        assert!(!codigos(&d).contains(&"CERT-VIGENCIA"));
     }
 
     #[test]

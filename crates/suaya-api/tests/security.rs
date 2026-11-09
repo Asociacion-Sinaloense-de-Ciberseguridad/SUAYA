@@ -30,6 +30,7 @@ fn app() -> axum::Router {
         credentials,
         targets: Default::default(),
         network_targets: Default::default(),
+        organization: None,
     };
     let state = AppState::new(config, db).unwrap();
     router(state)
@@ -142,6 +143,7 @@ async fn ownership_checked_on_read_delete_and_list() {
         }],
         targets: Default::default(),
         network_targets: Default::default(),
+        organization: None,
     };
     let state = AppState::new(config, Connection::open(&file).unwrap()).unwrap();
     let db = Connection::open(&file).unwrap();
@@ -213,6 +215,7 @@ fn rejects_expired_config_and_duplicate_tokens() {
                 credentials: vec![c],
                 targets: Default::default(),
                 network_targets: Default::default(),
+                organization: None,
             },
             Connection::open_in_memory().unwrap()
         )
@@ -242,6 +245,7 @@ async fn real_scan_persists_and_is_readable_by_owner() {
         credentials: vec![credential],
         targets: std::collections::HashMap::from([("fixture".into(), target)]),
         network_targets: Default::default(),
+        organization: None,
     };
     let app = router(AppState::new(config, Connection::open_in_memory().unwrap()).unwrap());
     let response = call(
@@ -307,6 +311,7 @@ fn duplicate_tokens_rejected_including_hex_case() {
                 credentials: vec![first, second],
                 targets: Default::default(),
                 network_targets: Default::default(),
+                organization: None,
             },
             Connection::open_in_memory().unwrap()
         )
@@ -327,6 +332,7 @@ async fn reload_revokes_old_token_and_accepts_new_token() {
         credentials: vec![credential(token)],
         targets: Default::default(),
         network_targets: Default::default(),
+        organization: None,
     };
     let state = AppState::new(config(ALICE), Connection::open_in_memory().unwrap()).unwrap();
     let app = router(state.clone());
@@ -367,6 +373,7 @@ async fn scoped_credential_cannot_scan_another_alias() {
             credentials: vec![credential],
             targets: std::collections::HashMap::from([("fixture".into(), target)]),
             network_targets: Default::default(),
+            organization: None,
         },
         Connection::open_in_memory().unwrap(),
     )
@@ -400,6 +407,7 @@ fn retention_removes_expired_records_without_new_scans() {
             credentials: vec![c],
             targets: Default::default(),
             network_targets: Default::default(),
+            organization: None,
         },
         Connection::open(&file).unwrap(),
     )
@@ -436,6 +444,7 @@ fn app_with_network(target: &str, scope: Option<Vec<String>>) -> axum::Router {
         credentials,
         targets: Default::default(),
         network_targets: std::collections::HashMap::from([("web".into(), target.into())]),
+        organization: None,
     };
     router(AppState::new(config, Connection::open_in_memory().unwrap()).unwrap())
 }
@@ -525,7 +534,7 @@ async fn diagnose_uses_only_preconfigured_network_aliases() {
 #[test]
 fn invalid_network_targets_are_rejected_at_startup() {
     for (alias, target) in [
-        ("web", "ftp://x"),
+        ("web", "gopher://x"),
         ("bad alias", "tls://x:443"),
         ("web", "x:puerto"),
     ] {
@@ -539,6 +548,7 @@ fn invalid_network_targets_are_rejected_at_startup() {
             }],
             targets: Default::default(),
             network_targets: std::collections::HashMap::from([(alias.into(), target.into())]),
+            organization: None,
         };
         assert!(
             AppState::new(config, Connection::open_in_memory().unwrap()).is_err(),

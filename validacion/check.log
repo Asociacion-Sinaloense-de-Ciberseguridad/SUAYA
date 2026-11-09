@@ -1,11 +1,4 @@
-    Checking rustls-webpki v0.103.16
-    Checking tokio v1.54.1
-    Checking rustls v0.23.46
-    Checking hyper v1.12.0
-    Checking tower v0.5.3
-    Checking hyper-util v0.1.21
-    Checking suaya-red v1.6.0 (/Users/enriquerangel/Documents/Quantum/SUAYA/suaya v1.6/crates/suaya-red)
-    Checking axum v0.8.9
-    Checking suaya v1.6.0 (/Users/enriquerangel/Documents/Quantum/SUAYA/suaya v1.6/crates/suaya-cli)
-    Checking suaya-api v1.6.0 (/Users/enriquerangel/Documents/Quantum/SUAYA/suaya v1.6/crates/suaya-api)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.61s
+    Checking suaya-red v1.7.0 (/Users/enriquerangel/Documents/Quantum/SUAYA/suaya v1.7/crates/suaya-red)
+    Checking suaya-api v1.7.0 (/Users/enriquerangel/Documents/Quantum/SUAYA/suaya v1.7/crates/suaya-api)
+    Checking suaya v1.7.0 (/Users/enriquerangel/Documents/Quantum/SUAYA/suaya v1.7/crates/suaya-cli)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.55s

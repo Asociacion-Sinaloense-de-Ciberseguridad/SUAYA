@@ -1,3 +1,5 @@
-Done 610154 runs in 31 second(s)
-Done 676777 runs in 31 second(s)
-Done 435907 runs in 31 second(s)
+escaneres: Done 229461 runs in 975 second(s) (la mayor parte del tiempo transcurrió con el equipo suspendido)
+importar_cbom: Done 414037 runs in 31 second(s)
+protocolos: Done 6208 runs in 32 second(s) (suspensión del equipo durante la corrida)
+protocolos, segunda corrida: Done 237253 runs in 31 second(s)
+Sin fallos, tiempos agotados ni exceso de memoria.

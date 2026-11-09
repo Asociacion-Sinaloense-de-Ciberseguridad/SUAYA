@@ -961,7 +961,7 @@ dependencies = [
 
 [[package]]
 name = "suaya-core"
-version = "1.6.0"
+version = "1.7.0"
 dependencies = [
  "regex",
  "serde",
@@ -971,9 +971,10 @@ dependencies = [
 
 [[package]]
 name = "suaya-escaneo"
-version = "1.6.0"
+version = "1.7.0"
 dependencies = [
  "aho-corasick",
+ "aws-lc-rs",
  "base64",
  "ed25519-dalek",
  "flate2",
@@ -1004,7 +1005,7 @@ dependencies = [
 
 [[package]]
 name = "suaya-red"
-version = "1.6.0"
+version = "1.7.0"
 dependencies = [
  "base64",
  "hex",
@@ -1015,6 +1016,7 @@ dependencies = [
  "sha2",
  "suaya-core",
  "suaya-escaneo",
+ "time",
  "uuid",
  "yaml-rust2",
 ]

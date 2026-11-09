@@ -4,6 +4,6 @@ test_SEC002_anonymous_budget_does_not_block_valid_user (__main__.SecurityRegress
 test_SEC003_missing_layer_is_not_completed (__main__.SecurityRegression.test_SEC003_missing_layer_is_not_completed) ... ok
 
 ----------------------------------------------------------------------
-Ran 4 tests in 2.358s
+Ran 4 tests in 2.816s
 
 OK

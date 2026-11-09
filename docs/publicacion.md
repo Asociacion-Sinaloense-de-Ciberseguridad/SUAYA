@@ -21,7 +21,7 @@ sha256sum --check --ignore-missing SHA256SUMS
 Con la CLI de GitHub:
 
 ```bash
-gh attestation verify suaya-1.0.0-x86_64-unknown-linux-gnu.tar.gz --repo Asociacion-Sinaloense-de-Ciberseguridad/SUAYA
+gh attestation verify suaya-1.0.0-x86_64-unknown-linux-gnu.tar.gz --repo [OWNER]/suaya
 ```
 
 La verificación falla si el archivo no se compiló en el flujo de publicación de ese repositorio.
@@ -41,7 +41,7 @@ Compare la huella que imprime con la que el proyecto publica por un canal distin
 Cualquiera puede recompilar una versión y obtener el mismo binario:
 
 ```bash
-git clone https://github.com/Asociacion-Sinaloense-de-Ciberseguridad/SUAYA && cd SUAYA
+git clone https://github.com/[OWNER]/suaya && cd suaya
 git checkout v1.0.0
 ./scripts/compilacion-reproducible.sh
 ```

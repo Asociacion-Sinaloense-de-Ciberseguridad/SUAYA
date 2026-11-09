@@ -16,6 +16,7 @@ ignorar_primitivas = ["other", "kdf"]
 # Fecha de uso exclusivo de CNSA 2.0 por capacidad tecnológica.
 [plazos]
 "firma-codigo" = 2030
+"aseguramiento-plataforma" = 2030
 "vpn-cifrado-red" = 2030
 "servidores-web" = 2033
 "navegadores-web" = 2033
@@ -32,7 +33,18 @@ algoritmos = ["ml-kem-1024", "ml-dsa-87", "aes-256-gcm", "aes-256-ctr", "aes-256
 estado = "conforme"
 
 [[regla]]
-algoritmos = ["secp384r1-mlkem1024"]
+algoritmos = ["hss-lms", "xmss", "xmssmt"]
+capacidades = ["firma-codigo", "aseguramiento-plataforma"]
+estado = "conforme"
+nota = "LMS y XMSS (NIST SP 800-208) son los algoritmos de CNSA 2.0 para firmar software y firmware."
+
+[[regla]]
+algoritmos = ["hss-lms", "xmss", "xmssmt"]
+estado = "no-conforme"
+nota = "CNSA 2.0 admite LMS y XMSS solo para firmar software y firmware; para otras firmas exige ML-DSA-87."
+
+[[regla]]
+algoritmos = ["secp384r1-mlkem1024", "composite-mlkem1024-ecdh-p384"]
 estado = "conforme"
 nota = "Híbrido con ML-KEM-1024 y P-384."
 

@@ -19,16 +19,37 @@ final class ScanJob: @unchecked Sendable {
     }
 }
 
+/// Perfiles de política incluidos en el motor: (identificador, nombre).
+let perfiles: [(String, String)] = [
+    ("", "Sin perfil"),
+    ("nist-ir-8547", "NIST IR 8547"),
+    ("cnsa-2.0", "CNSA 2.0 (NSA)"),
+    ("ue-hoja-de-ruta", "Unión Europea"),
+    ("ncsc-reino-unido", "Reino Unido (NCSC)"),
+    ("canada-cccs", "Canadá (CCCS)"),
+    ("pci-dss-4", "PCI DSS v4.0.1"),
+]
+
+/// Lo que se puede exportar de un inventario.
+enum Exportacion { case cbom, html, csv, sarif }
+
 @MainActor final class ScanModel: ObservableObject {
     @Published var status = "Selecciona una carpeta para inventariar su criptografía."
     @Published var busy = false
     @Published var target: URL?
+    @Published var profile = ""
+    @Published var organization: URL?
+    @Published var keychain = false
     @Published var components: [String] = []
     @Published var critical = 0
     @Published var cbom: Data?
     @Published var html: Data?
+    @Published var csv: Data?
+    @Published var sarif: Data?
     private var job: ScanJob?
     private var generation = UUID()
+
+    var canScan: Bool { !busy && (target != nil || keychain) }
 
     func choose() {
         let panel = NSOpenPanel()
@@ -36,23 +57,31 @@ final class ScanJob: @unchecked Sendable {
         panel.allowsMultipleSelection = false
         if panel.runModal() == .OK { target = panel.url }
     }
+    func chooseOrganization() {
+        let panel = NSOpenPanel()
+        panel.canChooseDirectories = false; panel.canChooseFiles = true
+        panel.allowsMultipleSelection = false
+        if let toml = UTType(filenameExtension: "toml") { panel.allowedContentTypes = [toml, .plainText] }
+        if panel.runModal() == .OK { organization = panel.url }
+    }
     func cancel() {
         generation = UUID()
         job?.cancel(); job = nil; busy = false
         status = "Escaneo cancelado."
     }
     func clear() {
-        cancel(); cbom = nil; html = nil; components = []; critical = 0
+        cancel(); cbom = nil; html = nil; csv = nil; sarif = nil; components = []; critical = 0
         status = "Inventario borrado de la sesión."
     }
     func scan() {
-        guard !busy, let target else { return }
+        guard canScan else { return }
         guard let executable = Bundle.main.url(forAuxiliaryExecutable: "suaya-engine") else {
             status = "El paquete no contiene el motor SUAYA. Reinstala la aplicación."; return
         }
         let id = UUID(); generation = id
-        busy = true; cbom = nil; html = nil; components = []; critical = 0
-        status = "Analizando \(target.lastPathComponent)…"
+        busy = true; cbom = nil; html = nil; csv = nil; sarif = nil; components = []; critical = 0
+        status = target.map { "Analizando \($0.lastPathComponent)…" } ?? "Analizando el llavero…"
+        let (target, profile, organization, keychain) = (self.target, self.profile, self.organization, self.keychain)
         let proc = Process(); let job = ScanJob(); self.job = job
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             let dir = FileManager.default.temporaryDirectory.appendingPathComponent("suaya-\(id)")
@@ -61,23 +90,33 @@ final class ScanJob: @unchecked Sendable {
                 try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: false, attributes: [.posixPermissions: 0o700])
                 let json = dir.appendingPathComponent("cbom.json")
                 let report = dir.appendingPathComponent("reporte.html")
+                let csvFile = dir.appendingPathComponent("inventario.csv")
+                let sarifFile = dir.appendingPathComponent("hallazgos.sarif")
                 let log = dir.appendingPathComponent("stderr.log")
                 FileManager.default.createFile(atPath: log.path, contents: nil, attributes: [.posixPermissions: 0o600])
                 let handle = try FileHandle(forWritingTo: log)
                 defer { try? handle.close() }
+                var args = ["escanear", "--hilos", "2", "-o", json.path, "-r", report.path, "--csv", csvFile.path, "--sarif", sarifFile.path]
+                if !profile.isEmpty { args += ["--perfil", profile] }
+                if let organization { args += ["--organizacion", organization.path] }
+                if keychain { args.append("--llavero") }
+                // «--» cierra las opciones: la ruta elegida solo puede ser un objetivo.
+                if let target { args += ["--", target.path] }
                 proc.executableURL = executable
-                proc.arguments = ["escanear", target.path, "--hilos", "2", "-o", json.path, "-r", report.path]
+                proc.arguments = args
                 proc.standardOutput = FileHandle.nullDevice; proc.standardError = handle
                 try job.run(proc); proc.waitUntilExit()
                 guard proc.terminationStatus == 0 else {
                     DispatchQueue.main.async {
                         guard let self, self.generation == id else { return }
                         self.busy = false; self.job = nil
-                        self.status = "El escaneo falló (código \(proc.terminationStatus)). Revisa permisos y el objetivo con la CLI."
+                        self.status = "El escaneo falló (código \(proc.terminationStatus)). Revisa permisos, el objetivo y el archivo de organización con la CLI."
                     }; return
                 }
                 let bytes = try Data(contentsOf: json)
                 let reportBytes = try Data(contentsOf: report)
+                let csvBytes = try Data(contentsOf: csvFile)
+                let sarifBytes = try Data(contentsOf: sarifFile)
                 let object = try JSONSerialization.jsonObject(with: bytes) as? [String: Any]
                 let items = object?["components"] as? [[String: Any]] ?? []
                 let names = items.map { ($0["name"] as? String) ?? "Activo" }
@@ -90,7 +129,8 @@ final class ScanJob: @unchecked Sendable {
                 let warnings = !completed
                 DispatchQueue.main.async {
                     guard let self, self.generation == id else { return }
-                    self.cbom = bytes; self.html = reportBytes; self.components = names; self.critical = count
+                    self.cbom = bytes; self.html = reportBytes; self.csv = csvBytes; self.sarif = sarifBytes
+                    self.components = names; self.critical = count
                     self.busy = false; self.job = nil
                     self.status = warnings ? "Inventario generado con avisos. Consulta el reporte y la CLI antes de concluir cobertura completa." : "Inventario generado: \(names.count) activos, \(count) críticos."
                 }
@@ -102,11 +142,17 @@ final class ScanJob: @unchecked Sendable {
             }
         }
     }
-    func export(htmlReport: Bool) {
-        guard let data = htmlReport ? html : cbom else { return }
+    func export(_ kind: Exportacion) {
+        let (data, name, type): (Data?, String, UTType) = switch kind {
+        case .cbom: (cbom, "suaya-cbom.json", .json)
+        case .html: (html, "suaya-reporte.html", .html)
+        case .csv: (csv, "suaya-inventario.csv", .commaSeparatedText)
+        case .sarif: (sarif, "suaya-hallazgos.sarif", UTType(filenameExtension: "sarif") ?? .json)
+        }
+        guard let data else { return }
         let panel = NSSavePanel()
-        panel.nameFieldStringValue = htmlReport ? "suaya-reporte.html" : "suaya-cbom.json"
-        panel.allowedContentTypes = htmlReport ? [.html] : [.json]
+        panel.nameFieldStringValue = name
+        panel.allowedContentTypes = [type]
         if panel.runModal() == .OK, let url = panel.url {
             do {
                 try writePrivately(data, to: url)
@@ -154,10 +200,23 @@ struct Cadena: Decodable, Hashable {
     let error_validacion: String?; let error_nombre: String?; let bytes: Int; let certificados: [CertificadoDiag]
 }
 struct IntercambioSsh: Decodable, Hashable { let identificacion: String; let kex: [String]; let kex_poscuanticos: [String]; let kex_estricto: Bool }
+struct IntercambioIke: Decodable, Hashable { let grupos: [String]; let preferido: String?; let mlkem: String? }
+struct IntercambioDns: Decodable, Hashable {
+    let resolvedor: String; let validada: Bool; let llaves: [String]; let delegaciones: [String]
+    let firmas: [String]; let caa: [String]; let tlsa: [String]; let dkim: [String]
+}
+struct IntercambioIdentidad: Decodable, Hashable {
+    let documento: String; let emisor: String?; let algoritmos: [String]; let jwks: String?
+    let llaves: [String]; let certificados: [String]
+}
+struct RecetaDiag: Decodable, Hashable { let id: String; let titulo: String; let pasos: [String]; let hallazgos: [String] }
 struct Diagnostico: Decodable, Hashable, Identifiable {
     var id: String { objetivo }
     let objetivo: String; let protocolo: String; let conectividad: Conectividad
-    let tls: IntercambioTls?; let certificados: Cadena?; let ssh: IntercambioSsh?; let hallazgos: [Hallazgo]
+    let tls: IntercambioTls?; let certificados: Cadena?; let ssh: IntercambioSsh?
+    let ike: IntercambioIke?; let dns: IntercambioDns?; let identidad: IntercambioIdentidad?
+    let hallazgos: [Hallazgo]
+    let recetas: [RecetaDiag]?
     var peor: String? { ["critico", "alto", "medio", "bajo", "info"].first { n in hallazgos.contains { $0.nivel == n } } }
 }
 struct DocumentoDiagnostico: Decodable { let diagnosticos: [Diagnostico] }
@@ -180,7 +239,7 @@ func etiquetaNivel(_ nivel: String) -> String {
     static let maximoObjetivos = 20
     @Published var input = ""
     @Published var authority: URL?
-    @Published var status = "Escribe uno o más servicios (p. ej. www.ejemplo.mx, smtp://correo.ejemplo.mx, ssh://bastion:22)."
+    @Published var status = "Escribe uno o más servicios (p. ej. www.ejemplo.mx, smtp://correo.ejemplo.mx, ssh://bastion:22, dns://ejemplo.mx, oidc://login.ejemplo.mx)."
     @Published var busy = false
     @Published var results: [Diagnostico] = []
     @Published var json: Data?
@@ -305,12 +364,36 @@ struct DiagnosisRow: View {
                     Text("KEX: \(s.kex.joined(separator: ", "))")
                     Text(s.kex_estricto ? "strict KEX anunciado" : "sin strict KEX")
                 }
+                if let i = d.ike {
+                    Text("IKEv2: \(i.grupos.joined(separator: ", "))")
+                    if let m = i.mlkem { Text("Intercambio adicional: \(m)") }
+                }
+                if let x = d.dns {
+                    Text("Resolvedor: \(x.resolvedor)\(x.validada ? " · cadena DNSSEC validada" : "")")
+                    ForEach([("DNSKEY", x.llaves), ("DS", x.delegaciones), ("RRSIG", x.firmas), ("CAA", x.caa), ("TLSA", x.tlsa), ("DKIM", x.dkim)], id: \.0) { titulo, lista in
+                        if !lista.isEmpty { Text("\(titulo): \(lista.joined(separator: " | "))") }
+                    }
+                }
+                if let x = d.identidad {
+                    Text("Documento: \(x.documento)")
+                    ForEach(x.algoritmos, id: \.self) { Text($0) }
+                    if let j = x.jwks { Text("JWKS: \(j) (\(x.llaves.count) llaves)") }
+                    ForEach(x.certificados, id: \.self) { Text("Certificado \($0)") }
+                }
                 Divider()
                 ForEach(d.hallazgos, id: \.self) { h in
                     HStack(alignment: .firstTextBaseline) {
                         Text(etiquetaNivel(h.nivel)).font(.caption.bold()).foregroundColor(colorNivel(h.nivel)).frame(width: 64, alignment: .leading)
                         Text(h.codigo).font(.caption.monospaced()).frame(width: 170, alignment: .leading)
                         Text(h.mensaje)
+                    }
+                }
+                if let recetas = d.recetas, !recetas.isEmpty {
+                    Divider()
+                    Text("Cómo corregir").font(.callout.bold())
+                    ForEach(recetas, id: \.self) { r in
+                        Text("\(r.titulo) (\(r.hallazgos.joined(separator: ", ")))").bold()
+                        ForEach(Array(r.pasos.enumerated()), id: \.offset) { i, paso in Text("  \(i + 1). \(paso)") }
                     }
                 }
             }.textSelection(.enabled).font(.callout).padding(.vertical, 4)
@@ -331,7 +414,7 @@ struct DiagnosisView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                TextField("www.ejemplo.mx  smtp://correo.ejemplo.mx  ssh://bastion:22", text: $model.input)
+                TextField("www.ejemplo.mx  ssh://bastion:22  ike://vpn.ejemplo.mx  dns://ejemplo.mx  oidc://login.ejemplo.mx", text: $model.input)
                     .textFieldStyle(.roundedBorder).disabled(model.busy).onSubmit { model.run() }
                 Button("Diagnosticar") { model.run() }.disabled(model.targets.isEmpty || model.busy).keyboardShortcut(.return)
                 if model.busy { Button("Cancelar") { model.cancel() } }
@@ -359,7 +442,7 @@ struct ContentView: View {
             HStack {
                 Image(systemName: "shield.lefthalf.filled").font(.largeTitle).foregroundColor(.teal)
                 VStack(alignment: .leading) {
-                    Text("SUAYA 1.6").font(.largeTitle.bold())
+                    Text("SUAYA 1.7").font(.largeTitle.bold())
                     Text("Inventario criptográfico, diagnóstico de red y preparación poscuántica").foregroundColor(.secondary)
                 }
                 Spacer()
@@ -379,9 +462,21 @@ struct InventoryView: View {
             HStack {
                 Button("Elegir archivo o carpeta") { model.choose() }.disabled(model.busy)
                 Text(model.target?.path ?? "Sin objetivo seleccionado").lineLimit(1).truncationMode(.middle)
+                if model.target != nil { Button("Quitar") { model.target = nil }.disabled(model.busy) }
                 Spacer()
-                Button("Escanear") { model.scan() }.disabled(model.target == nil || model.busy).keyboardShortcut(.return)
+                Button("Escanear") { model.scan() }.disabled(!model.canScan).keyboardShortcut(.return)
                 if model.busy { Button("Cancelar") { model.cancel() } }
+            }
+            HStack {
+                Picker("Perfil", selection: $model.profile) {
+                    ForEach(perfiles, id: \.0) { id, nombre in Text(nombre).tag(id) }
+                }.frame(maxWidth: 280).disabled(model.busy)
+                Button("Organización (TOML)…") { model.chooseOrganization() }.disabled(model.busy)
+                Text(model.organization?.lastPathComponent ?? "Sin contexto").foregroundColor(.secondary).lineLimit(1)
+                if model.organization != nil { Button("Quitar") { model.organization = nil }.disabled(model.busy) }
+                Spacer()
+                Toggle("Incluir el llavero de macOS", isOn: $model.keychain).disabled(model.busy)
+                    .help("Agrega los certificados del llavero (raíces del sistema, llavero del sistema y del usuario). Nunca lee llaves privadas.")
             }
             if model.busy { ProgressView().progressViewStyle(.linear) }
             Text(model.status).textSelection(.enabled)
@@ -389,8 +484,10 @@ struct InventoryView: View {
                 Text("\(model.components.count) activos").font(.headline)
                 Text("\(model.critical) críticos").foregroundColor(model.critical > 0 ? .red : .secondary)
                 Spacer()
-                Button("Exportar CBOM") { model.export(htmlReport: false) }.disabled(model.cbom == nil)
-                Button("Exportar HTML") { model.export(htmlReport: true) }.disabled(model.html == nil)
+                Button("Exportar CBOM") { model.export(.cbom) }.disabled(model.cbom == nil)
+                Button("Exportar HTML") { model.export(.html) }.disabled(model.html == nil)
+                Button("Exportar CSV") { model.export(.csv) }.disabled(model.csv == nil)
+                Button("Exportar SARIF") { model.export(.sarif) }.disabled(model.sarif == nil)
                 Button("Limpiar") { model.clear() }
             }
             List(Array(model.components.enumerated()), id: \.offset) { _, name in Text(name).textSelection(.enabled) }

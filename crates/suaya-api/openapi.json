@@ -1,0 +1,125 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Suaya API",
+    "version": "1.7.0",
+    "description": "API local de Suaya: inventario criptográfico (CBOM CycloneDX 1.7), evaluación de preparación poscuántica y diagnóstico de servicios de red. Nunca acepta rutas ni URLs del cliente: los escaneos usan alias de rutas configuradas por el operador, los diagnósticos alias de servicios y los perfiles, solo los incluidos en Suaya."
+  },
+  "servers": [{ "url": "/" }],
+  "security": [{ "token": [] }],
+  "components": {
+    "securitySchemes": {
+      "token": { "type": "http", "scheme": "bearer", "description": "Token opaco de 32 a 256 caracteres; el servidor guarda solo su SHA-256." }
+    },
+    "parameters": {
+      "id": { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+    },
+    "schemas": {
+      "Error": { "type": "object", "properties": { "error": { "type": "string" } }, "required": ["error"] },
+      "ScanRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["target"],
+        "properties": {
+          "target": { "type": "string", "description": "Alias de ruta (escaneo) o de servicio (diagnóstico)." },
+          "profile": { "type": "string", "description": "Perfil incluido: nist-ir-8547, cnsa-2.0, ue-hoja-de-ruta, ncsc-reino-unido, canada-cccs, pci-dss-4... Solo en escaneos." }
+        }
+      },
+      "ScanResult": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "status": { "type": "string", "enum": ["completed", "partial"] },
+          "created_at": { "type": "string", "format": "date-time" },
+          "files": { "type": "integer" },
+          "skipped": { "type": "integer" },
+          "warnings": { "type": "integer" }
+        }
+      },
+      "Diagnosis": {
+        "type": "object",
+        "properties": {
+          "target": { "type": "string" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "worst": { "type": ["string", "null"], "enum": ["critico", "alto", "medio", "bajo", "info", null] },
+          "diagnosis": { "type": "object", "description": "Diagnóstico completo, igual que diagnosticar --json." }
+        }
+      }
+    },
+    "responses": {
+      "Error": { "description": "Error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+    }
+  },
+  "paths": {
+    "/api/v1/health": {
+      "get": { "summary": "Estado del servicio", "security": [], "responses": { "200": { "description": "En servicio" } } }
+    },
+    "/api/v1/openapi.json": {
+      "get": { "summary": "Esta descripción", "security": [], "responses": { "200": { "description": "OpenAPI 3.1" } } }
+    },
+    "/api/v1/targets": {
+      "get": { "summary": "Alias que el usuario puede escanear o diagnosticar", "responses": { "200": { "description": "Alias" }, "401": { "$ref": "#/components/responses/Error" } } }
+    },
+    "/api/v1/profiles": {
+      "get": { "summary": "Perfiles de política incluidos", "responses": { "200": { "description": "Perfiles" } } }
+    },
+    "/api/v1/scan": {
+      "post": {
+        "summary": "Escanea un alias y guarda su CBOM",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ScanRequest" } } } },
+        "responses": {
+          "200": { "description": "Escaneo guardado", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ScanResult" } } } },
+          "400": { "$ref": "#/components/responses/Error" },
+          "403": { "$ref": "#/components/responses/Error" },
+          "409": { "$ref": "#/components/responses/Error" },
+          "429": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/api/v1/diagnose": {
+      "post": {
+        "summary": "Diagnostica un servicio de red configurado (no se guarda)",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ScanRequest" } } } },
+        "responses": {
+          "200": { "description": "Diagnóstico", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Diagnosis" } } } },
+          "400": { "$ref": "#/components/responses/Error" },
+          "403": { "$ref": "#/components/responses/Error" },
+          "429": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/api/v1/scans": {
+      "get": { "summary": "Escaneos del usuario (todos, si es administrador)", "responses": { "200": { "description": "Lista" } } }
+    },
+    "/api/v1/scan/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/id" }],
+      "get": { "summary": "CBOM de un escaneo", "responses": { "200": { "description": "CBOM CycloneDX 1.7" }, "404": { "$ref": "#/components/responses/Error" } } },
+      "delete": { "summary": "Elimina un escaneo", "responses": { "204": { "description": "Eliminado" }, "404": { "$ref": "#/components/responses/Error" } } }
+    },
+    "/api/v1/scan/{id}/report": {
+      "parameters": [
+        { "$ref": "#/components/parameters/id" },
+        { "name": "format", "in": "query", "schema": { "type": "string", "enum": ["html", "md", "pci", "sarif", "csv", "jsonl", "tickets"], "default": "html" } }
+      ],
+      "get": { "summary": "Reporte de un escaneo en el formato pedido", "responses": { "200": { "description": "Reporte" }, "400": { "$ref": "#/components/responses/Error" }, "404": { "$ref": "#/components/responses/Error" } } }
+    },
+    "/api/v1/scan/{id}/summary": {
+      "parameters": [{ "$ref": "#/components/parameters/id" }],
+      "get": { "summary": "Totales por prioridad y hallazgos más urgentes", "responses": { "200": { "description": "Resumen" }, "404": { "$ref": "#/components/responses/Error" } } }
+    },
+    "/api/v1/compare/{a}/{b}": {
+      "parameters": [
+        { "name": "a", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Escaneo anterior" },
+        { "name": "b", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Escaneo actual" }
+      ],
+      "get": { "summary": "Diferencias entre dos escaneos", "responses": { "200": { "description": "Diferencias y si hay regresión" }, "404": { "$ref": "#/components/responses/Error" } } }
+    },
+    "/api/v1/trends": {
+      "parameters": [{ "name": "target", "in": "query", "schema": { "type": "string" }, "description": "Alias del sistema escaneado" }],
+      "get": { "summary": "Evolución de los últimos 100 escaneos", "responses": { "200": { "description": "Serie" } } }
+    },
+    "/api/v1/config": {
+      "get": { "summary": "Configuración vigente (solo administradores)", "responses": { "200": { "description": "Configuración" }, "403": { "$ref": "#/components/responses/Error" } } }
+    }
+  }
+}

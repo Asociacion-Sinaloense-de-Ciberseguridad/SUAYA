@@ -11,6 +11,8 @@ categories.workspace = true
 
 [dependencies]
 libc = "0.2"
+# Ya presente por rustls; aquí se usa para descifrar PKCS #12 con la contraseña del usuario.
+aws-lc-rs = { version = "1.18.2", default-features = false, features = ["aws-lc-sys", "alloc"] }
 suaya-core.workspace = true
 base64 = "0.23.1"
 ed25519-dalek = { version = "2", default-features = false, features = ["zeroize"] }

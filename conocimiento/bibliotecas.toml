@@ -13,7 +13,8 @@
 # Campos:
 #   id, nombre             identificador y nombre legible
 #   paquetes               "<ecosistema>:<nombre>" (pypi, npm, maven, golang,
-#                          cargo, nuget, binario, jar, runtime)
+#                          cargo, nuget, binario, jar, runtime, aplicacion)
+#   capacidad              capacidad tecnológica (predeterminada: codigo-aplicacion)
 #   pq_disponible          primera versión con ML-KEM o ML-DSA
 #   pq_predeterminado      primera versión que negocia un grupo híbrido por omisión
 #   nota_pq                qué ofrece exactamente
@@ -25,7 +26,7 @@
 # Las fechas son una fotografía: se actualizan aquí, sin recompilar.
 
 [meta]
-version = "2026.10.0"
+version = "2026.11.0"
 descripcion = "Bibliotecas criptográficas iniciales; fechas de fin de soporte al 16 de octubre de 2026"
 fuente = "Políticas de publicación de cada proyecto, resumidas en endoflife.date"
 
@@ -208,3 +209,45 @@ id = "rustcrypto-ml-dsa"
 nombre = "ml-dsa (RustCrypto)"
 paquetes = ["cargo:ml-dsa"]
 riesgo_predeterminado = "resistente-cuantico"
+
+# ---------------------------------------------------------------------------
+# 1.7: navegadores (capacidad «navegadores-web»). Se reconocen por el
+# Info.plist de su paquete en macOS (CFBundleIdentifier) o, en Firefox, por
+# application.ini. Fuente de las versiones: notas de publicación de cada
+# proyecto y la tabla de soporte de PQC de Cloudflare (noviembre de 2026).
+# ---------------------------------------------------------------------------
+[[biblioteca]]
+id = "chrome"
+nombre = "Google Chrome"
+paquetes = ["aplicacion:com.google.chrome", "aplicacion:com.google.chrome.canary"]
+capacidad = "navegadores-web"
+pq_disponible = "124"
+pq_predeterminado = "131"
+nota_pq = "Desde la versión 131 negocia X25519MLKEM768 por omisión (de la 124 a la 130 usaba el borrador X25519Kyber768). Las firmas de los certificados siguen siendo clásicas."
+
+[[biblioteca]]
+id = "edge"
+nombre = "Microsoft Edge"
+paquetes = ["aplicacion:com.microsoft.edgemac"]
+capacidad = "navegadores-web"
+pq_disponible = "124"
+pq_predeterminado = "131"
+nota_pq = "Basado en Chromium: desde la versión 131 negocia X25519MLKEM768 por omisión."
+
+[[biblioteca]]
+id = "firefox"
+nombre = "Mozilla Firefox"
+paquetes = ["aplicacion:org.mozilla.firefox", "aplicacion:firefox"]
+capacidad = "navegadores-web"
+pq_disponible = "128"
+pq_predeterminado = "132"
+nota_pq = "Desde la versión 132 negocia X25519MLKEM768 por omisión en HTTPS, y en HTTP/3 desde la 135. La política PostQuantumKeyAgreementEnabled puede desactivarlo."
+
+[[biblioteca]]
+id = "safari"
+nombre = "Safari"
+paquetes = ["aplicacion:com.apple.safari"]
+capacidad = "navegadores-web"
+pq_disponible = "26"
+pq_predeterminado = "26"
+nota_pq = "Desde Safari 26 (iOS 26 y macOS 26) negocia X25519MLKEM768 por omisión."

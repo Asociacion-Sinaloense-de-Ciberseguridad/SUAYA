@@ -30,6 +30,21 @@ pub enum Riesgo {
 }
 
 impl Riesgo {
+    pub const TODOS: [Riesgo; 7] = [
+        Riesgo::RotoClasico,
+        Riesgo::Obsoleto,
+        Riesgo::VulnerableCuantico,
+        Riesgo::DebilitadoGrover,
+        Riesgo::HibridoPq,
+        Riesgo::ResistenteCuantico,
+        Riesgo::Desconocido,
+    ];
+
+    /// Interpreta el texto de [`Riesgo::como_texto`] (p. ej. de un CBOM).
+    pub fn desde_texto(t: &str) -> Option<Self> {
+        Self::TODOS.into_iter().find(|r| r.como_texto() == t)
+    }
+
     pub fn como_texto(self) -> &'static str {
         match self {
             Riesgo::RotoClasico => "roto-clasico",
@@ -90,6 +105,17 @@ pub enum Garantia {
 }
 
 impl Garantia {
+    /// Interpreta el texto de [`Garantia::como_texto`] (p. ej. de un CBOM).
+    pub fn desde_texto(t: &str) -> Option<Self> {
+        [
+            Garantia::Confidencialidad,
+            Garantia::Autenticacion,
+            Garantia::Integridad,
+        ]
+        .into_iter()
+        .find(|g| g.como_texto() == t)
+    }
+
     pub fn como_texto(self) -> &'static str {
         match self {
             Garantia::Confidencialidad => "confidencialidad",
@@ -251,6 +277,96 @@ pub enum Detalles {
     },
 }
 
+/// Criticidad de un sistema para la organización.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum Criticidad {
+    Alta,
+    Media,
+    Baja,
+}
+
+impl Criticidad {
+    pub fn como_texto(self) -> &'static str {
+        match self {
+            Criticidad::Alta => "alta",
+            Criticidad::Media => "media",
+            Criticidad::Baja => "baja",
+        }
+    }
+
+    pub fn etiqueta(self) -> &'static str {
+        match self {
+            Criticidad::Alta => crate::idioma::tx("Alta", "High"),
+            Criticidad::Media => crate::idioma::tx("Media", "Medium"),
+            Criticidad::Baja => crate::idioma::tx("Baja", "Low"),
+        }
+    }
+}
+
+/// Desde dónde se puede alcanzar un sistema.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum Exposicion {
+    Internet,
+    Interna,
+}
+
+impl Exposicion {
+    pub fn como_texto(self) -> &'static str {
+        match self {
+            Exposicion::Internet => "internet",
+            Exposicion::Interna => "interna",
+        }
+    }
+}
+
+/// Evaluación de la desigualdad de Mosca (x + y > z): los datos deben seguir
+/// confidenciales `x` años, la migración tarda `y` y el horizonte de una
+/// computadora cuántica relevante es `z` años desde hoy.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Mosca {
+    pub vida_datos: u32,
+    pub migracion: u32,
+    /// Año que se supone para una computadora cuántica relevante.
+    pub horizonte: i32,
+    /// Años de margen: z - (x + y). Negativo significa exposición.
+    pub holgura: i32,
+}
+
+impl Mosca {
+    /// Los datos capturados hoy seguirán siendo valiosos cuando se puedan descifrar.
+    pub fn expuesto(&self) -> bool {
+        self.holgura < 0
+    }
+}
+
+/// Riesgo aceptado formalmente, con vencimiento.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Excepcion {
+    pub id: String,
+    pub justificacion: String,
+    #[serde(default)]
+    pub aprobada_por: Option<String>,
+    /// Fecha AAAA-MM-DD a partir de la cual deja de valer.
+    pub vence: String,
+    pub vigente: bool,
+}
+
+/// A qué sistemas pertenece un activo, quién responde por él y cuánto tiempo
+/// deben protegerse sus datos (archivo de contexto, `--organizacion`).
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+pub struct ContextoOrganizacional {
+    pub sistemas: Vec<String>,
+    pub responsables: Vec<String>,
+    /// La más alta de sus sistemas.
+    pub criticidad: Option<Criticidad>,
+    /// `internet` si alguno de sus sistemas lo está.
+    pub exposicion: Option<Exposicion>,
+    pub mosca: Option<Mosca>,
+    pub excepcion: Option<Excepcion>,
+}
+
 /// Un activo criptográfico del inventario.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Activo {
@@ -269,6 +385,9 @@ pub struct Activo {
     /// Cumplimiento con un perfil de política, si se evaluó.
     #[serde(default)]
     pub cumplimiento: Option<crate::politica::Cumplimiento>,
+    /// Contexto de la organización, si se proporcionó.
+    #[serde(default)]
+    pub organizacion: Option<ContextoOrganizacional>,
 }
 
 impl Activo {
@@ -288,6 +407,7 @@ impl Activo {
             advertencias: Vec::new(),
             clasificacion: None,
             cumplimiento: None,
+            organizacion: None,
         }
     }
 

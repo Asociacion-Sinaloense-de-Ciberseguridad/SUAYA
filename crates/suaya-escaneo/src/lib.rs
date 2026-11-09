@@ -20,17 +20,30 @@ mod config_java;
 mod config_mysql;
 mod config_postfix;
 mod config_postgresql;
+mod config_sistema;
 mod config_ssh;
 mod config_tls;
 mod contenedores;
 mod crypttab;
+mod der;
+mod directorio_activo;
+mod ejecutables;
 mod identidad;
 mod imagen;
 mod importar;
 mod incrustados;
+mod java;
+mod llavero;
 mod llaves_ssh;
+mod luks;
+mod nube;
 mod pem;
+mod pgp;
+mod plataforma;
+mod registro_windows;
+mod servicios;
 mod vpn;
+mod zip;
 
 use std::path::{Path, PathBuf};
 
@@ -44,13 +57,18 @@ pub use importar::{Importado, importar_cbom};
 /// Funciones para escáneres externos a este paquete (por ejemplo, el sondeo
 /// de red), de modo que todos produzcan activos con las mismas reglas.
 pub mod api {
+    pub use crate::bibliotecas::hoy;
     pub use crate::cert_manager::activos_certificado;
     pub use crate::codigo::validar_reglas;
     pub use crate::comun::resolver_certificados_referenciados;
     pub use crate::comun::{activo_algoritmo, id_corto, por_alias};
     pub use crate::config_ssh::riesgo_kex_ssh;
+    pub use crate::llavero::escanear_llavero;
+    pub use crate::llaves_ssh::activos_de_llave_ssh;
+    pub use crate::nube::activos_de_jwks;
     pub use crate::pem::{
-        ResumenCertificado, analizar_texto_pem, certificado_en_contexto, resumen_certificado,
+        ResumenCertificado, analizar_texto_pem, certificado_en_contexto, llave_de_spki,
+        resumen_certificado,
     };
 }
 
@@ -79,6 +97,22 @@ pub fn escaneres_predeterminados() -> Vec<Box<dyn Escaner>> {
         Box::new(config_mysql::EscanerConfigMysql),
         Box::new(config_java::EscanerConfigJava),
         Box::new(config_postfix::EscanerConfigPostfix),
+        Box::new(config_sistema::EscanerOpenssl),
+        Box::new(config_sistema::EscanerCryptoPolicies),
+        Box::new(config_sistema::EscanerGnutls),
+        Box::new(config_sistema::EscanerKerberos),
+        Box::new(config_sistema::EscanerPoliticaNavegador),
+        Box::new(registro_windows::EscanerRegistroWindows),
+        Box::new(servicios::EscanerServicios),
+        Box::new(nube::EscanerNube),
+        Box::new(pgp::EscanerOpenpgp),
+        Box::new(plataforma::EscanerArranqueSeguro),
+        Box::new(plataforma::EscanerConfigKernel),
+        Box::new(plataforma::EscanerLlavesPlataforma),
+        Box::new(luks::EscanerLuks),
+        Box::new(directorio_activo::EscanerDirectorioActivo),
+        Box::new(ejecutables::EscanerEjecutables),
+        Box::new(java::EscanerArchivosJava),
         Box::new(crypttab::EscanerCrypttab),
         Box::new(vpn::EscanerWireGuard),
         Box::new(vpn::EscanerOpenVpn),
@@ -353,6 +387,75 @@ fn analizar_grande(
         .ok()
         .filter(|r| !r.as_os_str().is_empty())
         .map(|r| r.to_string_lossy().replace('\\', "/"));
+    // Copias de cabecera LUKS (las de LUKS2 ocupan 16 MiB): basta con el primer MiB.
+    if let Ok(inicio) = leer_inicio(ruta, 1 << 20, opciones)
+        && inicio.starts_with(luks::MAGIA)
+    {
+        let mut a = Archivo::nuevo(&texto_ruta, ruta, &inicio, comun::modo(metadatos));
+        if let Some(e) = &estable {
+            a.ruta_estable = e.clone();
+        }
+        resultado.archivos_revisados += 1;
+        match luks::analizar_cabecera(&a, &inicio, conocimiento) {
+            Ok(v) => resultado.inventario.extender(v),
+            Err(e) => resultado.avisos.push(format!("{}: {e}", ruta.display())),
+        }
+        return;
+    }
+    let extension = ruta
+        .extension()
+        .map(|e| e.to_string_lossy().to_ascii_lowercase())
+        .unwrap_or_default();
+    let estructural = opciones.binarios
+        && metadatos.len() <= MAXIMO_ESTRUCTURA
+        && (matches!(
+            extension.as_str(),
+            "jar"
+                | "war"
+                | "ear"
+                | "aar"
+                | "apk"
+                | "exe"
+                | "dll"
+                | "sys"
+                | "efi"
+                | "so"
+                | "dylib"
+                | "bin"
+                | "fw"
+                | "rom"
+        ) || comun::modo(metadatos).is_some_and(|m| m & 0o111 != 0));
+    if estructural {
+        // Análisis estructural en memoria: firmas, símbolos, constantes y bytecode.
+        let _permiso = semaforo::adquirir();
+        match leer_inicio(ruta, MAXIMO_ESTRUCTURA as usize, opciones) {
+            Ok(datos) => {
+                let mut a = Archivo::nuevo(&texto_ruta, ruta, &datos, comun::modo(metadatos));
+                if let Some(e) = &estable {
+                    a.ruta_estable = e.clone();
+                }
+                resultado.archivos_revisados += 1;
+                if matches!(extension.as_str(), "jar" | "war" | "ear" | "aar" | "apk") {
+                    match java::analizar_archivo_java(&a, &datos, conocimiento) {
+                        Ok(v) => resultado.inventario.extender(v),
+                        Err(e) => resultado.avisos.push(format!("{}: {e}", ruta.display())),
+                    }
+                    resultado
+                        .inventario
+                        .extender(bibliotecas::analizar_grande(&a, conocimiento));
+                } else {
+                    resultado
+                        .inventario
+                        .extender(ejecutables::analizar_ejecutable(&a, &datos, conocimiento));
+                    resultado
+                        .inventario
+                        .extender(bibliotecas::analizar_grande(&a, conocimiento));
+                }
+            }
+            Err(e) => resultado.avisos.push(format!("{}: {e}", ruta.display())),
+        }
+        return;
+    }
     if bibliotecas::jar_por_nombre(&nombre).is_some() {
         let mut a = Archivo::nuevo(&texto_ruta, ruta, &[], comun::modo(metadatos));
         if let Some(e) = &estable {
@@ -413,6 +516,76 @@ fn analizar_grande(
             resultado.inventario.extender(activos);
         }
         Err(e) => resultado.avisos.push(format!("{}: {e}", ruta.display())),
+    }
+}
+
+/// Tamaño máximo de un archivo grande que se analiza en memoria con `--binarios`.
+const MAXIMO_ESTRUCTURA: u64 = 64 * 1024 * 1024;
+
+/// Lee como máximo `limite` bytes del inicio de un archivo regular.
+fn leer_inicio(ruta: &Path, limite: usize, opciones: &Opciones) -> std::io::Result<Vec<u8>> {
+    use std::io::Read;
+    let mut op = std::fs::OpenOptions::new();
+    op.read(true);
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::OpenOptionsExt;
+        op.custom_flags(
+            libc::O_NONBLOCK
+                | if opciones.seguir_enlaces {
+                    0
+                } else {
+                    libc::O_NOFOLLOW
+                },
+        );
+    }
+    #[cfg(not(unix))]
+    let _ = opciones;
+    let archivo = op.open(ruta)?;
+    if !archivo.metadata()?.is_file() {
+        return Err(std::io::Error::other("archivo no regular"));
+    }
+    let mut v = Vec::new();
+    archivo.take(limite as u64).read_to_end(&mut v)?;
+    Ok(v)
+}
+
+/// Limita a dos las lecturas grandes simultáneas, para acotar la memoria.
+mod semaforo {
+    use std::sync::{Condvar, Mutex, OnceLock};
+
+    struct Estado {
+        ocupados: Mutex<usize>,
+        libre: Condvar,
+    }
+
+    fn estado() -> &'static Estado {
+        static E: OnceLock<Estado> = OnceLock::new();
+        E.get_or_init(|| Estado {
+            ocupados: Mutex::new(0),
+            libre: Condvar::new(),
+        })
+    }
+
+    pub struct Permiso;
+
+    pub fn adquirir() -> Permiso {
+        let e = estado();
+        let mut n = e.ocupados.lock().unwrap_or_else(|x| x.into_inner());
+        while *n >= 2 {
+            n = e.libre.wait(n).unwrap_or_else(|x| x.into_inner());
+        }
+        *n += 1;
+        Permiso
+    }
+
+    impl Drop for Permiso {
+        fn drop(&mut self) {
+            let e = estado();
+            let mut n = e.ocupados.lock().unwrap_or_else(|x| x.into_inner());
+            *n = n.saturating_sub(1);
+            e.libre.notify_one();
+        }
     }
 }
 

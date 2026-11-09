@@ -1,9 +1,0 @@
-test_SEC001_cdn_challenge_cannot_receive_registry_password (__main__.SecurityRegression.test_SEC001_cdn_challenge_cannot_receive_registry_password) ... ok
-test_SEC001_external_realm_requires_explicit_per_registry_allowlist (__main__.SecurityRegression.test_SEC001_external_realm_requires_explicit_per_registry_allowlist) ... ok
-test_SEC002_anonymous_budget_does_not_block_valid_user (__main__.SecurityRegression.test_SEC002_anonymous_budget_does_not_block_valid_user) ... ok
-test_SEC003_missing_layer_is_not_completed (__main__.SecurityRegression.test_SEC003_missing_layer_is_not_completed) ... ok
-
-----------------------------------------------------------------------
-Ran 4 tests in 2.764s
-
-OK

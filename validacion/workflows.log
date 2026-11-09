@@ -1,2 +1,5 @@
 .github/workflows/ci.yml YAML válido
 .github/workflows/publicacion.yml YAML válido
+action.yml YAML válido
+integraciones/gitlab/suaya.gitlab-ci.yml YAML válido
+.pre-commit-hooks.yaml YAML válido

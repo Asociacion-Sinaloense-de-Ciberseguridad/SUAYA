@@ -3822,71 +3822,6 @@
       "type": "cryptographic-asset"
     },
     {
-      "bom-ref": "llave:contenedor:8c3ae9ba3da50a90",
-      "cryptoProperties": {
-        "assetType": "related-crypto-material",
-        "relatedCryptoMaterialProperties": {
-          "format": "PKCS#12",
-          "relatedCryptographicAssets": [],
-          "securedBy": {
-            "mechanism": "contraseña"
-          },
-          "type": "key"
-        }
-      },
-      "evidence": {
-        "occurrences": [
-          {
-            "location": "pruebas/fixtures/sistema-demo/srv/almacen.p12"
-          }
-        ]
-      },
-      "name": "Contenedor PKCS#12",
-      "properties": [
-        {
-          "name": "suaya:riesgo",
-          "value": "desconocido"
-        },
-        {
-          "name": "suaya:accion",
-          "value": "verificar"
-        },
-        {
-          "name": "suaya:prioridad",
-          "value": "3"
-        },
-        {
-          "name": "suaya:prioridad-etiqueta",
-          "value": "Media"
-        },
-        {
-          "name": "suaya:capacidad",
-          "value": "sin-clasificar"
-        },
-        {
-          "name": "suaya:garantia",
-          "value": "autenticacion"
-        },
-        {
-          "name": "suaya:madurez-ecosistema",
-          "value": "habilitado"
-        },
-        {
-          "name": "suaya:justificacion",
-          "value": "Suaya no pudo determinar el algoritmo o sus parámetros; requiere revisión manual."
-        },
-        {
-          "name": "suaya:contexto",
-          "value": "sin-clasificar/autenticacion"
-        },
-        {
-          "name": "suaya:advertencia",
-          "value": "Contenedor protegido por contraseña: Suaya no lo abre. Inventaríe su contenido con «openssl pkcs12 -info -nokeys»."
-        }
-      ],
-      "type": "cryptographic-asset"
-    },
-    {
       "bom-ref": "llave:f5064373e91fb5be",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
@@ -7342,6 +7277,70 @@
       "type": "cryptographic-asset"
     },
     {
+      "bom-ref": "algoritmo:pbes2",
+      "cryptoProperties": {
+        "algorithmProperties": {
+          "algorithmFamily": "PBES2",
+          "executionEnvironment": "unknown",
+          "implementationPlatform": "unknown",
+          "primitive": "other"
+        },
+        "assetType": "algorithm",
+        "oid": "1.2.840.113549.1.5.13"
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "pruebas/fixtures/sistema-demo/srv/almacen.p12"
+          }
+        ]
+      },
+      "name": "PBES2",
+      "properties": [
+        {
+          "name": "suaya:riesgo",
+          "value": "resistente-cuantico"
+        },
+        {
+          "name": "suaya:accion",
+          "value": "conforme"
+        },
+        {
+          "name": "suaya:prioridad",
+          "value": "5"
+        },
+        {
+          "name": "suaya:prioridad-etiqueta",
+          "value": "Informativa"
+        },
+        {
+          "name": "suaya:capacidad",
+          "value": "sin-clasificar"
+        },
+        {
+          "name": "suaya:garantia",
+          "value": "confidencialidad"
+        },
+        {
+          "name": "suaya:madurez-ecosistema",
+          "value": "habilitado"
+        },
+        {
+          "name": "suaya:justificacion",
+          "value": "Resistente a los ataques cuánticos conocidos."
+        },
+        {
+          "name": "suaya:contexto",
+          "value": "sin-clasificar/confidencialidad"
+        },
+        {
+          "name": "suaya:nota",
+          "value": "Esquema de cifrado con contraseña; su fortaleza depende de la KDF, el cifrador y la contraseña."
+        }
+      ],
+      "type": "cryptographic-asset"
+    },
+    {
       "bom-ref": "algoritmo:sha256",
       "cryptoProperties": {
         "algorithmProperties": {
@@ -7821,6 +7820,80 @@
         {
           "name": "suaya:contexto",
           "value": "sin-clasificar/autenticacion"
+        }
+      ],
+      "type": "cryptographic-asset"
+    },
+    {
+      "bom-ref": "llave:contenedor:8c3ae9ba3da50a90",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "relatedCryptoMaterialProperties": {
+          "format": "PKCS#12",
+          "relatedCryptographicAssets": [
+            {
+              "ref": "algoritmo:pbes2",
+              "type": "algorithm"
+            }
+          ],
+          "securedBy": {
+            "mechanism": "certificados: PBES2 con PBKDF2-HMAC-SHA-256 (2048 iteraciones) y AES-256-CBC; llave privada: PBES2 con PBKDF2-HMAC-SHA-256 (2048 iteraciones) y AES-256-CBC"
+          },
+          "type": "key"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "pruebas/fixtures/sistema-demo/srv/almacen.p12"
+          }
+        ]
+      },
+      "name": "Contenedor PKCS#12",
+      "properties": [
+        {
+          "name": "suaya:riesgo",
+          "value": "resistente-cuantico"
+        },
+        {
+          "name": "suaya:accion",
+          "value": "conforme"
+        },
+        {
+          "name": "suaya:prioridad",
+          "value": "5"
+        },
+        {
+          "name": "suaya:prioridad-etiqueta",
+          "value": "Informativa"
+        },
+        {
+          "name": "suaya:capacidad",
+          "value": "sin-clasificar"
+        },
+        {
+          "name": "suaya:garantia",
+          "value": "autenticacion"
+        },
+        {
+          "name": "suaya:madurez-ecosistema",
+          "value": "habilitado"
+        },
+        {
+          "name": "suaya:justificacion",
+          "value": "Resistente a los ataques cuánticos conocidos."
+        },
+        {
+          "name": "suaya:contexto",
+          "value": "sin-clasificar/autenticacion"
+        },
+        {
+          "name": "suaya:advertencia",
+          "value": "1 partes con certificados están cifradas: defina SUAYA_CLAVE_ALMACEN con la contraseña para inventariarlos."
+        },
+        {
+          "name": "suaya:advertencia",
+          "value": "PKCS #12: 0 certificados leídos, 1 llaves privadas cifradas."
         }
       ],
       "type": "cryptographic-asset"
@@ -8867,6 +8940,12 @@
     },
     {
       "dependsOn": [
+        "algoritmo:pbes2"
+      ],
+      "ref": "llave:contenedor:8c3ae9ba3da50a90"
+    },
+    {
+      "dependsOn": [
         "algoritmo:aes-256-xts"
       ],
       "ref": "llave:volumen:e29dbcd29319ab1b"
@@ -8947,7 +9026,7 @@
   "metadata": {
     "component": {
       "bom-ref": "sistema",
-      "name": "Sistema demo",
+      "name": "Sistema escaneado",
       "type": "application"
     },
     "lifecycles": [
@@ -8958,15 +9037,15 @@
     "properties": [
       {
         "name": "suaya:base-conocimiento",
-        "value": "algoritmos 2026.10.0 · código 2026.10.0 · bibliotecas 2026.10.0 · madurez 2026.09.0 (MITRE, Post-Quantum Cryptography (PQC) Capability Development Report, edición 2026-09)"
+        "value": "algoritmos 2026.11.1 · código 2026.11.0 · bibliotecas 2026.11.0 · servicios 2026.11.0 · remediación 2026.11.0 · madurez 2026.11.0 (MITRE, Post-Quantum Cryptography (PQC) Capability Development Report, edición 2026-09)"
       },
       {
         "name": "suaya:version-algoritmos",
-        "value": "2026.10.0"
+        "value": "2026.11.1"
       },
       {
         "name": "suaya:version-madurez",
-        "value": "2026.09.0"
+        "value": "2026.11.0"
       },
       {
         "name": "suaya:idioma",
@@ -8989,7 +9068,7 @@
         "value": "0"
       }
     ],
-    "timestamp": "2026-10-31T01:53:00Z",
+    "timestamp": "2026-11-07T06:12:14Z",
     "tools": {
       "components": [
         {
@@ -9003,12 +9082,12 @@
           ],
           "name": "Suaya",
           "type": "application",
-          "version": "1.6.0"
+          "version": "1.7.0"
         }
       ]
     }
   },
-  "serialNumber": "urn:uuid:305125ec-a776-4af9-a1c6-e0786b5e9cb2",
+  "serialNumber": "urn:uuid:40466153-266a-4bc2-a4cf-6843ae483bfb",
   "specVersion": "1.7",
   "version": 1
 }

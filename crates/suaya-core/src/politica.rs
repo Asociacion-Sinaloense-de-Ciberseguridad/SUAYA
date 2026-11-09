@@ -24,6 +24,22 @@ const PERFILES_EMBEBIDOS: &[(&str, &str)] = &[
         include_str!("../../../conocimiento/perfiles/cnsa-2.0.toml"),
     ),
     (
+        "ue-hoja-de-ruta",
+        include_str!("../../../conocimiento/perfiles/ue-hoja-de-ruta.toml"),
+    ),
+    (
+        "ncsc-reino-unido",
+        include_str!("../../../conocimiento/perfiles/reino-unido-ncsc.toml"),
+    ),
+    (
+        "canada-cccs",
+        include_str!("../../../conocimiento/perfiles/canada-cccs.toml"),
+    ),
+    (
+        "pci-dss-4",
+        include_str!("../../../conocimiento/perfiles/pci-dss-4.toml"),
+    ),
+    (
         "plantilla",
         include_str!("../../../conocimiento/perfiles/plantilla.toml"),
     ),
@@ -86,6 +102,9 @@ pub struct Regla {
     pub capacidades: Vec<String>,
     #[serde(default)]
     pub tamano_minimo: Option<u32>,
+    /// Criticidad del sistema según el archivo de contexto (`alta`, `media`, `baja`).
+    #[serde(default)]
+    pub criticidades: Vec<crate::modelo::Criticidad>,
     pub estado: EstadoCumplimiento,
     #[serde(default)]
     pub retiro: Option<i32>,
@@ -143,6 +162,14 @@ impl Regla {
         }
         if let Some(t) = self.tamano_minimo {
             partes.push(crate::t!("de al menos {t} bits", "of at least {t} bits"));
+        }
+        if !self.criticidades.is_empty() {
+            let v: Vec<&str> = self.criticidades.iter().map(|c| c.etiqueta()).collect();
+            let v = v.join(", ");
+            partes.push(crate::t!(
+                "sistemas de criticidad {v}",
+                "systems of criticality {v}"
+            ));
         }
         let alcance = if partes.is_empty() {
             crate::idioma::tx("cualquier activo", "any asset").to_string()
@@ -250,6 +277,11 @@ impl Perfil {
                         .any(|c| r.capacidades.iter().any(|x| x == c)))
                 && r.tamano_minimo
                     .is_none_or(|m| tamano.is_some_and(|t| t >= m))
+                && (r.criticidades.is_empty()
+                    || a.organizacion
+                        .as_ref()
+                        .and_then(|o| o.criticidad)
+                        .is_some_and(|k| r.criticidades.contains(&k)))
         });
         let regla = indice.map(|i| &self.reglas[i]);
         let Some(r) = regla else {
@@ -391,8 +423,64 @@ mod pruebas {
 
     #[test]
     fn los_perfiles_incluidos_son_validos() {
-        assert_eq!(Perfil::incluidos().len(), 3);
+        assert_eq!(Perfil::incluidos().len(), 7);
         assert!(Perfil::cargar("inexistente").is_err());
+    }
+
+    #[test]
+    fn plazo_por_criticidad_del_sistema() {
+        let c = Conocimiento::embebido();
+        let ue = Perfil::cargar("ue-hoja-de-ruta").unwrap();
+        let activo = |criticidad: Option<crate::modelo::Criticidad>| {
+            let mut a = Activo::nuevo(
+                "algoritmo:x25519",
+                "X25519",
+                Detalles::Algoritmo {
+                    algoritmo_id: Some("x25519".into()),
+                    tamano_llave: None,
+                },
+            )
+            .con_contexto("servidores-web", crate::Garantia::Confidencialidad);
+            a.organizacion = criticidad.map(|k| crate::modelo::ContextoOrganizacional {
+                criticidad: Some(k),
+                ..Default::default()
+            });
+            let mut inv = Inventario::default();
+            inv.agregar(a);
+            crate::clasificar(&mut inv, &c);
+            ue.evaluar(&mut inv, &c, 2026);
+            inv.activos[0].cumplimiento.clone().unwrap()
+        };
+        assert_eq!(
+            activo(Some(crate::modelo::Criticidad::Alta)).prohibicion,
+            Some(2030)
+        );
+        assert_eq!(
+            activo(Some(crate::modelo::Criticidad::Baja)).prohibicion,
+            Some(2035)
+        );
+        assert_eq!(activo(None).prohibicion, Some(2035));
+        // CNSA 2.0: LMS es conforme solo para firmar software y firmware.
+        let cnsa = Perfil::cargar("cnsa-2.0").unwrap();
+        let lms = |capacidad: &str| {
+            let mut inv = Inventario::default();
+            inv.agregar(
+                Activo::nuevo(
+                    "algoritmo:hss-lms",
+                    "HSS/LMS",
+                    Detalles::Algoritmo {
+                        algoritmo_id: Some("hss-lms".into()),
+                        tamano_llave: None,
+                    },
+                )
+                .con_contexto(capacidad, crate::Garantia::Autenticacion),
+            );
+            crate::clasificar(&mut inv, &c);
+            cnsa.evaluar(&mut inv, &c, 2026);
+            inv.activos[0].cumplimiento.clone().unwrap().estado
+        };
+        assert_eq!(lms("firma-codigo"), EstadoCumplimiento::Conforme);
+        assert_eq!(lms("servidores-web"), EstadoCumplimiento::NoConforme);
     }
 
     #[test]

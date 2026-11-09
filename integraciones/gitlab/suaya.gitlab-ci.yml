@@ -1,0 +1,66 @@
+# Plantilla de GitLab CI para Suaya.
+#
+# Compila Suaya desde su repositorio, escanea las rutas indicadas y deja el
+# CBOM, el reporte, el SARIF y el CSV como artefactos aunque haya hallazgos.
+# El trabajo falla (código 2) si hay hallazgos de la prioridad indicada o más
+# grave; un resultado parcial (código 4) se permite y se marca.
+#
+# Uso en el .gitlab-ci.yml de otro proyecto:
+#
+#   include:
+#     - project: "seguridad/suaya"          # o remote: "https://.../suaya.gitlab-ci.yml"
+#       ref: "v1.7.0"
+#       file: "integraciones/gitlab/suaya.gitlab-ci.yml"
+#
+#   variables:
+#     SUAYA_REPO: "https://gitlab.ejemplo.mx/seguridad/suaya.git"
+#     SUAYA_RUTAS: "infra src"
+#     SUAYA_PERFIL: "cnsa-2.0"
+#
+# Las variables llegan al script por el entorno y se pasan como argumentos
+# separados, nunca evaluadas como código.
+
+variables:
+  SUAYA_REPO: ""
+  SUAYA_VERSION: "1.7.0"
+  SUAYA_IMAGEN: "rust:1.99"
+  SUAYA_RUTAS: "."
+  SUAYA_PERFIL: ""
+  SUAYA_ORGANIZACION: ""
+  SUAYA_FALLAR_EN: "1"
+
+.suaya:
+  stage: test
+  image: "$SUAYA_IMAGEN"
+  cache:
+    key: "suaya-$SUAYA_VERSION"
+    paths:
+      - .suaya/
+  script:
+    - |
+      if [ -z "$SUAYA_REPO" ]; then echo "Defina SUAYA_REPO con la URL del repositorio de Suaya."; exit 1; fi
+      if [ ! -x .suaya/bin/suaya ]; then
+        cargo install --locked --quiet --git "$SUAYA_REPO" --tag "v$SUAYA_VERSION" --root .suaya suaya
+      fi
+      read -r -a rutas <<< "$SUAYA_RUTAS"
+      args=(escanear -o suaya-cbom.json -r suaya-reporte.html --sarif suaya.sarif --csv suaya.csv)
+      if [ -n "$SUAYA_PERFIL" ]; then args+=(--perfil "$SUAYA_PERFIL"); fi
+      if [ -n "$SUAYA_ORGANIZACION" ]; then args+=(--organizacion "$SUAYA_ORGANIZACION"); fi
+      if [ -n "$SUAYA_FALLAR_EN" ]; then args+=(--fallar-en "$SUAYA_FALLAR_EN"); fi
+      args+=(-- "${rutas[@]}")
+      .suaya/bin/suaya "${args[@]}"
+  allow_failure:
+    exit_codes: [4]
+  artifacts:
+    when: always
+    expire_in: 30 days
+    paths:
+      - suaya-cbom.json
+      - suaya-reporte.html
+      - suaya.sarif
+      - suaya.csv
+
+suaya:
+  extends: .suaya
+  rules:
+    - if: $SUAYA_REPO
