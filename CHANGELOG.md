@@ -34,6 +34,9 @@
 - macOS: perfil, archivo de organización, llavero y exportación CSV y SARIF; el diagnóstico muestra IKE, DNS, identidad y recetas.
 - Interfaz y reporte en portugués (`--idioma pt`); catálogo en inglés para todos los textos nuevos.
 
+### Seguridad
+- `rusqlite` 0.41.1 y `libsqlite3-sys` 0.39.1 (SQLite 3.54.1) en la API, por RUSTSEC-2026-0459 (CVE-2026-119375): memoria de la caché de páginas sin inicializar al abrir una base con un `-wal` manipulado.
+
 ### Correcciones
 - Los protocolos fuera del vocabulario de CycloneDX 1.7 (Kerberos, NTLM, DNSSEC...) se exportan como `other` con `suaya:tipo-protocolo`, y el CBOM vuelve a validar contra el esquema.
 - El aviso de cobertura parcial del reporte ya se traduce.
