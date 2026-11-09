@@ -10,6 +10,13 @@ El repositorio requiere acceso de lectura mientras sea privado. Las versiones se
 
 **Binarios:** descargue el paquete de su plataforma desde la página de [publicaciones](https://github.com/Asociacion-Sinaloense-de-Ciberseguridad/SUAYA/releases), si la versión ya está publicada, y compruébelo con su `SHA256SUMS`. Mientras el repositorio sea privado, las publicaciones no llevan atestación de procedencia: GitHub solo la admite en repositorios públicos o con Enterprise Cloud.
 
+Cada publicación incluye un instalador por sistema, que verifica la suma SHA-256 antes de instalar. Descargue en una misma carpeta el paquete, `SHA256SUMS` y el instalador:
+
+- **Windows:** `suaya-<versión>-x86_64-pc-windows-msvc.zip` e `instalar-windows.ps1` (clic derecho, «Ejecutar con PowerShell»). Instala en su usuario, sin permisos de administrador, y agrega la carpeta al PATH.
+- **macOS y Linux:** el `.tar.gz` de su equipo e `instalar.sh` (`sh instalar.sh`; con `PREFIJO="$HOME/.local"` no necesita `sudo`). En Debian, Ubuntu, Fedora o RHEL también puede instalar el paquete `.deb` o `.rpm`.
+
+Ambos instaladores aceptan la desinstalación (`-Desinstalar` y `--desinstalar`).
+
 **Desde fuentes** (requiere Rust 1.89 o posterior y, según la plataforma, un compilador de C y CMake para AWS-LC):
 
 ```sh

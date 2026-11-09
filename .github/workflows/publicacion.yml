@@ -177,6 +177,8 @@ jobs:
           SUAYA_LLAVE_FIRMA: ${{ secrets.SUAYA_LLAVE_FIRMA }}
           SUAYA_CLAVE_FIRMA: ${{ secrets.SUAYA_CLAVE_FIRMA }}
         run: |
+          # Instaladores por sistema operativo, junto a los paquetes.
+          cp empaquetado/instaladores/instalar-windows.ps1 empaquetado/instaladores/instalar.sh publicacion/
           cd publicacion
           sha256sum * > SHA256SUMS
           if [ -n "$SUAYA_LLAVE_FIRMA" ]; then
