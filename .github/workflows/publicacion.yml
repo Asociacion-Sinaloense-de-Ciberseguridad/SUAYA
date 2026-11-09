@@ -63,6 +63,10 @@ jobs:
           if [[ "${{ matrix.objetivo }}" != *windows* ]]; then
             export CFLAGS="-ffile-prefix-map=$PWD=/suaya -ffile-prefix-map=$HOME/.cargo=/cargo"
             export CXXFLAGS="$CFLAGS"
+          else
+            # aws-lc-sys necesita NASM en Windows x86_64 y la imagen windows-2025
+            # no lo trae: se usan los objetos NASM precompilados del propio crate.
+            export AWS_LC_SYS_PREBUILT_NASM=1
           fi
           cargo build --locked --release --target ${{ matrix.objetivo }} -p suaya -p suaya-api
       - name: Empaquetar
