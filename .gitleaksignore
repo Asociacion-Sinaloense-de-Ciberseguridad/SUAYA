@@ -1,2 +1,6 @@
 # Falso positivo: prosa sobre encabezados/claims/longitudes, no credencial.
 docs/auditoria-1.3.md:generic-api-key:440
+# Falso positivo: SHA-256 del archivo scripts/configurar-api.py en el manifiesto archivado de 1.5.
+validacion/heredado-1.5/build-manifest.json:generic-api-key:1659
+# Falso positivo: SHA-256 del archivo scripts/configurar-api.py en el manifiesto archivado de 1.6.
+validacion/heredado-1.6/build-manifest.json:generic-api-key:1661

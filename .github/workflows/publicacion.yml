@@ -47,6 +47,10 @@ jobs:
         with:
           toolchain: "1.99.1"
           targets: ${{ matrix.objetivo }}
+      # scripts/manifest-build.py usa tomllib; ubuntu-22.04 trae Python 3.10. v7.0.0
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.13"
       - name: Compilar de forma reproducible
         shell: bash
         run: |
@@ -59,11 +63,18 @@ jobs:
           if [[ "${{ matrix.objetivo }}" != *windows* ]]; then
             export CFLAGS="-ffile-prefix-map=$PWD=/suaya -ffile-prefix-map=$HOME/.cargo=/cargo"
             export CXXFLAGS="$CFLAGS"
+          else
+            # aws-lc-sys necesita NASM en Windows x86_64 y la imagen windows-2025
+            # no lo trae: se usan los objetos NASM precompilados del propio crate.
+            export AWS_LC_SYS_PREBUILT_NASM=1
           fi
           cargo build --locked --release --target ${{ matrix.objetivo }} -p suaya -p suaya-api
       - name: Empaquetar
         id: paquete
         shell: bash
+        # Python lee la salida de cargo metadata en UTF-8 también en Windows.
+        env:
+          PYTHONUTF8: "1"
         run: |
           version=${GITHUB_REF_NAME#v}
           nombre=suaya-$version-${{ matrix.objetivo }}
@@ -71,6 +82,9 @@ jobs:
           exe=target/${{ matrix.objetivo }}/release/suaya
           [ -f "$exe.exe" ] && exe=$exe.exe
           cp "$exe" LICENSE NOTICE README.md "$nombre/"
+          # manifest-build.py consulta cargo metadata sin red y este resuelve las
+          # dependencias de todas las plataformas, no solo las ya compiladas.
+          cargo fetch --locked
           python3 scripts/manifest-build.py --output "$nombre/build-manifest.json"
           api=target/${{ matrix.objetivo }}/release/suaya-api
           [ -f "$api.exe" ] && api=$api.exe
@@ -85,7 +99,10 @@ jobs:
               || tar -czf "$nombre.tar.gz" "$nombre"
             echo "archivo=$nombre.tar.gz" >> "$GITHUB_OUTPUT"
           fi
+      # GitHub solo admite atestaciones en repositorios públicos salvo con
+      # Enterprise Cloud; en un repositorio privado se omiten.
       - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8
+        if: ${{ !github.event.repository.private }}
         with:
           subject-path: ${{ steps.paquete.outputs.archivo }}
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
@@ -130,6 +147,7 @@ jobs:
           dpkg-deb --contents target/debian/suaya-api_*.deb
           dpkg-deb --contents target/debian/suaya_*.deb
       - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8
+        if: ${{ !github.event.repository.private }}
         with:
           subject-path: |
             target/debian/*.deb
@@ -162,6 +180,8 @@ jobs:
           SUAYA_LLAVE_FIRMA: ${{ secrets.SUAYA_LLAVE_FIRMA }}
           SUAYA_CLAVE_FIRMA: ${{ secrets.SUAYA_CLAVE_FIRMA }}
         run: |
+          # Instaladores por sistema operativo, junto a los paquetes.
+          cp empaquetado/instaladores/instalar-windows.ps1 empaquetado/instaladores/instalar.sh publicacion/
           cd publicacion
           sha256sum * > SHA256SUMS
           if [ -n "$SUAYA_LLAVE_FIRMA" ]; then

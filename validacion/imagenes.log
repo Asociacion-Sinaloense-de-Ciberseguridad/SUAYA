@@ -4,6 +4,6 @@ test_invalid_layer_type_rejected (__main__.ImageSecurity.test_invalid_layer_type
 test_oci_digest_and_missing_layer (__main__.ImageSecurity.test_oci_digest_and_missing_layer) ... ok
 
 ----------------------------------------------------------------------
-Ran 4 tests in 0.134s
+Ran 4 tests in 0.105s
 
 OK

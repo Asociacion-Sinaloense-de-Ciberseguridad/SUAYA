@@ -1,0 +1,43 @@
+# Perfil de política: hoja de ruta coordinada de la Unión Europea para la
+# transición a la criptografía poscuántica (Grupo de Cooperación NIS, junio
+# de 2025).
+#
+# Metas de la hoja de ruta: iniciar la transición a más tardar a finales de
+# 2026 (inventario y plan), completar los casos de uso de alto riesgo a
+# finales de 2030 y el resto, en la medida de lo posible, a finales de 2035.
+#
+# Suaya asigna el plazo de 2030 a los activos de sistemas con criticidad
+# «alta» en el archivo de contexto (--contexto); sin contexto, aplica 2035.
+# Es una interpretación de Suaya, no un texto oficial: verifique el documento
+# vigente antes de citarlo.
+
+[perfil]
+id = "ue-hoja-de-ruta"
+nombre = "Unión Europea: hoja de ruta coordinada de transición a PQC"
+referencia = "NIS Cooperation Group, A Coordinated Implementation Roadmap for the Transition to Post-Quantum Cryptography (junio de 2025)"
+predeterminado = "sin-evaluar"
+ignorar_primitivas = ["other", "kdf"]
+
+[[regla]]
+riesgos = ["roto-clasico", "obsoleto"]
+estado = "no-conforme"
+nota = "Inseguro o retirado por los estándares vigentes."
+
+[[regla]]
+riesgos = ["vulnerable-cuantico"]
+criticidades = ["alta"]
+estado = "transicion"
+retiro = 2026
+prohibicion = 2030
+nota = "Caso de uso de alto riesgo: la hoja de ruta de la UE pide completar su transición a finales de 2030."
+
+[[regla]]
+riesgos = ["vulnerable-cuantico"]
+estado = "transicion"
+retiro = 2026
+prohibicion = 2035
+nota = "La hoja de ruta de la UE pide iniciar la transición a finales de 2026 y completarla, en la medida de lo posible, a finales de 2035."
+
+[[regla]]
+riesgos = ["debilitado-grover", "hibrido-pq", "resistente-cuantico"]
+estado = "conforme"

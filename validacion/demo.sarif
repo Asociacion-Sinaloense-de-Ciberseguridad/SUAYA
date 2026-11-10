@@ -1,0 +1,4596 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "runs": [
+    {
+      "automationDetails": {
+        "id": "suaya/Sistema escaneado"
+      },
+      "results": [
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/legado/ssh/sshd_config"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Triple DES (CBC): Corregir de inmediato (crítica). Inseguro hoy, sin necesidad de una computadora cuántica."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:3des-cbc|pruebas/fixtures/sistema-demo/legado/ssh/sshd_config"
+          },
+          "properties": {
+            "suaya:capacidad": "vpn-cifrado-red",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 1,
+            "suaya:referencia": "algoritmo:3des-cbc",
+            "suaya:riesgo": "roto-clasico"
+          },
+          "ruleId": "suaya/cifrados-rotos"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/legado/vpn/ipsec.conf"
+                },
+                "region": {
+                  "startLine": 3
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Triple DES (CBC): Corregir de inmediato (crítica). Inseguro hoy, sin necesidad de una computadora cuántica."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:3des-cbc|pruebas/fixtures/sistema-demo/legado/vpn/ipsec.conf"
+          },
+          "properties": {
+            "suaya:capacidad": "vpn-cifrado-red",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 1,
+            "suaya:referencia": "algoritmo:3des-cbc",
+            "suaya:riesgo": "roto-clasico"
+          },
+          "ruleId": "suaya/cifrados-rotos"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/legado/vpn/ipsec.conf"
+                },
+                "region": {
+                  "startLine": 4
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Triple DES (CBC): Corregir de inmediato (crítica). Inseguro hoy, sin necesidad de una computadora cuántica."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:3des-cbc|pruebas/fixtures/sistema-demo/legado/vpn/ipsec.conf"
+          },
+          "properties": {
+            "suaya:capacidad": "vpn-cifrado-red",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 1,
+            "suaya:referencia": "algoritmo:3des-cbc",
+            "suaya:riesgo": "roto-clasico"
+          },
+          "ruleId": "suaya/cifrados-rotos"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/srv/app/Cifrado.cs"
+                },
+                "region": {
+                  "startLine": 6
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Triple DES (CBC): Corregir de inmediato (crítica). Inseguro hoy, sin necesidad de una computadora cuántica."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:3des-cbc|pruebas/fixtures/sistema-demo/srv/app/Cifrado.cs"
+          },
+          "properties": {
+            "suaya:capacidad": "vpn-cifrado-red",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 1,
+            "suaya:referencia": "algoritmo:3des-cbc",
+            "suaya:riesgo": "roto-clasico"
+          },
+          "ruleId": "suaya/cifrados-rotos"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/srv/app/legado.c"
+                },
+                "region": {
+                  "startLine": 11
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Triple DES (CBC): Corregir de inmediato (crítica). Inseguro hoy, sin necesidad de una computadora cuántica."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:3des-cbc|pruebas/fixtures/sistema-demo/srv/app/legado.c"
+          },
+          "properties": {
+            "suaya:capacidad": "vpn-cifrado-red",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 1,
+            "suaya:referencia": "algoritmo:3des-cbc",
+            "suaya:riesgo": "roto-clasico"
+          },
+          "ruleId": "suaya/cifrados-rotos"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/legado/vpn/cliente.ovpn"
+                },
+                "region": {
+                  "startLine": 4
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Blowfish (CBC): Corregir de inmediato (crítica). Inseguro hoy, sin necesidad de una computadora cuántica."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:blowfish-cbc|pruebas/fixtures/sistema-demo/legado/vpn/cliente.ovpn"
+          },
+          "properties": {
+            "suaya:capacidad": "vpn-cifrado-red",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 1,
+            "suaya:referencia": "algoritmo:blowfish-cbc",
+            "suaya:riesgo": "roto-clasico"
+          },
+          "ruleId": "suaya/cifrados-rotos"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/legado/vpn/ipsec.conf"
+                },
+                "region": {
+                  "startLine": 3
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Diffie-Hellman de 1024 o 1536 bits: Corregir de inmediato (crítica). Inseguro hoy, sin necesidad de una computadora cuántica."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:ffdh-1024|pruebas/fixtures/sistema-demo/legado/vpn/ipsec.conf"
+          },
+          "properties": {
+            "suaya:capacidad": "vpn-cifrado-red",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 1,
+            "suaya:referencia": "algoritmo:ffdh-1024",
+            "suaya:riesgo": "roto-clasico"
+          },
+          "ruleId": "suaya/dh-roto"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/legado/ssh/sshd_config"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Diffie-Hellman con SHA-1: Corregir de inmediato (crítica). Inseguro hoy, sin necesidad de una computadora cuántica."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:ffdh-sha1|pruebas/fixtures/sistema-demo/legado/ssh/sshd_config"
+          },
+          "properties": {
+            "suaya:capacidad": "vpn-cifrado-red",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 1,
+            "suaya:referencia": "algoritmo:ffdh-sha1",
+            "suaya:riesgo": "roto-clasico"
+          },
+          "ruleId": "suaya/dh-roto"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/legado/vpn/ipsec.conf"
+                },
+                "region": {
+                  "startLine": 3
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "HMAC-MD5: Corregir de inmediato (crítica). Inseguro hoy, sin necesidad de una computadora cuántica."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:hmac-md5|pruebas/fixtures/sistema-demo/legado/vpn/ipsec.conf"
+          },
+          "properties": {
+            "suaya:capacidad": "vpn-cifrado-red",
+            "suaya:garantia": "integridad",
+            "suaya:prioridad": 1,
+            "suaya:referencia": "algoritmo:hmac-md5",
+            "suaya:riesgo": "roto-clasico"
+          },
+          "ruleId": "suaya/hashes-rotos"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/legado/vpn/ipsec.conf"
+                },
+                "region": {
+                  "startLine": 4
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "HMAC-MD5: Corregir de inmediato (crítica). Inseguro hoy, sin necesidad de una computadora cuántica."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:hmac-md5|pruebas/fixtures/sistema-demo/legado/vpn/ipsec.conf"
+          },
+          "properties": {
+            "suaya:capacidad": "vpn-cifrado-red",
+            "suaya:garantia": "integridad",
+            "suaya:prioridad": 1,
+            "suaya:referencia": "algoritmo:hmac-md5",
+            "suaya:riesgo": "roto-clasico"
+          },
+          "ruleId": "suaya/hashes-rotos"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/srv/app/pagos.py"
+                },
+                "region": {
+                  "startLine": 7
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "MD5: Corregir de inmediato (crítica). Inseguro hoy, sin necesidad de una computadora cuántica."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:md5|pruebas/fixtures/sistema-demo/srv/app/pagos.py"
+          },
+          "properties": {
+            "suaya:capacidad": "codigo-aplicacion",
+            "suaya:garantia": "integridad",
+            "suaya:prioridad": 1,
+            "suaya:referencia": "algoritmo:md5",
+            "suaya:riesgo": "roto-clasico"
+          },
+          "ruleId": "suaya/hashes-rotos"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/legado/legado.crt"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "RSA-1024: Corregir de inmediato (crítica). Inseguro hoy, sin necesidad de una computadora cuántica."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:rsa-1024|pruebas/fixtures/sistema-demo/legado/legado.crt"
+          },
+          "properties": {
+            "suaya:capacidad": "pki-ca",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 1,
+            "suaya:referencia": "algoritmo:rsa-1024",
+            "suaya:riesgo": "roto-clasico"
+          },
+          "ruleId": "suaya/rsa-corta"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/legado/legado.key"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "RSA-1024: Corregir de inmediato (crítica). Inseguro hoy, sin necesidad de una computadora cuántica."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:rsa-1024|pruebas/fixtures/sistema-demo/legado/legado.key"
+          },
+          "properties": {
+            "suaya:capacidad": "pki-ca",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 1,
+            "suaya:referencia": "algoritmo:rsa-1024",
+            "suaya:riesgo": "roto-clasico"
+          },
+          "ruleId": "suaya/rsa-corta"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/srv/app/pagos.py"
+                },
+                "region": {
+                  "startLine": 10
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "RSA-1024: Corregir de inmediato (crítica). Inseguro hoy, sin necesidad de una computadora cuántica."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:rsa-1024|pruebas/fixtures/sistema-demo/srv/app/pagos.py"
+          },
+          "properties": {
+            "suaya:capacidad": "pki-ca",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 1,
+            "suaya:referencia": "algoritmo:rsa-1024",
+            "suaya:riesgo": "roto-clasico"
+          },
+          "ruleId": "suaya/rsa-corta"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/legado/ssh/sshd_config"
+                },
+                "region": {
+                  "startLine": 4
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "RSASSA-PKCS1-v1_5 con SHA-1: Corregir de inmediato (crítica). Inseguro hoy, sin necesidad de una computadora cuántica."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:rsassa-pkcs1-sha1|pruebas/fixtures/sistema-demo/legado/ssh/sshd_config"
+          },
+          "properties": {
+            "suaya:capacidad": "vpn-cifrado-red",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 1,
+            "suaya:referencia": "algoritmo:rsassa-pkcs1-sha1",
+            "suaya:riesgo": "roto-clasico"
+          },
+          "ruleId": "suaya/hashes-rotos"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/srv/app/legado.c"
+                },
+                "region": {
+                  "startLine": 6
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "SSL 3.0: Corregir de inmediato (crítica). Inseguro hoy, sin necesidad de una computadora cuántica."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:ssl-3.0|pruebas/fixtures/sistema-demo/srv/app/legado.c"
+          },
+          "properties": {
+            "suaya:capacidad": "codigo-aplicacion",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 1,
+            "suaya:referencia": "algoritmo:ssl-3.0",
+            "suaya:riesgo": "roto-clasico"
+          },
+          "ruleId": "suaya/tls-versiones"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/legado/legado.crt"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "legado.ejemplo.mx: Corregir de inmediato (crítica). Inseguro hoy, sin necesidad de una computadora cuántica."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "certificado:cb51eaa09bf356be|pruebas/fixtures/sistema-demo/legado/legado.crt"
+          },
+          "properties": {
+            "suaya:capacidad": "pki-ca",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 1,
+            "suaya:referencia": "certificado:cb51eaa09bf356be",
+            "suaya:riesgo": "roto-clasico"
+          },
+          "ruleId": "suaya/general-roto"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/legado/legado.key"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Llave privada RSA-1024: Corregir de inmediato (crítica). Inseguro hoy, sin necesidad de una computadora cuántica."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "llave:d647943f83398839|pruebas/fixtures/sistema-demo/legado/legado.key"
+          },
+          "properties": {
+            "suaya:capacidad": "pki-ca",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 1,
+            "suaya:referencia": "llave:d647943f83398839",
+            "suaya:riesgo": "roto-clasico"
+          },
+          "ruleId": "suaya/general-roto"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/legado/vpn/ipsec.conf"
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "strongSwan (ipsec.conf): Corregir de inmediato (crítica). Inseguro hoy, sin necesidad de una computadora cuántica."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "protocolo:ipsec:05a1906bfaaf19b9|pruebas/fixtures/sistema-demo/legado/vpn/ipsec.conf"
+          },
+          "properties": {
+            "suaya:capacidad": "vpn-cifrado-red",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 1,
+            "suaya:referencia": "protocolo:ipsec:05a1906bfaaf19b9",
+            "suaya:riesgo": "roto-clasico"
+          },
+          "ruleId": "suaya/general-roto"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/legado/ssh/sshd_config"
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Configuración SSH (sshd_config): Corregir de inmediato (crítica). Inseguro hoy, sin necesidad de una computadora cuántica."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "protocolo:ssh:4fef5e74aa5221d0|pruebas/fixtures/sistema-demo/legado/ssh/sshd_config"
+          },
+          "properties": {
+            "suaya:capacidad": "vpn-cifrado-red",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 1,
+            "suaya:referencia": "protocolo:ssh:4fef5e74aa5221d0",
+            "suaya:riesgo": "roto-clasico"
+          },
+          "ruleId": "suaya/general-roto"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/legado/java/java.security"
+                },
+                "region": {
+                  "startLine": 4
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Java (java.security): Corregir de inmediato (crítica). Inseguro hoy, sin necesidad de una computadora cuántica."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "protocolo:tls:a1bf6aa260471aa8|pruebas/fixtures/sistema-demo/legado/java/java.security"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 1,
+            "suaya:referencia": "protocolo:tls:a1bf6aa260471aa8",
+            "suaya:riesgo": "roto-clasico"
+          },
+          "ruleId": "suaya/general-roto"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/legado/vpn/cliente.ovpn"
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "OpenVPN (cliente.ovpn): Corregir de inmediato (crítica). Inseguro hoy, sin necesidad de una computadora cuántica."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "protocolo:tls:a9ac61ab93ef1853|pruebas/fixtures/sistema-demo/legado/vpn/cliente.ovpn"
+          },
+          "properties": {
+            "suaya:capacidad": "vpn-cifrado-red",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 1,
+            "suaya:referencia": "protocolo:tls:a9ac61ab93ef1853",
+            "suaya:riesgo": "roto-clasico"
+          },
+          "ruleId": "suaya/general-roto"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/legado/postfix/main.cf"
+                },
+                "region": {
+                  "startLine": 3
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Postfix SMTP (main.cf): Corregir de inmediato (crítica). Inseguro hoy, sin necesidad de una computadora cuántica."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "protocolo:tls:b49f22831a6bf0bb|pruebas/fixtures/sistema-demo/legado/postfix/main.cf"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 1,
+            "suaya:referencia": "protocolo:tls:b49f22831a6bf0bb",
+            "suaya:riesgo": "roto-clasico"
+          },
+          "ruleId": "suaya/general-roto"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/legado/pgsql/postgresql.conf"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "PostgreSQL (postgresql.conf): Corregir de inmediato (crítica). Inseguro hoy, sin necesidad de una computadora cuántica."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "protocolo:tls:bbb6ead3fe8247fe|pruebas/fixtures/sistema-demo/legado/pgsql/postgresql.conf"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 1,
+            "suaya:referencia": "protocolo:tls:bbb6ead3fe8247fe",
+            "suaya:riesgo": "roto-clasico"
+          },
+          "ruleId": "suaya/general-roto"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/srv/app/pagos.py"
+                },
+                "region": {
+                  "startLine": 13
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "TLS en código (pagos.py): Corregir de inmediato (crítica). Inseguro hoy, sin necesidad de una computadora cuántica."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "protocolo:tls:codigo:973855a40a805393|pruebas/fixtures/sistema-demo/srv/app/pagos.py"
+          },
+          "properties": {
+            "suaya:capacidad": "codigo-aplicacion",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 1,
+            "suaya:referencia": "protocolo:tls:codigo:973855a40a805393",
+            "suaya:riesgo": "roto-clasico"
+          },
+          "ruleId": "suaya/general-roto"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/srv/app/cliente.ts"
+                },
+                "region": {
+                  "startLine": 7
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "TLS en código (cliente.ts): Corregir de inmediato (crítica). Inseguro hoy, sin necesidad de una computadora cuántica."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "protocolo:tls:codigo:c88aae3d00593fc2|pruebas/fixtures/sistema-demo/srv/app/cliente.ts"
+          },
+          "properties": {
+            "suaya:capacidad": "codigo-aplicacion",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 1,
+            "suaya:referencia": "protocolo:tls:codigo:c88aae3d00593fc2",
+            "suaya:riesgo": "roto-clasico"
+          },
+          "ruleId": "suaya/general-roto"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/srv/app/legado.c"
+                },
+                "region": {
+                  "startLine": 7
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "TLS en código (legado.c): Corregir de inmediato (crítica). Inseguro hoy, sin necesidad de una computadora cuántica."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "protocolo:tls:codigo:f78b0a422f13ba42|pruebas/fixtures/sistema-demo/srv/app/legado.c"
+          },
+          "properties": {
+            "suaya:capacidad": "codigo-aplicacion",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 1,
+            "suaya:referencia": "protocolo:tls:codigo:f78b0a422f13ba42",
+            "suaya:riesgo": "roto-clasico"
+          },
+          "ruleId": "suaya/general-roto"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/legado/ssh/sshd_config"
+                },
+                "region": {
+                  "startLine": 4
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "DSA: Reemplazar (alta). Retirado o en retiro por los estándares vigentes."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:dsa|pruebas/fixtures/sistema-demo/legado/ssh/sshd_config"
+          },
+          "properties": {
+            "suaya:capacidad": "vpn-cifrado-red",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 2,
+            "suaya:referencia": "algoritmo:dsa",
+            "suaya:riesgo": "obsoleto"
+          },
+          "ruleId": "suaya/general-obsoleto"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/haproxy/haproxy.cfg"
+                },
+                "region": {
+                  "startLine": 6
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "ECDH sobre P-256: Migrar ahora (alta). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema ya ofrece PQC para confidencialidad (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:ecdh-p256|pruebas/fixtures/sistema-demo/etc/haproxy/haproxy.cfg"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 2,
+            "suaya:referencia": "algoritmo:ecdh-p256",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/tls-hibrido"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/haproxy/haproxy.cfg"
+                },
+                "region": {
+                  "startLine": 10
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "ECDH sobre P-256: Migrar ahora (alta). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema ya ofrece PQC para confidencialidad (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:ecdh-p256|pruebas/fixtures/sistema-demo/etc/haproxy/haproxy.cfg"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 2,
+            "suaya:referencia": "algoritmo:ecdh-p256",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/tls-hibrido"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/nginx/nginx.conf"
+                },
+                "region": {
+                  "startLine": 7
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "ECDH sobre P-256: Migrar ahora (alta). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema ya ofrece PQC para confidencialidad (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:ecdh-p256|pruebas/fixtures/sistema-demo/etc/nginx/nginx.conf"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 2,
+            "suaya:referencia": "algoritmo:ecdh-p256",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/tls-hibrido"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/postfix/main.cf"
+                },
+                "region": {
+                  "startLine": 7
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "ECDH sobre P-256: Migrar ahora (alta). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema ya ofrece PQC para confidencialidad (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:ecdh-p256|pruebas/fixtures/sistema-demo/etc/postfix/main.cf"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 2,
+            "suaya:referencia": "algoritmo:ecdh-p256",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/tls-hibrido"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/swanctl/swanctl.conf"
+                },
+                "region": {
+                  "startLine": 7
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "ECDH sobre P-384: Migrar ahora (alta). Vulnerable al algoritmo de Shor. En VPN y cifrado de red el ecosistema ya ofrece PQC para confidencialidad (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:ecdh-p384|pruebas/fixtures/sistema-demo/etc/swanctl/swanctl.conf"
+          },
+          "properties": {
+            "suaya:capacidad": "vpn-cifrado-red",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 2,
+            "suaya:referencia": "algoritmo:ecdh-p384",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/vpn-hibrido"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/swanctl/swanctl.conf"
+                },
+                "region": {
+                  "startLine": 4
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Diffie-Hellman de campo finito: Migrar ahora (alta). Vulnerable al algoritmo de Shor. En VPN y cifrado de red el ecosistema ya ofrece PQC para confidencialidad (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:ffdh|pruebas/fixtures/sistema-demo/etc/swanctl/swanctl.conf"
+          },
+          "properties": {
+            "suaya:capacidad": "vpn-cifrado-red",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 2,
+            "suaya:referencia": "algoritmo:ffdh",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/vpn-hibrido"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/legado/ssh/sshd_config"
+                },
+                "region": {
+                  "startLine": 3
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "HMAC-SHA-1: Reemplazar (alta). Retirado o en retiro por los estándares vigentes."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:hmac-sha1|pruebas/fixtures/sistema-demo/legado/ssh/sshd_config"
+          },
+          "properties": {
+            "suaya:capacidad": "vpn-cifrado-red",
+            "suaya:garantia": "integridad",
+            "suaya:prioridad": 2,
+            "suaya:referencia": "algoritmo:hmac-sha1",
+            "suaya:riesgo": "obsoleto"
+          },
+          "ruleId": "suaya/general-obsoleto"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/legado/vpn/cliente.ovpn"
+                },
+                "region": {
+                  "startLine": 5
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "HMAC-SHA-1: Reemplazar (alta). Retirado o en retiro por los estándares vigentes."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:hmac-sha1|pruebas/fixtures/sistema-demo/legado/vpn/cliente.ovpn"
+          },
+          "properties": {
+            "suaya:capacidad": "vpn-cifrado-red",
+            "suaya:garantia": "integridad",
+            "suaya:prioridad": 2,
+            "suaya:referencia": "algoritmo:hmac-sha1",
+            "suaya:riesgo": "obsoleto"
+          },
+          "ruleId": "suaya/general-obsoleto"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/srv/app/Firma.java"
+                },
+                "region": {
+                  "startLine": 10
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Modo de operación ECB: Reemplazar (alta). Retirado o en retiro por los estándares vigentes."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:modo-ecb|pruebas/fixtures/sistema-demo/srv/app/Firma.java"
+          },
+          "properties": {
+            "suaya:capacidad": "codigo-aplicacion",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 2,
+            "suaya:referencia": "algoritmo:modo-ecb",
+            "suaya:riesgo": "obsoleto"
+          },
+          "ruleId": "suaya/cifrados-rotos"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/srv/app/Cifrado.cs"
+                },
+                "region": {
+                  "startLine": 5
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "SHA-1: Reemplazar (alta). Retirado o en retiro por los estándares vigentes."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:sha1|pruebas/fixtures/sistema-demo/srv/app/Cifrado.cs"
+          },
+          "properties": {
+            "suaya:capacidad": "codigo-aplicacion",
+            "suaya:garantia": "integridad",
+            "suaya:prioridad": 2,
+            "suaya:referencia": "algoritmo:sha1",
+            "suaya:riesgo": "obsoleto"
+          },
+          "ruleId": "suaya/hashes-rotos"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/srv/app/cliente.ts"
+                },
+                "region": {
+                  "startLine": 4
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "SHA-1: Reemplazar (alta). Retirado o en retiro por los estándares vigentes."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:sha1|pruebas/fixtures/sistema-demo/srv/app/cliente.ts"
+          },
+          "properties": {
+            "suaya:capacidad": "codigo-aplicacion",
+            "suaya:garantia": "integridad",
+            "suaya:prioridad": 2,
+            "suaya:referencia": "algoritmo:sha1",
+            "suaya:riesgo": "obsoleto"
+          },
+          "ruleId": "suaya/hashes-rotos"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/srv/app/Cifrado.cs"
+                },
+                "region": {
+                  "startLine": 8
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "TLS 1.2: Migrar ahora (alta). Vulnerable al algoritmo de Shor. En Código de aplicaciones el ecosistema ya ofrece PQC para confidencialidad (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:tls-1.2|pruebas/fixtures/sistema-demo/srv/app/Cifrado.cs"
+          },
+          "properties": {
+            "suaya:capacidad": "codigo-aplicacion",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 2,
+            "suaya:referencia": "algoritmo:tls-1.2",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/tls13"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/haproxy/haproxy.cfg"
+                },
+                "region": {
+                  "startLine": 6
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "X25519: Migrar ahora (alta). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema ya ofrece PQC para confidencialidad (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:x25519|pruebas/fixtures/sistema-demo/etc/haproxy/haproxy.cfg"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 2,
+            "suaya:referencia": "algoritmo:x25519",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/tls-hibrido"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/nginx/nginx.conf"
+                },
+                "region": {
+                  "startLine": 7
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "X25519: Migrar ahora (alta). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema ya ofrece PQC para confidencialidad (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:x25519|pruebas/fixtures/sistema-demo/etc/nginx/nginx.conf"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 2,
+            "suaya:referencia": "algoritmo:x25519",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/tls-hibrido"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/openvpn/server.conf"
+                },
+                "region": {
+                  "startLine": 8
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "X25519: Migrar ahora (alta). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema ya ofrece PQC para confidencialidad (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:x25519|pruebas/fixtures/sistema-demo/etc/openvpn/server.conf"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 2,
+            "suaya:referencia": "algoritmo:x25519",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/tls-hibrido"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/postfix/main.cf"
+                },
+                "region": {
+                  "startLine": 7
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "X25519: Migrar ahora (alta). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema ya ofrece PQC para confidencialidad (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:x25519|pruebas/fixtures/sistema-demo/etc/postfix/main.cf"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 2,
+            "suaya:referencia": "algoritmo:x25519",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/tls-hibrido"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/ssh/sshd_config"
+                },
+                "region": {
+                  "startLine": 3
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "X25519: Migrar ahora (alta). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema ya ofrece PQC para confidencialidad (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:x25519|pruebas/fixtures/sistema-demo/etc/ssh/sshd_config"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 2,
+            "suaya:referencia": "algoritmo:x25519",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/tls-hibrido"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/swanctl/swanctl.conf"
+                },
+                "region": {
+                  "startLine": 4
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "X25519: Migrar ahora (alta). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema ya ofrece PQC para confidencialidad (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:x25519|pruebas/fixtures/sistema-demo/etc/swanctl/swanctl.conf"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 2,
+            "suaya:referencia": "algoritmo:x25519",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/tls-hibrido"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/wireguard/wg0.conf"
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "X25519: Migrar ahora (alta). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema ya ofrece PQC para confidencialidad (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:x25519|pruebas/fixtures/sistema-demo/etc/wireguard/wg0.conf"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 2,
+            "suaya:referencia": "algoritmo:x25519",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/tls-hibrido"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/legado/ssh/sshd_config"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "X25519: Migrar ahora (alta). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema ya ofrece PQC para confidencialidad (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:x25519|pruebas/fixtures/sistema-demo/legado/ssh/sshd_config"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 2,
+            "suaya:referencia": "algoritmo:x25519",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/tls-hibrido"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/srv/app/main.go"
+                },
+                "region": {
+                  "startLine": 13
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "X25519: Migrar ahora (alta). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema ya ofrece PQC para confidencialidad (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:x25519|pruebas/fixtures/sistema-demo/srv/app/main.go"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 2,
+            "suaya:referencia": "algoritmo:x25519",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/tls-hibrido"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/var/lib/pgsql/data/postgresql.conf"
+                },
+                "region": {
+                  "startLine": 6
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "X25519: Migrar ahora (alta). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema ya ofrece PQC para confidencialidad (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:x25519|pruebas/fixtures/sistema-demo/var/lib/pgsql/data/postgresql.conf"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 2,
+            "suaya:referencia": "algoritmo:x25519",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/tls-hibrido"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/srv/app/pom.xml"
+                },
+                "region": {
+                  "startLine": 11
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Bouncy Castle (Java, artefacto jdk15on) 1.70: Reemplazar (alta). Retirado o en retiro por los estándares vigentes."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "biblioteca:bouncycastle-java-jdk15on:1.70|pruebas/fixtures/sistema-demo/srv/app/pom.xml"
+          },
+          "properties": {
+            "suaya:capacidad": "codigo-aplicacion",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 2,
+            "suaya:referencia": "biblioteca:bouncycastle-java-jdk15on:1.70",
+            "suaya:riesgo": "obsoleto"
+          },
+          "ruleId": "suaya/bibliotecas"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/srv/app/lib/bcprov-jdk18on-1.78.1.jar"
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Bouncy Castle (Java) 1.78.1: Migrar ahora (alta). Vulnerable al algoritmo de Shor. En Código de aplicaciones el ecosistema ya ofrece PQC para confidencialidad (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "biblioteca:bouncycastle-java:1.78.1|pruebas/fixtures/sistema-demo/srv/app/lib/bcprov-jdk18on-1.78.1.jar"
+          },
+          "properties": {
+            "suaya:capacidad": "codigo-aplicacion",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 2,
+            "suaya:referencia": "biblioteca:bouncycastle-java:1.78.1",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/bibliotecas"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/srv/app/package-lock.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "crypto-js 4.2.0: Reemplazar (alta). Retirado o en retiro por los estándares vigentes."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "biblioteca:crypto-js:4.2.0|pruebas/fixtures/sistema-demo/srv/app/package-lock.json"
+          },
+          "properties": {
+            "suaya:capacidad": "codigo-aplicacion",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 2,
+            "suaya:referencia": "biblioteca:crypto-js:4.2.0",
+            "suaya:riesgo": "obsoleto"
+          },
+          "ruleId": "suaya/bibliotecas"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/srv/app/go.mod"
+                },
+                "region": {
+                  "startLine": 3
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Go (biblioteca estándar) 1.22: Reemplazar (alta). Retirado o en retiro por los estándares vigentes."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "biblioteca:go:1.22|pruebas/fixtures/sistema-demo/srv/app/go.mod"
+          },
+          "properties": {
+            "suaya:capacidad": "codigo-aplicacion",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 2,
+            "suaya:referencia": "biblioteca:go:1.22",
+            "suaya:riesgo": "obsoleto"
+          },
+          "ruleId": "suaya/bibliotecas"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/srv/bin/herramienta"
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "OpenSSL 1.1.1w: Reemplazar (alta). Retirado o en retiro por los estándares vigentes."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "biblioteca:openssl:1.1.1w|pruebas/fixtures/sistema-demo/srv/bin/herramienta"
+          },
+          "properties": {
+            "suaya:capacidad": "codigo-aplicacion",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 2,
+            "suaya:referencia": "biblioteca:openssl:1.1.1w",
+            "suaya:riesgo": "obsoleto"
+          },
+          "ruleId": "suaya/bibliotecas"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/srv/app/Cargo.lock"
+                },
+                "region": {
+                  "startLine": 4
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "OpenSSL 3.3.1: Reemplazar (alta). Retirado o en retiro por los estándares vigentes."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "biblioteca:openssl:3.3.1|pruebas/fixtures/sistema-demo/srv/app/Cargo.lock"
+          },
+          "properties": {
+            "suaya:capacidad": "codigo-aplicacion",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 2,
+            "suaya:referencia": "biblioteca:openssl:3.3.1",
+            "suaya:riesgo": "obsoleto"
+          },
+          "ruleId": "suaya/bibliotecas"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/srv/app/requirements.txt"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "PyCrypto 2.6.1: Reemplazar (alta). Retirado o en retiro por los estándares vigentes."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "biblioteca:pycrypto:2.6.1|pruebas/fixtures/sistema-demo/srv/app/requirements.txt"
+          },
+          "properties": {
+            "suaya:capacidad": "codigo-aplicacion",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 2,
+            "suaya:referencia": "biblioteca:pycrypto:2.6.1",
+            "suaya:riesgo": "obsoleto"
+          },
+          "ruleId": "suaya/bibliotecas"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/wireguard/wg0.conf"
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "WireGuard (wg0.conf): Migrar ahora (alta). Vulnerable al algoritmo de Shor. En VPN y cifrado de red el ecosistema ya ofrece PQC para confidencialidad (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "protocolo:other:4557f75138af21fb|pruebas/fixtures/sistema-demo/etc/wireguard/wg0.conf"
+          },
+          "properties": {
+            "suaya:capacidad": "vpn-cifrado-red",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 2,
+            "suaya:referencia": "protocolo:other:4557f75138af21fb",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/general-confidencialidad"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/apache2/ssl.conf"
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Configuración TLS (ssl.conf): Reemplazar (alta). Retirado o en retiro por los estándares vigentes."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "protocolo:tls:39c8d4959ab8b555|pruebas/fixtures/sistema-demo/etc/apache2/ssl.conf"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 2,
+            "suaya:referencia": "protocolo:tls:39c8d4959ab8b555",
+            "suaya:riesgo": "obsoleto"
+          },
+          "ruleId": "suaya/general-obsoleto"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/haproxy/haproxy.cfg"
+                },
+                "region": {
+                  "startLine": 10
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "HAProxy bind :8443 (haproxy.cfg): Reemplazar (alta). Retirado o en retiro por los estándares vigentes."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "protocolo:tls:d1c67f8d104eb411|pruebas/fixtures/sistema-demo/etc/haproxy/haproxy.cfg"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 2,
+            "suaya:referencia": "protocolo:tls:d1c67f8d104eb411",
+            "suaya:riesgo": "obsoleto"
+          },
+          "ruleId": "suaya/general-obsoleto"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/legado/mysql/my.cnf"
+                },
+                "region": {
+                  "startLine": 6
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "MySQL/MariaDB (my.cnf): Reemplazar (alta). Retirado o en retiro por los estándares vigentes."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "protocolo:tls:f81203ad036f0caa|pruebas/fixtures/sistema-demo/legado/mysql/my.cnf"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 2,
+            "suaya:referencia": "protocolo:tls:f81203ad036f0caa",
+            "suaya:riesgo": "obsoleto"
+          },
+          "ruleId": "suaya/general-obsoleto"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/pki/ca.der"
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Ed25519: Migrar ahora (media). Vulnerable al algoritmo de Shor. En Gestión de PKI y autoridades certificadoras el ecosistema ya ofrece PQC para autenticación (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:ed25519|pruebas/fixtures/sistema-demo/etc/pki/ca.der"
+          },
+          "properties": {
+            "suaya:capacidad": "pki-ca",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "algoritmo:ed25519",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/pki/ca.key"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Ed25519: Migrar ahora (media). Vulnerable al algoritmo de Shor. En Gestión de PKI y autoridades certificadoras el ecosistema ya ofrece PQC para autenticación (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:ed25519|pruebas/fixtures/sistema-demo/etc/pki/ca.key"
+          },
+          "properties": {
+            "suaya:capacidad": "pki-ca",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "algoritmo:ed25519",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/ssh/sshd_config"
+                },
+                "region": {
+                  "startLine": 6
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Ed25519: Migrar ahora (media). Vulnerable al algoritmo de Shor. En Gestión de PKI y autoridades certificadoras el ecosistema ya ofrece PQC para autenticación (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:ed25519|pruebas/fixtures/sistema-demo/etc/ssh/sshd_config"
+          },
+          "properties": {
+            "suaya:capacidad": "pki-ca",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "algoritmo:ed25519",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/home/ana/.ssh/authorized_keys"
+                },
+                "region": {
+                  "startLine": 3
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Ed25519: Migrar ahora (media). Vulnerable al algoritmo de Shor. En Gestión de PKI y autoridades certificadoras el ecosistema ya ofrece PQC para autenticación (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:ed25519|pruebas/fixtures/sistema-demo/home/ana/.ssh/authorized_keys"
+          },
+          "properties": {
+            "suaya:capacidad": "pki-ca",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "algoritmo:ed25519",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/home/ana/.ssh/id_ed25519"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Ed25519: Migrar ahora (media). Vulnerable al algoritmo de Shor. En Gestión de PKI y autoridades certificadoras el ecosistema ya ofrece PQC para autenticación (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:ed25519|pruebas/fixtures/sistema-demo/home/ana/.ssh/id_ed25519"
+          },
+          "properties": {
+            "suaya:capacidad": "pki-ca",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "algoritmo:ed25519",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/home/ana/.ssh/id_ed25519.pub"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Ed25519: Migrar ahora (media). Vulnerable al algoritmo de Shor. En Gestión de PKI y autoridades certificadoras el ecosistema ya ofrece PQC para autenticación (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:ed25519|pruebas/fixtures/sistema-demo/home/ana/.ssh/id_ed25519.pub"
+          },
+          "properties": {
+            "suaya:capacidad": "pki-ca",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "algoritmo:ed25519",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/home/ana/.ssh/known_hosts"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Ed25519: Migrar ahora (media). Vulnerable al algoritmo de Shor. En Gestión de PKI y autoridades certificadoras el ecosistema ya ofrece PQC para autenticación (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:ed25519|pruebas/fixtures/sistema-demo/home/ana/.ssh/known_hosts"
+          },
+          "properties": {
+            "suaya:capacidad": "pki-ca",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "algoritmo:ed25519",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/haproxy/certs/api.pem"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "RSA-2048: Migrar ahora (media). Vulnerable al algoritmo de Shor. En Gestión de PKI y autoridades certificadoras el ecosistema ya ofrece PQC para autenticación (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:rsa-2048|pruebas/fixtures/sistema-demo/etc/haproxy/certs/api.pem"
+          },
+          "properties": {
+            "suaya:capacidad": "pki-ca",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "algoritmo:rsa-2048",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/haproxy/certs/api.pem"
+                },
+                "region": {
+                  "startLine": 20
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "RSA-2048: Migrar ahora (media). Vulnerable al algoritmo de Shor. En Gestión de PKI y autoridades certificadoras el ecosistema ya ofrece PQC para autenticación (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:rsa-2048|pruebas/fixtures/sistema-demo/etc/haproxy/certs/api.pem"
+          },
+          "properties": {
+            "suaya:capacidad": "pki-ca",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "algoritmo:rsa-2048",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/home/ana/.kube/config"
+                },
+                "region": {
+                  "startLine": 10
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "RSA-2048: Migrar ahora (media). Vulnerable al algoritmo de Shor. En Gestión de PKI y autoridades certificadoras el ecosistema ya ofrece PQC para autenticación (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:rsa-2048|pruebas/fixtures/sistema-demo/home/ana/.kube/config"
+          },
+          "properties": {
+            "suaya:capacidad": "pki-ca",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "algoritmo:rsa-2048",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/home/ana/.kube/config"
+                },
+                "region": {
+                  "startLine": 11
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "RSA-2048: Migrar ahora (media). Vulnerable al algoritmo de Shor. En Gestión de PKI y autoridades certificadoras el ecosistema ya ofrece PQC para autenticación (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:rsa-2048|pruebas/fixtures/sistema-demo/home/ana/.kube/config"
+          },
+          "properties": {
+            "suaya:capacidad": "pki-ca",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "algoritmo:rsa-2048",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/k8s/certificados.yaml"
+                },
+                "region": {
+                  "startLine": 14
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "RSA-2048: Migrar ahora (media). Vulnerable al algoritmo de Shor. En Gestión de PKI y autoridades certificadoras el ecosistema ya ofrece PQC para autenticación (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:rsa-2048|pruebas/fixtures/sistema-demo/k8s/certificados.yaml"
+          },
+          "properties": {
+            "suaya:capacidad": "pki-ca",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "algoritmo:rsa-2048",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/srv/app/Firma.java"
+                },
+                "region": {
+                  "startLine": 14
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "RSA-2048: Migrar ahora (media). Vulnerable al algoritmo de Shor. En Gestión de PKI y autoridades certificadoras el ecosistema ya ofrece PQC para autenticación (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:rsa-2048|pruebas/fixtures/sistema-demo/srv/app/Firma.java"
+          },
+          "properties": {
+            "suaya:capacidad": "pki-ca",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "algoritmo:rsa-2048",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/srv/app/firma.rs"
+                },
+                "region": {
+                  "startLine": 8
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "RSA-2048: Migrar ahora (media). Vulnerable al algoritmo de Shor. En Gestión de PKI y autoridades certificadoras el ecosistema ya ofrece PQC para autenticación (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:rsa-2048|pruebas/fixtures/sistema-demo/srv/app/firma.rs"
+          },
+          "properties": {
+            "suaya:capacidad": "pki-ca",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "algoritmo:rsa-2048",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/mysql/server-cert.pem"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "RSA-3072: Migrar ahora (media). Vulnerable al algoritmo de Shor. En Código de aplicaciones el ecosistema ya ofrece PQC para autenticación (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:rsa-3072|pruebas/fixtures/sistema-demo/etc/mysql/server-cert.pem"
+          },
+          "properties": {
+            "suaya:capacidad": "codigo-aplicacion",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "algoritmo:rsa-3072",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/codigo-pq"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/mysql/server-key.pem"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "RSA-3072: Migrar ahora (media). Vulnerable al algoritmo de Shor. En Código de aplicaciones el ecosistema ya ofrece PQC para autenticación (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:rsa-3072|pruebas/fixtures/sistema-demo/etc/mysql/server-key.pem"
+          },
+          "properties": {
+            "suaya:capacidad": "codigo-aplicacion",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "algoritmo:rsa-3072",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/codigo-pq"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/home/ana/.ssh/authorized_keys"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "RSA-3072: Migrar ahora (media). Vulnerable al algoritmo de Shor. En Código de aplicaciones el ecosistema ya ofrece PQC para autenticación (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:rsa-3072|pruebas/fixtures/sistema-demo/home/ana/.ssh/authorized_keys"
+          },
+          "properties": {
+            "suaya:capacidad": "codigo-aplicacion",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "algoritmo:rsa-3072",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/codigo-pq"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/home/ana/.ssh/id_rsa"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "RSA-3072: Migrar ahora (media). Vulnerable al algoritmo de Shor. En Código de aplicaciones el ecosistema ya ofrece PQC para autenticación (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:rsa-3072|pruebas/fixtures/sistema-demo/home/ana/.ssh/id_rsa"
+          },
+          "properties": {
+            "suaya:capacidad": "codigo-aplicacion",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "algoritmo:rsa-3072",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/codigo-pq"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/home/ana/.ssh/id_rsa.pub"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "RSA-3072: Migrar ahora (media). Vulnerable al algoritmo de Shor. En Código de aplicaciones el ecosistema ya ofrece PQC para autenticación (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:rsa-3072|pruebas/fixtures/sistema-demo/home/ana/.ssh/id_rsa.pub"
+          },
+          "properties": {
+            "suaya:capacidad": "codigo-aplicacion",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "algoritmo:rsa-3072",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/codigo-pq"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/legado/app-pkcs1.key"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "RSA-3072: Migrar ahora (media). Vulnerable al algoritmo de Shor. En Código de aplicaciones el ecosistema ya ofrece PQC para autenticación (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:rsa-3072|pruebas/fixtures/sistema-demo/legado/app-pkcs1.key"
+          },
+          "properties": {
+            "suaya:capacidad": "codigo-aplicacion",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "algoritmo:rsa-3072",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/codigo-pq"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/srv/app.key"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "RSA-3072: Migrar ahora (media). Vulnerable al algoritmo de Shor. En Código de aplicaciones el ecosistema ya ofrece PQC para autenticación (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:rsa-3072|pruebas/fixtures/sistema-demo/srv/app.key"
+          },
+          "properties": {
+            "suaya:capacidad": "codigo-aplicacion",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "algoritmo:rsa-3072",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/codigo-pq"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/srv/app.pub.pem"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "RSA-3072: Migrar ahora (media). Vulnerable al algoritmo de Shor. En Código de aplicaciones el ecosistema ya ofrece PQC para autenticación (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:rsa-3072|pruebas/fixtures/sistema-demo/srv/app.pub.pem"
+          },
+          "properties": {
+            "suaya:capacidad": "codigo-aplicacion",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "algoritmo:rsa-3072",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/codigo-pq"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/srv/app/cliente.ts"
+                },
+                "region": {
+                  "startLine": 6
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "RSA-3072: Migrar ahora (media). Vulnerable al algoritmo de Shor. En Código de aplicaciones el ecosistema ya ofrece PQC para autenticación (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:rsa-3072|pruebas/fixtures/sistema-demo/srv/app/cliente.ts"
+          },
+          "properties": {
+            "suaya:capacidad": "codigo-aplicacion",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "algoritmo:rsa-3072",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/codigo-pq"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/haproxy/certs/api.pem"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "RSASSA-PKCS1-v1_5 con SHA-256: Migrar ahora (media). Vulnerable al algoritmo de Shor. En Código de aplicaciones el ecosistema ya ofrece PQC para autenticación (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:rsassa-pkcs1-sha256|pruebas/fixtures/sistema-demo/etc/haproxy/certs/api.pem"
+          },
+          "properties": {
+            "suaya:capacidad": "codigo-aplicacion",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "algoritmo:rsassa-pkcs1-sha256",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/codigo-pq"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/mysql/server-cert.pem"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "RSASSA-PKCS1-v1_5 con SHA-256: Migrar ahora (media). Vulnerable al algoritmo de Shor. En Código de aplicaciones el ecosistema ya ofrece PQC para autenticación (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:rsassa-pkcs1-sha256|pruebas/fixtures/sistema-demo/etc/mysql/server-cert.pem"
+          },
+          "properties": {
+            "suaya:capacidad": "codigo-aplicacion",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "algoritmo:rsassa-pkcs1-sha256",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/codigo-pq"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/srv/app/Firma.java"
+                },
+                "region": {
+                  "startLine": 21
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "RSASSA-PKCS1-v1_5 con SHA-256: Migrar ahora (media). Vulnerable al algoritmo de Shor. En Código de aplicaciones el ecosistema ya ofrece PQC para autenticación (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:rsassa-pkcs1-sha256|pruebas/fixtures/sistema-demo/srv/app/Firma.java"
+          },
+          "properties": {
+            "suaya:capacidad": "codigo-aplicacion",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "algoritmo:rsassa-pkcs1-sha256",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/codigo-pq"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/srv/app/pom.xml"
+                },
+                "region": {
+                  "startLine": 6
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Bouncy Castle (Java) 1.80: Verificar manualmente (media). Suaya no pudo determinar el algoritmo o sus parámetros; requiere revisión manual."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "biblioteca:bouncycastle-java:1.80|pruebas/fixtures/sistema-demo/srv/app/pom.xml"
+          },
+          "properties": {
+            "suaya:capacidad": "codigo-aplicacion",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "biblioteca:bouncycastle-java:1.80",
+            "suaya:riesgo": "desconocido"
+          },
+          "ruleId": "suaya/bibliotecas"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/srv/app/go.mod"
+                },
+                "region": {
+                  "startLine": 7
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "CIRCL (Cloudflare) v1.3.7: Verificar manualmente (media). Suaya no pudo determinar el algoritmo o sus parámetros; requiere revisión manual."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "biblioteca:circl:v1.3.7|pruebas/fixtures/sistema-demo/srv/app/go.mod"
+          },
+          "properties": {
+            "suaya:capacidad": "codigo-aplicacion",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "biblioteca:circl:v1.3.7",
+            "suaya:riesgo": "desconocido"
+          },
+          "ruleId": "suaya/bibliotecas"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/srv/app/go.mod"
+                },
+                "region": {
+                  "startLine": 6
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "golang.org/x/crypto v0.21.0: Verificar manualmente (media). Suaya no pudo determinar el algoritmo o sus parámetros; requiere revisión manual."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "biblioteca:golang-x-crypto:v0.21.0|pruebas/fixtures/sistema-demo/srv/app/go.mod"
+          },
+          "properties": {
+            "suaya:capacidad": "codigo-aplicacion",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "biblioteca:golang-x-crypto:v0.21.0",
+            "suaya:riesgo": "desconocido"
+          },
+          "ruleId": "suaya/bibliotecas"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/srv/app/requirements.txt"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "cryptography (Python) 41.0.7: Verificar manualmente (media). Suaya no pudo determinar el algoritmo o sus parámetros; requiere revisión manual."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "biblioteca:pyca-cryptography:41.0.7|pruebas/fixtures/sistema-demo/srv/app/requirements.txt"
+          },
+          "properties": {
+            "suaya:capacidad": "codigo-aplicacion",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "biblioteca:pyca-cryptography:41.0.7",
+            "suaya:riesgo": "desconocido"
+          },
+          "ruleId": "suaya/bibliotecas"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/pki/ca.der"
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "CA Demo Suaya: Migrar ahora (media). Vulnerable al algoritmo de Shor. En Gestión de PKI y autoridades certificadoras el ecosistema ya ofrece PQC para autenticación (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "certificado:7a7b637a59f2e56e|pruebas/fixtures/sistema-demo/etc/pki/ca.der"
+          },
+          "properties": {
+            "suaya:capacidad": "pki-ca",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "certificado:7a7b637a59f2e56e",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/home/ana/.kube/config"
+                },
+                "region": {
+                  "startLine": 10
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "ana: Migrar ahora (media). Vulnerable al algoritmo de Shor. En Gestión de PKI y autoridades certificadoras el ecosistema ya ofrece PQC para autenticación (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "certificado:de61ceca974f6821|pruebas/fixtures/sistema-demo/home/ana/.kube/config"
+          },
+          "properties": {
+            "suaya:capacidad": "pki-ca",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "certificado:de61ceca974f6821",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/pki/ca.key"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Llave privada Ed25519: Migrar ahora (media). Vulnerable al algoritmo de Shor. En Gestión de PKI y autoridades certificadoras el ecosistema ya ofrece PQC para autenticación (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "llave:0dce1f0ad66e8096|pruebas/fixtures/sistema-demo/etc/pki/ca.key"
+          },
+          "properties": {
+            "suaya:capacidad": "pki-ca",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "llave:0dce1f0ad66e8096",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/srv/app-cifrada.key"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Llave privada cifrada (algoritmo no visible): Verificar manualmente (media). Suaya no pudo determinar el algoritmo o sus parámetros; requiere revisión manual."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "llave:131bdd9f779ece96|pruebas/fixtures/sistema-demo/srv/app-cifrada.key"
+          },
+          "properties": {
+            "suaya:capacidad": "sin-clasificar",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "llave:131bdd9f779ece96",
+            "suaya:riesgo": "desconocido"
+          },
+          "ruleId": "suaya/desconocido"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/home/ana/.kube/config"
+                },
+                "region": {
+                  "startLine": 11
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Llave privada RSA-2048: Migrar ahora (media). Vulnerable al algoritmo de Shor. En Gestión de PKI y autoridades certificadoras el ecosistema ya ofrece PQC para autenticación (integración): la migración es accionable hoy."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "llave:f5064373e91fb5be|pruebas/fixtures/sistema-demo/home/ana/.kube/config"
+          },
+          "properties": {
+            "suaya:capacidad": "pki-ca",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "llave:f5064373e91fb5be",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/java-21-openjdk/security/java.security"
+                },
+                "region": {
+                  "startLine": 7
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Java (java.security): Verificar manualmente (media). Suaya no pudo determinar el algoritmo o sus parámetros; requiere revisión manual."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "protocolo:tls:1579f4f92b6ae9ea|pruebas/fixtures/sistema-demo/etc/java-21-openjdk/security/java.security"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "protocolo:tls:1579f4f92b6ae9ea",
+            "suaya:riesgo": "desconocido"
+          },
+          "ruleId": "suaya/desconocido"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/mysql/mysql.conf.d/mysqld.cnf"
+                },
+                "region": {
+                  "startLine": 5
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "MySQL/MariaDB (mysqld.cnf): Verificar manualmente (media). Suaya no pudo determinar el algoritmo o sus parámetros; requiere revisión manual."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "protocolo:tls:815ee89adef1724b|pruebas/fixtures/sistema-demo/etc/mysql/mysql.conf.d/mysqld.cnf"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 3,
+            "suaya:referencia": "protocolo:tls:815ee89adef1724b",
+            "suaya:riesgo": "desconocido"
+          },
+          "ruleId": "suaya/desconocido"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/legado/ssh/sshd_config"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "AES-128-CTR: Revisar parámetros (baja). El algoritmo de Grover reduce su margen de seguridad; considerar llaves de 256 bits."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:aes-128-ctr|pruebas/fixtures/sistema-demo/legado/ssh/sshd_config"
+          },
+          "properties": {
+            "suaya:capacidad": "vpn-cifrado-red",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "algoritmo:aes-128-ctr",
+            "suaya:riesgo": "debilitado-grover"
+          },
+          "ruleId": "suaya/grover"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/ssh/sshd_config"
+                },
+                "region": {
+                  "startLine": 4
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "AES-128-GCM: Revisar parámetros (baja). El algoritmo de Grover reduce su margen de seguridad; considerar llaves de 256 bits."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:aes-128-gcm|pruebas/fixtures/sistema-demo/etc/ssh/sshd_config"
+          },
+          "properties": {
+            "suaya:capacidad": "vpn-cifrado-red",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "algoritmo:aes-128-gcm",
+            "suaya:riesgo": "debilitado-grover"
+          },
+          "ruleId": "suaya/grover"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/crypttab"
+                },
+                "region": {
+                  "startLine": 3
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "AES-128-XTS: Revisar parámetros (baja). El algoritmo de Grover reduce su margen de seguridad; considerar llaves de 256 bits."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:aes-128-xts|pruebas/fixtures/sistema-demo/etc/crypttab"
+          },
+          "properties": {
+            "suaya:capacidad": "cifrado-volumen",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "algoritmo:aes-128-xts",
+            "suaya:riesgo": "debilitado-grover"
+          },
+          "ruleId": "suaya/grover"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/nginx/www.crt"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Curva NIST P-256: Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:ec-p256|pruebas/fixtures/sistema-demo/etc/nginx/www.crt"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "algoritmo:ec-p256",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/nginx/www.key"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Curva NIST P-256: Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:ec-p256|pruebas/fixtures/sistema-demo/etc/nginx/www.key"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "algoritmo:ec-p256",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/postfix/correo.pem"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Curva NIST P-256: Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:ec-p256|pruebas/fixtures/sistema-demo/etc/postfix/correo.pem"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "algoritmo:ec-p256",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/postfix/correo.pem"
+                },
+                "region": {
+                  "startLine": 6
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Curva NIST P-256: Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:ec-p256|pruebas/fixtures/sistema-demo/etc/postfix/correo.pem"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "algoritmo:ec-p256",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/k8s/certificados.yaml"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Curva NIST P-256: Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:ec-p256|pruebas/fixtures/sistema-demo/k8s/certificados.yaml"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "algoritmo:ec-p256",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/k8s/secret-tienda.yaml"
+                },
+                "region": {
+                  "startLine": 8
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Curva NIST P-256: Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:ec-p256|pruebas/fixtures/sistema-demo/k8s/secret-tienda.yaml"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "algoritmo:ec-p256",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/k8s/secret-tienda.yaml"
+                },
+                "region": {
+                  "startLine": 9
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Curva NIST P-256: Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:ec-p256|pruebas/fixtures/sistema-demo/k8s/secret-tienda.yaml"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "algoritmo:ec-p256",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/legado/ec384-sec1.key"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Curva NIST P-384: Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:ec-p384|pruebas/fixtures/sistema-demo/legado/ec384-sec1.key"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "algoritmo:ec-p384",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/var/lib/pgsql/data/server.crt"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Curva NIST P-384: Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:ec-p384|pruebas/fixtures/sistema-demo/var/lib/pgsql/data/server.crt"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "algoritmo:ec-p384",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/var/lib/pgsql/data/server.key"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Curva NIST P-384: Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:ec-p384|pruebas/fixtures/sistema-demo/var/lib/pgsql/data/server.key"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "algoritmo:ec-p384",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/nginx/www.crt"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "ECDSA con SHA-256: Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:ecdsa-sha256|pruebas/fixtures/sistema-demo/etc/nginx/www.crt"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "algoritmo:ecdsa-sha256",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/postfix/correo.pem"
+                },
+                "region": {
+                  "startLine": 6
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "ECDSA con SHA-256: Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:ecdsa-sha256|pruebas/fixtures/sistema-demo/etc/postfix/correo.pem"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "algoritmo:ecdsa-sha256",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/k8s/secret-tienda.yaml"
+                },
+                "region": {
+                  "startLine": 8
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "ECDSA con SHA-256: Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:ecdsa-sha256|pruebas/fixtures/sistema-demo/k8s/secret-tienda.yaml"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "algoritmo:ecdsa-sha256",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/var/lib/pgsql/data/server.crt"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "ECDSA con SHA-384: Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:ecdsa-sha384|pruebas/fixtures/sistema-demo/var/lib/pgsql/data/server.crt"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "algoritmo:ecdsa-sha384",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/legado/app-pkcs1-cifrada.key"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "RSA: Monitorear el ecosistema (baja). Vulnerable al algoritmo de Shor, pero en Sin clasificar aún no hay una vía de migración madura para autenticación. Documentar y monitorear."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:rsa|pruebas/fixtures/sistema-demo/legado/app-pkcs1-cifrada.key"
+          },
+          "properties": {
+            "suaya:capacidad": "sin-clasificar",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "algoritmo:rsa",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/ssh/sshd_config"
+                },
+                "region": {
+                  "startLine": 6
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "RSASSA-PKCS1-v1_5 con SHA-512: Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En VPN y cifrado de red el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "algoritmo:rsassa-pkcs1-sha512|pruebas/fixtures/sistema-demo/etc/ssh/sshd_config"
+          },
+          "properties": {
+            "suaya:capacidad": "vpn-cifrado-red",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "algoritmo:rsassa-pkcs1-sha512",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/postfix/correo.pem"
+                },
+                "region": {
+                  "startLine": 6
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "correo.ejemplo.mx: Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "certificado:462a7ceaf396b3db|pruebas/fixtures/sistema-demo/etc/postfix/correo.pem"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "certificado:462a7ceaf396b3db",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/mysql/server-cert.pem"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "mysql.ejemplo.mx: Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "certificado:8d19e200261f8d8f|pruebas/fixtures/sistema-demo/etc/mysql/server-cert.pem"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "certificado:8d19e200261f8d8f",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/haproxy/certs/api.pem"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "api.ejemplo.mx: Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "certificado:ae0f2021bf288189|pruebas/fixtures/sistema-demo/etc/haproxy/certs/api.pem"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "certificado:ae0f2021bf288189",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/k8s/secret-tienda.yaml"
+                },
+                "region": {
+                  "startLine": 8
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "tienda.ejemplo.mx: Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "certificado:c79f3017ed3434f3|pruebas/fixtures/sistema-demo/k8s/secret-tienda.yaml"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "certificado:c79f3017ed3434f3",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/nginx/www.crt"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "www.ejemplo.mx: Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "certificado:dd38088af8bc79c9|pruebas/fixtures/sistema-demo/etc/nginx/www.crt"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "certificado:dd38088af8bc79c9",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/var/lib/pgsql/data/server.crt"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "db.ejemplo.mx: Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "certificado:f92d88144ae83942|pruebas/fixtures/sistema-demo/var/lib/pgsql/data/server.crt"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "certificado:f92d88144ae83942",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/postfix/correo.pem"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Llave privada Curva NIST P-256: Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "llave:2741f7bfcf4870be|pruebas/fixtures/sistema-demo/etc/postfix/correo.pem"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "llave:2741f7bfcf4870be",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/home/ana/.ssh/authorized_keys"
+                },
+                "region": {
+                  "startLine": 3
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Llave pública Ed25519 (ana@demo): Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En VPN y cifrado de red el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "llave:3216247147fa8057|pruebas/fixtures/sistema-demo/home/ana/.ssh/authorized_keys"
+          },
+          "properties": {
+            "suaya:capacidad": "vpn-cifrado-red",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "llave:3216247147fa8057",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/home/ana/.ssh/id_ed25519.pub"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Llave pública Ed25519 (ana@demo): Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En VPN y cifrado de red el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "llave:3216247147fa8057|pruebas/fixtures/sistema-demo/home/ana/.ssh/id_ed25519.pub"
+          },
+          "properties": {
+            "suaya:capacidad": "vpn-cifrado-red",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "llave:3216247147fa8057",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/home/ana/.ssh/known_hosts"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Llave pública Ed25519 (ana@demo): Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En VPN y cifrado de red el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "llave:3216247147fa8057|pruebas/fixtures/sistema-demo/home/ana/.ssh/known_hosts"
+          },
+          "properties": {
+            "suaya:capacidad": "vpn-cifrado-red",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "llave:3216247147fa8057",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/home/ana/.ssh/authorized_keys"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Llave pública RSA-3072 (ana-rsa@demo): Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En VPN y cifrado de red el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "llave:4c97dc8a7bafdf51|pruebas/fixtures/sistema-demo/home/ana/.ssh/authorized_keys"
+          },
+          "properties": {
+            "suaya:capacidad": "vpn-cifrado-red",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "llave:4c97dc8a7bafdf51",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/home/ana/.ssh/id_rsa.pub"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Llave pública RSA-3072 (ana-rsa@demo): Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En VPN y cifrado de red el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "llave:4c97dc8a7bafdf51|pruebas/fixtures/sistema-demo/home/ana/.ssh/id_rsa.pub"
+          },
+          "properties": {
+            "suaya:capacidad": "vpn-cifrado-red",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "llave:4c97dc8a7bafdf51",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/haproxy/certs/api.pem"
+                },
+                "region": {
+                  "startLine": 20
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Llave privada RSA-2048: Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "llave:5f540d786472c94e|pruebas/fixtures/sistema-demo/etc/haproxy/certs/api.pem"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "llave:5f540d786472c94e",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/legado/ec384-sec1.key"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Llave privada Curva NIST P-384: Monitorear el ecosistema (baja). Vulnerable al algoritmo de Shor, pero en Sin clasificar aún no hay una vía de migración madura para autenticación. Documentar y monitorear."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "llave:75b13550525f67d2|pruebas/fixtures/sistema-demo/legado/ec384-sec1.key"
+          },
+          "properties": {
+            "suaya:capacidad": "sin-clasificar",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "llave:75b13550525f67d2",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/mysql/server-key.pem"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Llave privada RSA-3072: Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "llave:77d884886adf22cc|pruebas/fixtures/sistema-demo/etc/mysql/server-key.pem"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "llave:77d884886adf22cc",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/home/ana/.ssh/id_ed25519"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Llave privada Ed25519: Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En VPN y cifrado de red el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "llave:78ea1bd224293eef|pruebas/fixtures/sistema-demo/home/ana/.ssh/id_ed25519"
+          },
+          "properties": {
+            "suaya:capacidad": "vpn-cifrado-red",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "llave:78ea1bd224293eef",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/legado/app-pkcs1-cifrada.key"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Llave privada RSA: Monitorear el ecosistema (baja). Vulnerable al algoritmo de Shor, pero en Sin clasificar aún no hay una vía de migración madura para autenticación. Documentar y monitorear."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "llave:79f425c8932e703f|pruebas/fixtures/sistema-demo/legado/app-pkcs1-cifrada.key"
+          },
+          "properties": {
+            "suaya:capacidad": "sin-clasificar",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "llave:79f425c8932e703f",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/wireguard/wg0.conf"
+                },
+                "region": {
+                  "startLine": 4
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Llave privada WireGuard (X25519): Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En VPN y cifrado de red el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "llave:7baacde1904826c7|pruebas/fixtures/sistema-demo/etc/wireguard/wg0.conf"
+          },
+          "properties": {
+            "suaya:capacidad": "vpn-cifrado-red",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "llave:7baacde1904826c7",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/legado/app-pkcs1.key"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Llave privada RSA-3072: Monitorear el ecosistema (baja). Vulnerable al algoritmo de Shor, pero en Sin clasificar aún no hay una vía de migración madura para autenticación. Documentar y monitorear."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "llave:7e361c4d2834c24c|pruebas/fixtures/sistema-demo/legado/app-pkcs1.key"
+          },
+          "properties": {
+            "suaya:capacidad": "sin-clasificar",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "llave:7e361c4d2834c24c",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/k8s/secret-tienda.yaml"
+                },
+                "region": {
+                  "startLine": 9
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Llave privada Curva NIST P-256: Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "llave:8d6ea154e1d57318|pruebas/fixtures/sistema-demo/k8s/secret-tienda.yaml"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "llave:8d6ea154e1d57318",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/nginx/www.key"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Llave privada Curva NIST P-256: Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "llave:93efc6a03e699412|pruebas/fixtures/sistema-demo/etc/nginx/www.key"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "llave:93efc6a03e699412",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/var/lib/pgsql/data/server.key"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Llave privada Curva NIST P-384: Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "llave:a9312cebc0228c64|pruebas/fixtures/sistema-demo/var/lib/pgsql/data/server.key"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "llave:a9312cebc0228c64",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/home/ana/.ssh/id_rsa"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Llave privada RSA-3072: Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En VPN y cifrado de red el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "llave:c1f540ed97bb7b28|pruebas/fixtures/sistema-demo/home/ana/.ssh/id_rsa"
+          },
+          "properties": {
+            "suaya:capacidad": "vpn-cifrado-red",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "llave:c1f540ed97bb7b28",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/k8s/certificados.yaml"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Llave de cert-manager tienda/tienda (Curva NIST P-256): Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "llave:cert-manager:6cd8238854acb9b6|pruebas/fixtures/sistema-demo/k8s/certificados.yaml"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "llave:cert-manager:6cd8238854acb9b6",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/k8s/certificados.yaml"
+                },
+                "region": {
+                  "startLine": 14
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Llave de cert-manager interno/intranet (RSA-2048): Planificar y hacer piloto (baja). Vulnerable al algoritmo de Shor. En Servidores web el ecosistema para autenticación está en «Componentes disponibles»: conviene planificar y probar, aún no migrar en producción."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "llave:cert-manager:a14e1e36a6de2027|pruebas/fixtures/sistema-demo/k8s/certificados.yaml"
+          },
+          "properties": {
+            "suaya:capacidad": "servidores-web",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "llave:cert-manager:a14e1e36a6de2027",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/srv/app.key"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Llave privada RSA-3072: Monitorear el ecosistema (baja). Vulnerable al algoritmo de Shor, pero en Sin clasificar aún no hay una vía de migración madura para autenticación. Documentar y monitorear."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "llave:deee5b3c3463be9c|pruebas/fixtures/sistema-demo/srv/app.key"
+          },
+          "properties": {
+            "suaya:capacidad": "sin-clasificar",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "llave:deee5b3c3463be9c",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/srv/app.pub.pem"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Llave pública RSA-3072: Monitorear el ecosistema (baja). Vulnerable al algoritmo de Shor, pero en Sin clasificar aún no hay una vía de migración madura para autenticación. Documentar y monitorear."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "llave:fce50043eaef3acc|pruebas/fixtures/sistema-demo/srv/app.pub.pem"
+          },
+          "properties": {
+            "suaya:capacidad": "sin-clasificar",
+            "suaya:garantia": "autenticacion",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "llave:fce50043eaef3acc",
+            "suaya:riesgo": "vulnerable-cuantico"
+          },
+          "ruleId": "suaya/firmas-pq"
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pruebas/fixtures/sistema-demo/etc/crypttab"
+                },
+                "region": {
+                  "startLine": 3
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Llave del volumen datos: Revisar parámetros (baja). El algoritmo de Grover reduce su margen de seguridad; considerar llaves de 256 bits."
+          },
+          "partialFingerprints": {
+            "suayaReferencia/v1": "llave:volumen:4dc63820bd0dd2dd|pruebas/fixtures/sistema-demo/etc/crypttab"
+          },
+          "properties": {
+            "suaya:capacidad": "cifrado-volumen",
+            "suaya:garantia": "confidencialidad",
+            "suaya:prioridad": 4,
+            "suaya:referencia": "llave:volumen:4dc63820bd0dd2dd",
+            "suaya:riesgo": "debilitado-grover"
+          },
+          "ruleId": "suaya/grover"
+        }
+      ],
+      "tool": {
+        "driver": {
+          "name": "Suaya",
+          "rules": [
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "Actualizar la biblioteca criptográfica"
+              },
+              "help": {
+                "markdown": "**Actualizar la biblioteca criptográfica**\n\n1. Actualice a una versión con soporte vigente que ofrezca ML-KEM y ML-DSA (la nota de la biblioteca indica desde cuál).\n2. Fije la versión en el manifiesto o archivo de bloqueo del proyecto y vuelva a escanear.\n",
+                "text": "Actualice a una versión con soporte vigente que ofrezca ML-KEM y ML-DSA (la nota de la biblioteca indica desde cuál).\nFije la versión en el manifiesto o archivo de bloqueo del proyecto y vuelva a escanear."
+              },
+              "id": "suaya/bibliotecas",
+              "name": "Actualizar la biblioteca criptográfica",
+              "properties": {
+                "security-severity": "7.0",
+                "tags": [
+                  "security",
+                  "cryptography",
+                  "post-quantum"
+                ]
+              },
+              "shortDescription": {
+                "text": "Actualizar la biblioteca criptográfica"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "Retirar cifrados rotos (3DES, DES, RC4, RC2, Blowfish, ECB)"
+              },
+              "help": {
+                "markdown": "**Retirar cifrados rotos (3DES, DES, RC4, RC2, Blowfish, ECB)**\n\n1. TLS: use solo suites AEAD, p. ej. ECDHE+AESGCM:ECDHE+CHACHA20, y quite las listas heredadas con 3DES o RC4.\n2. OpenSSH: Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr\n3. OpenVPN 2.5 o posterior: data-ciphers AES-256-GCM:CHACHA20-POLY1305\n4. PKCS #12: vuelva a exportar con openssl pkcs12 -export -keypbe AES-256-CBC -certpbe AES-256-CBC -macalg sha256.\n5. Código: use AES-GCM o ChaCha20-Poly1305 de una biblioteca reconocida.\n",
+                "text": "TLS: use solo suites AEAD, p. ej. ECDHE+AESGCM:ECDHE+CHACHA20, y quite las listas heredadas con 3DES o RC4.\nOpenSSH: Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr\nOpenVPN 2.5 o posterior: data-ciphers AES-256-GCM:CHACHA20-POLY1305\nPKCS #12: vuelva a exportar con openssl pkcs12 -export -keypbe AES-256-CBC -certpbe AES-256-CBC -macalg sha256.\nCódigo: use AES-GCM o ChaCha20-Poly1305 de una biblioteca reconocida."
+              },
+              "id": "suaya/cifrados-rotos",
+              "name": "Retirar cifrados rotos (3DES, DES, RC4, RC2, Blowfish, ECB)",
+              "properties": {
+                "security-severity": "9.0",
+                "tags": [
+                  "security",
+                  "cryptography",
+                  "post-quantum"
+                ]
+              },
+              "shortDescription": {
+                "text": "Retirar cifrados rotos (3DES, DES, RC4, RC2, Blowfish, ECB)"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "fullDescription": {
+                "text": "Usar ML-KEM y ML-DSA desde el código"
+              },
+              "help": {
+                "markdown": "**Usar ML-KEM y ML-DSA desde el código**\n\n1. Cifrado e intercambio de llaves: use ML-KEM (FIPS 203), de preferencia en modo híbrido con X25519.\n2. Firmas: use ML-DSA (FIPS 204) o SLH-DSA (FIPS 205).\n3. Bibliotecas con estas API: OpenSSL 3.5, Go 1.24 (crypto/mlkem), Java 24 (javax.crypto.KEM), .NET 10 y Bouncy Castle.\n4. Concentre las llamadas criptográficas en un módulo propio: cambiar de algoritmo será un cambio de configuración.\n",
+                "text": "Cifrado e intercambio de llaves: use ML-KEM (FIPS 203), de preferencia en modo híbrido con X25519.\nFirmas: use ML-DSA (FIPS 204) o SLH-DSA (FIPS 205).\nBibliotecas con estas API: OpenSSL 3.5, Go 1.24 (crypto/mlkem), Java 24 (javax.crypto.KEM), .NET 10 y Bouncy Castle.\nConcentre las llamadas criptográficas en un módulo propio: cambiar de algoritmo será un cambio de configuración."
+              },
+              "id": "suaya/codigo-pq",
+              "name": "Usar ML-KEM y ML-DSA desde el código",
+              "properties": {
+                "security-severity": "5.0",
+                "tags": [
+                  "security",
+                  "cryptography",
+                  "post-quantum"
+                ]
+              },
+              "shortDescription": {
+                "text": "Usar ML-KEM y ML-DSA desde el código"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "fullDescription": {
+                "text": "Revisar manualmente"
+              },
+              "help": {
+                "markdown": "**Revisar manualmente**\n\n1. Suaya no pudo identificar el algoritmo o sus parámetros: revise el componente en sus ubicaciones.\n2. Si es criptografía propia o no estándar, sustitúyala por una biblioteca reconocida.\n",
+                "text": "Suaya no pudo identificar el algoritmo o sus parámetros: revise el componente en sus ubicaciones.\nSi es criptografía propia o no estándar, sustitúyala por una biblioteca reconocida."
+              },
+              "id": "suaya/desconocido",
+              "name": "Revisar manualmente",
+              "properties": {
+                "security-severity": "5.0",
+                "tags": [
+                  "security",
+                  "cryptography",
+                  "post-quantum"
+                ]
+              },
+              "shortDescription": {
+                "text": "Revisar manualmente"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "Retirar grupos Diffie-Hellman de 1024 y 1536 bits"
+              },
+              "help": {
+                "markdown": "**Retirar grupos Diffie-Hellman de 1024 y 1536 bits**\n\n1. Use grupos de al menos 2048 bits (ffdhe2048 o superior, RFC 7919) o curvas (X25519, P-256), y prefiera el intercambio híbrido con ML-KEM.\n2. OpenSSH: quite diffie-hellman-group1-sha1 y diffie-hellman-group14-sha1 de KexAlgorithms.\n3. IKEv2: quite modp1024 y modp1536 de las propuestas.\n",
+                "text": "Use grupos de al menos 2048 bits (ffdhe2048 o superior, RFC 7919) o curvas (X25519, P-256), y prefiera el intercambio híbrido con ML-KEM.\nOpenSSH: quite diffie-hellman-group1-sha1 y diffie-hellman-group14-sha1 de KexAlgorithms.\nIKEv2: quite modp1024 y modp1536 de las propuestas."
+              },
+              "id": "suaya/dh-roto",
+              "name": "Retirar grupos Diffie-Hellman de 1024 y 1536 bits",
+              "properties": {
+                "security-severity": "9.0",
+                "tags": [
+                  "security",
+                  "cryptography",
+                  "post-quantum"
+                ]
+              },
+              "shortDescription": {
+                "text": "Retirar grupos Diffie-Hellman de 1024 y 1536 bits"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "fullDescription": {
+                "text": "Planificar certificados y firmas ML-DSA"
+              },
+              "help": {
+                "markdown": "**Planificar certificados y firmas ML-DSA**\n\n1. Identifique quién valida cada certificado: los clientes deben aceptar ML-DSA (FIPS 204) o certificados compuestos antes de cambiar la cadena.\n2. Pruebe la emisión con OpenSSL 3.5 o posterior: openssl req -x509 -newkey ML-DSA-65 -keyout llave.pem -out cert.pem -days 90 -subj /CN=prueba\n3. Mientras tanto, automatice la renovación (ACME): facilita cambiar de algoritmo.\n",
+                "text": "Identifique quién valida cada certificado: los clientes deben aceptar ML-DSA (FIPS 204) o certificados compuestos antes de cambiar la cadena.\nPruebe la emisión con OpenSSL 3.5 o posterior: openssl req -x509 -newkey ML-DSA-65 -keyout llave.pem -out cert.pem -days 90 -subj /CN=prueba\nMientras tanto, automatice la renovación (ACME): facilita cambiar de algoritmo."
+              },
+              "id": "suaya/firmas-pq",
+              "name": "Planificar certificados y firmas ML-DSA",
+              "properties": {
+                "security-severity": "5.0",
+                "tags": [
+                  "security",
+                  "cryptography",
+                  "post-quantum"
+                ]
+              },
+              "shortDescription": {
+                "text": "Planificar certificados y firmas ML-DSA"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "Proteger la confidencialidad con ML-KEM"
+              },
+              "help": {
+                "markdown": "**Proteger la confidencialidad con ML-KEM**\n\n1. Lo que hoy se captura cifrado podrá descifrarse con una computadora cuántica: priorice el intercambio híbrido con ML-KEM (FIPS 203).\n2. Empiece por los sistemas con datos de vida larga (desigualdad de Mosca, opción --organizacion).\n",
+                "text": "Lo que hoy se captura cifrado podrá descifrarse con una computadora cuántica: priorice el intercambio híbrido con ML-KEM (FIPS 203).\nEmpiece por los sistemas con datos de vida larga (desigualdad de Mosca, opción --organizacion)."
+              },
+              "id": "suaya/general-confidencialidad",
+              "name": "Proteger la confidencialidad con ML-KEM",
+              "properties": {
+                "security-severity": "7.0",
+                "tags": [
+                  "security",
+                  "cryptography",
+                  "post-quantum"
+                ]
+              },
+              "shortDescription": {
+                "text": "Proteger la confidencialidad con ML-KEM"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "Reemplazar lo obsoleto"
+              },
+              "help": {
+                "markdown": "**Reemplazar lo obsoleto**\n\n1. Los estándares vigentes ya lo retiraron: planifique su reemplazo en el próximo ciclo de cambios.\n2. Cuando lo sustituya, elija ya un esquema híbrido o poscuántico si el ecosistema lo permite.\n",
+                "text": "Los estándares vigentes ya lo retiraron: planifique su reemplazo en el próximo ciclo de cambios.\nCuando lo sustituya, elija ya un esquema híbrido o poscuántico si el ecosistema lo permite."
+              },
+              "id": "suaya/general-obsoleto",
+              "name": "Reemplazar lo obsoleto",
+              "properties": {
+                "security-severity": "7.0",
+                "tags": [
+                  "security",
+                  "cryptography",
+                  "post-quantum"
+                ]
+              },
+              "shortDescription": {
+                "text": "Reemplazar lo obsoleto"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "Corregir de inmediato"
+              },
+              "help": {
+                "markdown": "**Corregir de inmediato**\n\n1. Ubique el componente en las ubicaciones del reporte y sustitúyalo por una alternativa vigente: AES-GCM, SHA-256, RSA-3072, ECDSA P-256 o, donde ya sea posible, ML-KEM y ML-DSA.\n2. Si es una llave o un certificado, reemítalo; si es una configuración, cámbiela y vuelva a escanear.\n",
+                "text": "Ubique el componente en las ubicaciones del reporte y sustitúyalo por una alternativa vigente: AES-GCM, SHA-256, RSA-3072, ECDSA P-256 o, donde ya sea posible, ML-KEM y ML-DSA.\nSi es una llave o un certificado, reemítalo; si es una configuración, cámbiela y vuelva a escanear."
+              },
+              "id": "suaya/general-roto",
+              "name": "Corregir de inmediato",
+              "properties": {
+                "security-severity": "9.0",
+                "tags": [
+                  "security",
+                  "cryptography",
+                  "post-quantum"
+                ]
+              },
+              "shortDescription": {
+                "text": "Corregir de inmediato"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "fullDescription": {
+                "text": "Ampliar los parámetros simétricos"
+              },
+              "help": {
+                "markdown": "**Ampliar los parámetros simétricos**\n\n1. Para datos de vida larga, use llaves simétricas de 256 bits (AES-256) y digestiones de 384 bits o más.\n",
+                "text": "Para datos de vida larga, use llaves simétricas de 256 bits (AES-256) y digestiones de 384 bits o más."
+              },
+              "id": "suaya/grover",
+              "name": "Ampliar los parámetros simétricos",
+              "properties": {
+                "security-severity": "3.0",
+                "tags": [
+                  "security",
+                  "cryptography",
+                  "post-quantum"
+                ]
+              },
+              "shortDescription": {
+                "text": "Ampliar los parámetros simétricos"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "Reemplazar MD5 y SHA-1"
+              },
+              "help": {
+                "markdown": "**Reemplazar MD5 y SHA-1**\n\n1. Integridad y firmas: use SHA-256 o SHA-3; en firmas, RSA-PSS, ECDSA o ML-DSA con SHA-256 o superior.\n2. Contraseñas: no use digestiones rápidas; use Argon2id (o scrypt o bcrypt donde no haya Argon2).\n3. Certificados firmados con SHA-1: reemítalos con SHA-256.\n4. DNSSEC: publique DS con SHA-256 (tipo 2) y retire los de SHA-1 (RFC 9905).\n",
+                "text": "Integridad y firmas: use SHA-256 o SHA-3; en firmas, RSA-PSS, ECDSA o ML-DSA con SHA-256 o superior.\nContraseñas: no use digestiones rápidas; use Argon2id (o scrypt o bcrypt donde no haya Argon2).\nCertificados firmados con SHA-1: reemítalos con SHA-256.\nDNSSEC: publique DS con SHA-256 (tipo 2) y retire los de SHA-1 (RFC 9905)."
+              },
+              "id": "suaya/hashes-rotos",
+              "name": "Reemplazar MD5 y SHA-1",
+              "properties": {
+                "security-severity": "9.0",
+                "tags": [
+                  "security",
+                  "cryptography",
+                  "post-quantum"
+                ]
+              },
+              "shortDescription": {
+                "text": "Reemplazar MD5 y SHA-1"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "Reemplazar llaves RSA de menos de 2048 bits"
+              },
+              "help": {
+                "markdown": "**Reemplazar llaves RSA de menos de 2048 bits**\n\n1. Genere llaves nuevas de al menos 3072 bits (o ECDSA P-256) y reemita los certificados: openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:3072 -out llave.pem\n2. DKIM: opendkim-genkey -b 2048 -s selector-nuevo, publique el registro nuevo y retire el anterior.\n3. Aproveche la reemisión para planificar ML-DSA o certificados compuestos.\n",
+                "text": "Genere llaves nuevas de al menos 3072 bits (o ECDSA P-256) y reemita los certificados: openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:3072 -out llave.pem\nDKIM: opendkim-genkey -b 2048 -s selector-nuevo, publique el registro nuevo y retire el anterior.\nAproveche la reemisión para planificar ML-DSA o certificados compuestos."
+              },
+              "id": "suaya/rsa-corta",
+              "name": "Reemplazar llaves RSA de menos de 2048 bits",
+              "properties": {
+                "security-severity": "9.0",
+                "tags": [
+                  "security",
+                  "cryptography",
+                  "post-quantum"
+                ]
+              },
+              "shortDescription": {
+                "text": "Reemplazar llaves RSA de menos de 2048 bits"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "Habilitar el intercambio híbrido X25519MLKEM768 en TLS 1.3"
+              },
+              "help": {
+                "markdown": "**Habilitar el intercambio híbrido X25519MLKEM768 en TLS 1.3**\n\n1. Actualice la biblioteca TLS a una versión con ML-KEM: OpenSSL 3.5 o posterior, BoringSSL, AWS-LC, Go 1.24 o posterior (lo activa por omisión) o rustls 0.23 con aws-lc-rs.\n2. nginx: ssl_protocols TLSv1.2 TLSv1.3; y ssl_ecdh_curve X25519MLKEM768:X25519:prime256v1;\n3. Apache httpd: SSLOpenSSLConfCmd Groups X25519MLKEM768:X25519:prime256v1\n4. HAProxy (sección global): ssl-default-bind-curves X25519MLKEM768:X25519:P-256\n5. Verifique con suaya diagnosticar tls://servidor:443: el cliente moderno debe negociar X25519MLKEM768.\n\nhttps://datatracker.ietf.org/doc/draft-ietf-tls-ecdhe-mlkem/\n",
+                "text": "Actualice la biblioteca TLS a una versión con ML-KEM: OpenSSL 3.5 o posterior, BoringSSL, AWS-LC, Go 1.24 o posterior (lo activa por omisión) o rustls 0.23 con aws-lc-rs.\nnginx: ssl_protocols TLSv1.2 TLSv1.3; y ssl_ecdh_curve X25519MLKEM768:X25519:prime256v1;\nApache httpd: SSLOpenSSLConfCmd Groups X25519MLKEM768:X25519:prime256v1\nHAProxy (sección global): ssl-default-bind-curves X25519MLKEM768:X25519:P-256\nVerifique con suaya diagnosticar tls://servidor:443: el cliente moderno debe negociar X25519MLKEM768."
+              },
+              "id": "suaya/tls-hibrido",
+              "name": "Habilitar el intercambio híbrido X25519MLKEM768 en TLS 1.3",
+              "properties": {
+                "security-severity": "7.0",
+                "tags": [
+                  "security",
+                  "cryptography",
+                  "post-quantum"
+                ]
+              },
+              "shortDescription": {
+                "text": "Habilitar el intercambio híbrido X25519MLKEM768 en TLS 1.3"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "Retirar SSL 3.0, TLS 1.0 y TLS 1.1"
+              },
+              "help": {
+                "markdown": "**Retirar SSL 3.0, TLS 1.0 y TLS 1.1**\n\n1. nginx: ssl_protocols TLSv1.2 TLSv1.3;\n2. Apache httpd: SSLProtocol -all +TLSv1.2 +TLSv1.3\n3. HAProxy (sección global): ssl-default-bind-options ssl-min-ver TLSv1.2\n4. Windows (SChannel): desactive los protocolos en HKLM\\SYSTEM\\CurrentControlSet\\Control\\SecurityProviders\\SCHANNEL\\Protocols.\n5. Java: agregue SSLv3, TLSv1 y TLSv1.1 a jdk.tls.disabledAlgorithms en java.security.\n\nhttps://www.rfc-editor.org/rfc/rfc8996\n",
+                "text": "nginx: ssl_protocols TLSv1.2 TLSv1.3;\nApache httpd: SSLProtocol -all +TLSv1.2 +TLSv1.3\nHAProxy (sección global): ssl-default-bind-options ssl-min-ver TLSv1.2\nWindows (SChannel): desactive los protocolos en HKLM\\SYSTEM\\CurrentControlSet\\Control\\SecurityProviders\\SCHANNEL\\Protocols.\nJava: agregue SSLv3, TLSv1 y TLSv1.1 a jdk.tls.disabledAlgorithms en java.security."
+              },
+              "id": "suaya/tls-versiones",
+              "name": "Retirar SSL 3.0, TLS 1.0 y TLS 1.1",
+              "properties": {
+                "security-severity": "9.0",
+                "tags": [
+                  "security",
+                  "cryptography",
+                  "post-quantum"
+                ]
+              },
+              "shortDescription": {
+                "text": "Retirar SSL 3.0, TLS 1.0 y TLS 1.1"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "Habilitar TLS 1.3"
+              },
+              "help": {
+                "markdown": "**Habilitar TLS 1.3**\n\n1. El intercambio híbrido con ML-KEM solo existe en TLS 1.3: habilítelo junto a TLS 1.2 mientras haya clientes que lo necesiten.\n2. nginx: ssl_protocols TLSv1.2 TLSv1.3; · Apache httpd: SSLProtocol -all +TLSv1.2 +TLSv1.3\n3. Si el producto no admite TLS 1.3, planifique su actualización o reemplazo.\n",
+                "text": "El intercambio híbrido con ML-KEM solo existe en TLS 1.3: habilítelo junto a TLS 1.2 mientras haya clientes que lo necesiten.\nnginx: ssl_protocols TLSv1.2 TLSv1.3; · Apache httpd: SSLProtocol -all +TLSv1.2 +TLSv1.3\nSi el producto no admite TLS 1.3, planifique su actualización o reemplazo."
+              },
+              "id": "suaya/tls13",
+              "name": "Habilitar TLS 1.3",
+              "properties": {
+                "security-severity": "7.0",
+                "tags": [
+                  "security",
+                  "cryptography",
+                  "post-quantum"
+                ]
+              },
+              "shortDescription": {
+                "text": "Habilitar TLS 1.3"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "Intercambio híbrido en SSH, IPsec y WireGuard"
+              },
+              "help": {
+                "markdown": "**Intercambio híbrido en SSH, IPsec y WireGuard**\n\n1. OpenSSH 9.9 o posterior: KexAlgorithms mlkem768x25519-sha256,sntrup761x25519-sha512@openssh.com,curve25519-sha256 (OpenSSH 10.0 ya prefiere mlkem768x25519-sha256).\n2. strongSwan 6.0 o posterior (IKEv2, RFC 9370): agregue un intercambio adicional a las propuestas, p. ej. aes256gcm16-prfsha384-ecp384-ke1_mlkem768.\n3. WireGuard: agregue una llave precompartida poscuántica, p. ej. con Rosenpass.\n4. Verifique con suaya diagnosticar ssh://host:22 o ike://host.\n\nhttps://www.rfc-editor.org/rfc/rfc9370\n",
+                "text": "OpenSSH 9.9 o posterior: KexAlgorithms mlkem768x25519-sha256,sntrup761x25519-sha512@openssh.com,curve25519-sha256 (OpenSSH 10.0 ya prefiere mlkem768x25519-sha256).\nstrongSwan 6.0 o posterior (IKEv2, RFC 9370): agregue un intercambio adicional a las propuestas, p. ej. aes256gcm16-prfsha384-ecp384-ke1_mlkem768.\nWireGuard: agregue una llave precompartida poscuántica, p. ej. con Rosenpass.\nVerifique con suaya diagnosticar ssh://host:22 o ike://host."
+              },
+              "id": "suaya/vpn-hibrido",
+              "name": "Intercambio híbrido en SSH, IPsec y WireGuard",
+              "properties": {
+                "security-severity": "7.0",
+                "tags": [
+                  "security",
+                  "cryptography",
+                  "post-quantum"
+                ]
+              },
+              "shortDescription": {
+                "text": "Intercambio híbrido en SSH, IPsec y WireGuard"
+              }
+            }
+          ],
+          "semanticVersion": "1.7.0"
+        }
+      }
+    }
+  ],
+  "version": "2.1.0"
+}

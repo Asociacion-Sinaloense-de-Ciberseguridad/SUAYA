@@ -12,7 +12,13 @@
 #   oids                   OIDs que identifican al algoritmo
 #   alias                  nombres por espacio: "<espacio>:<nombre>" en minúsculas.
 #                          Espacios: x509, ssh, ssh-llave, ssh-kex, ssh-cifrado,
-#                          ssh-mac, tls-grupo, tls-protocolo, volumen
+#                          ssh-mac, tls-grupo, tls-protocolo, volumen, ipsec,
+#                          kerberos, dnssec-alg, dnssec-ds, aws-kms, gcp-kms,
+#                          contrasena, oracle, jose (JWS/JWE, RFC 7518 y
+#                          RFC 9964) y xmldsig (URI de XML Signature y XML
+#                          Encryption, como en los metadatos SAML). Los
+#                          nombres en código fuente se traducen en codigo.toml
+#                          ([nombres.*]).
 #   riesgo                 roto-clasico | obsoleto | vulnerable-cuantico |
 #                          debilitado-grover | hibrido-pq | resistente-cuantico
 #   garantia               confidencialidad | autenticacion | integridad
@@ -23,8 +29,8 @@
 #                          decimal; el sondeo de red ofrece exactamente estos
 
 [meta]
-version = "2026.10.0"
-descripcion = "Registro inicial de algoritmos para Suaya"
+version = "2026.11.1"
+descripcion = "Registro de algoritmos para Suaya"
 
 # Fechas de transición usadas para advertir sobre activos vulnerables con
 # vigencia larga (por ejemplo, certificados que vencen después de 2030).
@@ -41,7 +47,7 @@ id = "rsa"
 nombre = "RSA"
 primitiva = "pke"
 oids = ["1.2.840.113549.1.1.1"]
-alias = ["x509:rsa", "ssh-llave:rsa"]
+alias = ["x509:rsa", "ssh-llave:rsa", "xmldsig:http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p", "xmldsig:http://www.w3.org/2009/xmlenc11#rsa-oaep", "xmldsig:http://www.w3.org/2001/04/xmlenc#rsa-1_5", "jose:rsa1_5", "jose:rsa-oaep", "jose:rsa-oaep-256", "jose:rsa-oaep-384", "jose:rsa-oaep-512"]
 riesgo = "vulnerable-cuantico"
 garantia = "autenticacion"
 tamano_minimo_clasico = 2048
@@ -54,7 +60,7 @@ nombre = "RSASSA-PKCS1-v1_5 con SHA-256"
 familia = "RSASSA-PKCS1"
 primitiva = "signature"
 oids = ["1.2.840.113549.1.1.11"]
-alias = ["ssh:rsa-sha2-256"]
+alias = ["ssh:rsa-sha2-256", "dnssec-alg:8", "xmldsig:http://www.w3.org/2001/04/xmldsig-more#rsa-sha256", "jose:rs256"]
 riesgo = "vulnerable-cuantico"
 garantia = "autenticacion"
 funciones = ["sign", "verify"]
@@ -66,6 +72,7 @@ nombre = "RSASSA-PKCS1-v1_5 con SHA-384"
 familia = "RSASSA-PKCS1"
 primitiva = "signature"
 oids = ["1.2.840.113549.1.1.12"]
+alias = ["xmldsig:http://www.w3.org/2001/04/xmldsig-more#rsa-sha384", "jose:rs384"]
 riesgo = "vulnerable-cuantico"
 garantia = "autenticacion"
 funciones = ["sign", "verify"]
@@ -77,7 +84,7 @@ nombre = "RSASSA-PKCS1-v1_5 con SHA-512"
 familia = "RSASSA-PKCS1"
 primitiva = "signature"
 oids = ["1.2.840.113549.1.1.13"]
-alias = ["ssh:rsa-sha2-512"]
+alias = ["ssh:rsa-sha2-512", "dnssec-alg:10", "xmldsig:http://www.w3.org/2001/04/xmldsig-more#rsa-sha512", "jose:rs512"]
 riesgo = "vulnerable-cuantico"
 garantia = "autenticacion"
 funciones = ["sign", "verify"]
@@ -89,7 +96,7 @@ nombre = "RSASSA-PKCS1-v1_5 con SHA-1"
 familia = "RSASSA-PKCS1"
 primitiva = "signature"
 oids = ["1.2.840.113549.1.1.5"]
-alias = ["ssh:ssh-rsa"]
+alias = ["ssh:ssh-rsa", "dnssec-alg:5", "dnssec-alg:7", "xmldsig:http://www.w3.org/2000/09/xmldsig#rsa-sha1"]
 riesgo = "roto-clasico"
 garantia = "autenticacion"
 funciones = ["sign", "verify"]
@@ -101,6 +108,7 @@ id = "rsassa-pkcs1-md5"
 nombre = "RSASSA-PKCS1-v1_5 con MD5"
 familia = "RSASSA-PKCS1"
 primitiva = "signature"
+alias = ["dnssec-alg:1", "xmldsig:http://www.w3.org/2001/04/xmldsig-more#rsa-md5"]
 oids = ["1.2.840.113549.1.1.4"]
 riesgo = "roto-clasico"
 garantia = "autenticacion"
@@ -114,6 +122,7 @@ nombre = "RSASSA-PSS"
 familia = "RSASSA-PSS"
 primitiva = "signature"
 oids = ["1.2.840.113549.1.1.10"]
+alias = ["xmldsig:http://www.w3.org/2007/05/xmldsig-more#sha256-rsa-mgf1", "xmldsig:http://www.w3.org/2007/05/xmldsig-more#sha384-rsa-mgf1", "xmldsig:http://www.w3.org/2007/05/xmldsig-more#sha512-rsa-mgf1", "jose:ps256", "jose:ps384", "jose:ps512"]
 riesgo = "vulnerable-cuantico"
 garantia = "autenticacion"
 funciones = ["sign", "verify"]
@@ -127,6 +136,7 @@ id = "ecdsa-sha256"
 nombre = "ECDSA con SHA-256"
 familia = "ECDSA"
 primitiva = "signature"
+alias = ["dnssec-alg:13", "xmldsig:http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256", "jose:es256"]
 oids = ["1.2.840.10045.4.3.2"]
 riesgo = "vulnerable-cuantico"
 garantia = "autenticacion"
@@ -138,6 +148,7 @@ id = "ecdsa-sha384"
 nombre = "ECDSA con SHA-384"
 familia = "ECDSA"
 primitiva = "signature"
+alias = ["dnssec-alg:14", "xmldsig:http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha384", "jose:es384"]
 oids = ["1.2.840.10045.4.3.3"]
 riesgo = "vulnerable-cuantico"
 garantia = "autenticacion"
@@ -150,6 +161,7 @@ nombre = "ECDSA con SHA-512"
 familia = "ECDSA"
 primitiva = "signature"
 oids = ["1.2.840.10045.4.3.4"]
+alias = ["xmldsig:http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha512", "jose:es512"]
 riesgo = "vulnerable-cuantico"
 garantia = "autenticacion"
 funciones = ["sign", "verify"]
@@ -161,6 +173,7 @@ nombre = "ECDSA con SHA-1"
 familia = "ECDSA"
 primitiva = "signature"
 oids = ["1.2.840.10045.4.1"]
+alias = ["xmldsig:http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha1"]
 riesgo = "roto-clasico"
 garantia = "autenticacion"
 funciones = ["sign", "verify"]
@@ -172,7 +185,7 @@ nombre = "Curva NIST P-256"
 familia = "ECDSA"
 primitiva = "signature"
 oids = ["1.2.840.10045.3.1.7"]
-alias = ["x509:p-256", "ssh-llave:ecdsa-sha2-nistp256", "ssh:ecdsa-sha2-nistp256"]
+alias = ["x509:p-256", "ssh-llave:ecdsa-sha2-nistp256", "ssh:ecdsa-sha2-nistp256", "aws-kms:ecc_nist_p256", "gcp-kms:ec_sign_p256_sha256"]
 curva = "nist/P-256"
 riesgo = "vulnerable-cuantico"
 garantia = "autenticacion"
@@ -185,7 +198,7 @@ nombre = "Curva NIST P-384"
 familia = "ECDSA"
 primitiva = "signature"
 oids = ["1.3.132.0.34"]
-alias = ["x509:p-384", "ssh-llave:ecdsa-sha2-nistp384", "ssh:ecdsa-sha2-nistp384"]
+alias = ["x509:p-384", "ssh-llave:ecdsa-sha2-nistp384", "ssh:ecdsa-sha2-nistp384", "aws-kms:ecc_nist_p384", "gcp-kms:ec_sign_p384_sha384"]
 curva = "nist/P-384"
 riesgo = "vulnerable-cuantico"
 garantia = "autenticacion"
@@ -198,7 +211,7 @@ nombre = "Curva NIST P-521"
 familia = "ECDSA"
 primitiva = "signature"
 oids = ["1.3.132.0.35"]
-alias = ["x509:p-521", "ssh-llave:ecdsa-sha2-nistp521", "ssh:ecdsa-sha2-nistp521"]
+alias = ["x509:p-521", "ssh-llave:ecdsa-sha2-nistp521", "ssh:ecdsa-sha2-nistp521", "aws-kms:ecc_nist_p521"]
 curva = "nist/P-521"
 riesgo = "vulnerable-cuantico"
 garantia = "autenticacion"
@@ -210,6 +223,7 @@ id = "ec-secp256k1"
 nombre = "Curva secp256k1"
 familia = "ECDSA"
 primitiva = "signature"
+alias = ["aws-kms:ecc_secg_p256k1", "gcp-kms:ec_sign_secp256k1_sha256", "jose:es256k"]
 oids = ["1.3.132.0.10"]
 curva = "secg/secp256k1"
 riesgo = "vulnerable-cuantico"
@@ -223,7 +237,7 @@ nombre = "Ed25519"
 familia = "EdDSA"
 primitiva = "signature"
 oids = ["1.3.101.112"]
-alias = ["ssh-llave:ed25519", "ssh:ssh-ed25519"]
+alias = ["ssh-llave:ed25519", "ssh:ssh-ed25519", "dnssec-alg:15", "aws-kms:ecc_nist_edwards25519", "gcp-kms:ec_sign_ed25519", "xmldsig:http://www.w3.org/2021/04/xmldsig-more#eddsa-ed25519", "jose:eddsa", "jose:ed25519"]
 curva = "other/Ed25519"
 riesgo = "vulnerable-cuantico"
 garantia = "autenticacion"
@@ -236,6 +250,7 @@ id = "ed448"
 nombre = "Ed448"
 familia = "EdDSA"
 primitiva = "signature"
+alias = ["dnssec-alg:16", "jose:ed448"]
 oids = ["1.3.101.113"]
 curva = "other/Ed448"
 riesgo = "vulnerable-cuantico"
@@ -250,7 +265,7 @@ nombre = "DSA"
 familia = "DSA"
 primitiva = "signature"
 oids = ["1.2.840.10040.4.1"]
-alias = ["ssh-llave:dsa", "ssh:ssh-dss"]
+alias = ["ssh-llave:dsa", "ssh:ssh-dss", "dnssec-alg:3", "dnssec-alg:6", "xmldsig:http://www.w3.org/2000/09/xmldsig#dsa-sha1", "xmldsig:http://www.w3.org/2009/xmldsig11#dsa-sha256"]
 riesgo = "obsoleto"
 garantia = "autenticacion"
 funciones = ["sign", "verify"]
@@ -265,6 +280,7 @@ id = "ml-dsa-44"
 nombre = "ML-DSA-44"
 familia = "ML-DSA"
 primitiva = "signature"
+alias = ["aws-kms:ml_dsa_44", "gcp-kms:pq_sign_ml_dsa_44", "gcp-kms:pq_sign_ml_dsa_44_external_mu", "dnssec-alg:18", "jose:ml-dsa-44"]
 oids = ["2.16.840.1.101.3.4.3.17"]
 conjunto_parametros = "44"
 riesgo = "resistente-cuantico"
@@ -277,6 +293,7 @@ id = "ml-dsa-65"
 nombre = "ML-DSA-65"
 familia = "ML-DSA"
 primitiva = "signature"
+alias = ["aws-kms:ml_dsa_65", "gcp-kms:pq_sign_ml_dsa_65", "gcp-kms:pq_sign_ml_dsa_65_external_mu", "jose:ml-dsa-65"]
 oids = ["2.16.840.1.101.3.4.3.18"]
 conjunto_parametros = "65"
 riesgo = "resistente-cuantico"
@@ -289,6 +306,7 @@ id = "ml-dsa-87"
 nombre = "ML-DSA-87"
 familia = "ML-DSA"
 primitiva = "signature"
+alias = ["aws-kms:ml_dsa_87", "gcp-kms:pq_sign_ml_dsa_87", "gcp-kms:pq_sign_ml_dsa_87_external_mu", "jose:ml-dsa-87"]
 oids = ["2.16.840.1.101.3.4.3.19"]
 conjunto_parametros = "87"
 riesgo = "resistente-cuantico"
@@ -301,6 +319,7 @@ id = "slh-dsa-sha2-128s"
 nombre = "SLH-DSA-SHA2-128s"
 familia = "SLH-DSA"
 primitiva = "signature"
+alias = ["gcp-kms:pq_sign_slh_dsa_sha2_128s", "gcp-kms:pq_sign_hash_slh_dsa_sha2_128s_sha256"]
 oids = ["2.16.840.1.101.3.4.3.20"]
 conjunto_parametros = "SHA2-128s"
 riesgo = "resistente-cuantico"
@@ -435,7 +454,7 @@ nombre = "ML-KEM-512"
 familia = "ML-KEM"
 primitiva = "kem"
 oids = ["2.16.840.1.101.3.4.4.1"]
-alias = ["tls-grupo:mlkem512", "ipsec:mlkem512"]
+alias = ["tls-grupo:mlkem512", "ipsec:mlkem512", "aws-kms:ml_kem_512"]
 conjunto_parametros = "512"
 riesgo = "resistente-cuantico"
 garantia = "confidencialidad"
@@ -449,7 +468,7 @@ nombre = "ML-KEM-768"
 familia = "ML-KEM"
 primitiva = "kem"
 oids = ["2.16.840.1.101.3.4.4.2"]
-alias = ["tls-grupo:mlkem768", "ipsec:mlkem768"]
+alias = ["tls-grupo:mlkem768", "ipsec:mlkem768", "aws-kms:ml_kem_768", "gcp-kms:ml_kem_768"]
 conjunto_parametros = "768"
 riesgo = "resistente-cuantico"
 garantia = "confidencialidad"
@@ -463,7 +482,7 @@ nombre = "ML-KEM-1024"
 familia = "ML-KEM"
 primitiva = "kem"
 oids = ["2.16.840.1.101.3.4.4.3"]
-alias = ["tls-grupo:mlkem1024", "ipsec:mlkem1024"]
+alias = ["tls-grupo:mlkem1024", "ipsec:mlkem1024", "aws-kms:ml_kem_1024", "gcp-kms:ml_kem_1024"]
 conjunto_parametros = "1024"
 riesgo = "resistente-cuantico"
 garantia = "confidencialidad"
@@ -636,7 +655,7 @@ nombre = "AES-128-GCM"
 familia = "AES"
 primitiva = "ae"
 modo = "gcm"
-alias = ["ssh-cifrado:aes128-gcm@openssh.com", "openvpn-cifrado:aes-128-gcm", "ipsec:aes128gcm16", "ipsec:aes128gcm"]
+alias = ["ssh-cifrado:aes128-gcm@openssh.com", "openvpn-cifrado:aes-128-gcm", "ipsec:aes128gcm16", "ipsec:aes128gcm", "xmldsig:http://www.w3.org/2009/xmlenc11#aes128-gcm", "jose:a128gcm", "jose:a128gcmkw"]
 tamano_llave = 128
 riesgo = "debilitado-grover"
 garantia = "confidencialidad"
@@ -650,7 +669,7 @@ nombre = "AES-256-GCM"
 familia = "AES"
 primitiva = "ae"
 modo = "gcm"
-alias = ["ssh-cifrado:aes256-gcm@openssh.com", "openvpn-cifrado:aes-256-gcm", "ipsec:aes256gcm16", "ipsec:aes256gcm"]
+alias = ["ssh-cifrado:aes256-gcm@openssh.com", "openvpn-cifrado:aes-256-gcm", "ipsec:aes256gcm16", "ipsec:aes256gcm", "aws-kms:symmetric_default", "gcp-kms:google_symmetric_encryption", "xmldsig:http://www.w3.org/2009/xmlenc11#aes256-gcm", "jose:a256gcm", "jose:a256gcmkw"]
 tamano_llave = 256
 riesgo = "resistente-cuantico"
 garantia = "confidencialidad"
@@ -715,7 +734,7 @@ familia = "3DES"
 primitiva = "block-cipher"
 modo = "cbc"
 oids = ["1.2.840.113549.3.7"]
-alias = ["ssh-cifrado:3des-cbc", "openvpn-cifrado:des-ede3-cbc", "ipsec:3des"]
+alias = ["ssh-cifrado:3des-cbc", "openvpn-cifrado:des-ede3-cbc", "ipsec:3des", "oracle:3des168", "oracle:3des112", "kerberos:des3-cbc-sha1", "kerberos:des3-hmac-sha1", "kerberos:des3-cbc-sha1-kd", "xmldsig:http://www.w3.org/2001/04/xmlenc#tripledes-cbc"]
 riesgo = "roto-clasico"
 garantia = "confidencialidad"
 nivel_nist_cuantico = 0
@@ -726,7 +745,7 @@ id = "aes-128-cbc"
 nombre = "AES-128-CBC"
 familia = "AES"
 primitiva = "block-cipher"
-alias = ["openvpn-cifrado:aes-128-cbc", "ipsec:aes128"]
+alias = ["openvpn-cifrado:aes-128-cbc", "ipsec:aes128", "oracle:aes128", "xmldsig:http://www.w3.org/2001/04/xmlenc#aes128-cbc", "jose:a128cbc-hs256"]
 modo = "cbc"
 oids = ["2.16.840.1.101.3.4.1.2"]
 tamano_llave = 128
@@ -740,7 +759,7 @@ id = "aes-192-cbc"
 nombre = "AES-192-CBC"
 familia = "AES"
 primitiva = "block-cipher"
-alias = ["openvpn-cifrado:aes-192-cbc", "ipsec:aes192"]
+alias = ["openvpn-cifrado:aes-192-cbc", "ipsec:aes192", "oracle:aes192", "xmldsig:http://www.w3.org/2001/04/xmlenc#aes192-cbc"]
 modo = "cbc"
 oids = ["2.16.840.1.101.3.4.1.22"]
 tamano_llave = 192
@@ -754,7 +773,7 @@ id = "aes-256-cbc"
 nombre = "AES-256-CBC"
 familia = "AES"
 primitiva = "block-cipher"
-alias = ["openvpn-cifrado:aes-256-cbc", "ipsec:aes256"]
+alias = ["openvpn-cifrado:aes-256-cbc", "ipsec:aes256", "oracle:aes256", "xmldsig:http://www.w3.org/2001/04/xmlenc#aes256-cbc", "jose:a256cbc-hs512"]
 modo = "cbc"
 oids = ["2.16.840.1.101.3.4.1.42"]
 tamano_llave = 256
@@ -787,6 +806,7 @@ id = "scrypt"
 nombre = "scrypt"
 familia = "scrypt"
 primitiva = "kdf"
+alias = ["contrasena:scrypt"]
 oids = ["1.3.6.1.4.1.11591.4.11"]
 riesgo = "resistente-cuantico"
 garantia = "confidencialidad"
@@ -820,7 +840,7 @@ id = "hmac-sha256"
 nombre = "HMAC-SHA-256"
 familia = "HMAC"
 primitiva = "mac"
-alias = ["ssh-mac:hmac-sha2-256", "ssh-mac:hmac-sha2-256-etm@openssh.com", "openvpn-auth:sha256", "ipsec:sha256"]
+alias = ["ssh-mac:hmac-sha2-256", "ssh-mac:hmac-sha2-256-etm@openssh.com", "openvpn-auth:sha256", "ipsec:sha256", "aws-kms:hmac_256", "gcp-kms:hmac_sha256", "oracle:sha256", "xmldsig:http://www.w3.org/2001/04/xmldsig-more#hmac-sha256", "jose:hs256"]
 riesgo = "resistente-cuantico"
 garantia = "integridad"
 nivel_nist_cuantico = 2
@@ -830,7 +850,7 @@ id = "hmac-sha512"
 nombre = "HMAC-SHA-512"
 familia = "HMAC"
 primitiva = "mac"
-alias = ["ssh-mac:hmac-sha2-512", "ssh-mac:hmac-sha2-512-etm@openssh.com", "openvpn-auth:sha512", "ipsec:sha512"]
+alias = ["ssh-mac:hmac-sha2-512", "ssh-mac:hmac-sha2-512-etm@openssh.com", "openvpn-auth:sha512", "ipsec:sha512", "aws-kms:hmac_512", "gcp-kms:hmac_sha512", "oracle:sha512", "jose:hs512"]
 riesgo = "resistente-cuantico"
 garantia = "integridad"
 nivel_nist_cuantico = 5
@@ -849,7 +869,7 @@ id = "hmac-sha1"
 nombre = "HMAC-SHA-1"
 familia = "HMAC"
 primitiva = "mac"
-alias = ["ssh-mac:hmac-sha1", "ssh-mac:hmac-sha1-etm@openssh.com", "openvpn-auth:sha1", "ipsec:sha1"]
+alias = ["ssh-mac:hmac-sha1", "ssh-mac:hmac-sha1-etm@openssh.com", "openvpn-auth:sha1", "ipsec:sha1", "gcp-kms:hmac_sha1", "oracle:sha1", "xmldsig:http://www.w3.org/2000/09/xmldsig#hmac-sha1"]
 riesgo = "obsoleto"
 garantia = "integridad"
 nota = "No está roto como MAC, pero SHA-1 está en retiro; sustituir por HMAC-SHA-256."
@@ -882,7 +902,7 @@ id = "hmac-sha384"
 nombre = "HMAC-SHA-384"
 familia = "HMAC"
 primitiva = "mac"
-alias = ["openvpn-auth:sha384", "ipsec:sha384"]
+alias = ["openvpn-auth:sha384", "ipsec:sha384", "aws-kms:hmac_384", "gcp-kms:hmac_sha384", "oracle:sha384", "jose:hs384"]
 riesgo = "resistente-cuantico"
 garantia = "integridad"
 nivel_nist_cuantico = 4
@@ -892,7 +912,7 @@ id = "hmac-md5"
 nombre = "HMAC-MD5"
 familia = "HMAC"
 primitiva = "mac"
-alias = ["openvpn-auth:md5", "ipsec:md5", "ssh-mac:hmac-md5"]
+alias = ["openvpn-auth:md5", "ipsec:md5", "ssh-mac:hmac-md5", "oracle:md5"]
 riesgo = "roto-clasico"
 garantia = "integridad"
 nota = "MD5 está roto; retirado de IPsec y SSH."
@@ -972,6 +992,7 @@ nombre = "MD5"
 familia = "MD5"
 primitiva = "hash"
 oids = ["1.2.840.113549.2.5"]
+alias = ["xmldsig:http://www.w3.org/2001/04/xmldsig-more#md5"]
 riesgo = "roto-clasico"
 garantia = "integridad"
 nota = "Colisiones prácticas desde 2004; no sirve para integridad, firmas ni contraseñas."
@@ -981,6 +1002,7 @@ id = "sha1"
 nombre = "SHA-1"
 familia = "SHA-1"
 primitiva = "hash"
+alias = ["dnssec-ds:1", "xmldsig:http://www.w3.org/2000/09/xmldsig#sha1"]
 oids = ["1.3.14.3.2.26"]
 riesgo = "obsoleto"
 garantia = "integridad"
@@ -1001,6 +1023,7 @@ id = "sha256"
 nombre = "SHA-256"
 familia = "SHA-2"
 primitiva = "hash"
+alias = ["dnssec-ds:2", "xmldsig:http://www.w3.org/2001/04/xmlenc#sha256"]
 oids = ["2.16.840.1.101.3.4.2.1"]
 riesgo = "resistente-cuantico"
 garantia = "integridad"
@@ -1011,6 +1034,7 @@ id = "sha384"
 nombre = "SHA-384"
 familia = "SHA-2"
 primitiva = "hash"
+alias = ["dnssec-ds:4", "xmldsig:http://www.w3.org/2001/04/xmldsig-more#sha384"]
 oids = ["2.16.840.1.101.3.4.2.2"]
 riesgo = "resistente-cuantico"
 garantia = "integridad"
@@ -1022,6 +1046,7 @@ nombre = "SHA-512"
 familia = "SHA-2"
 primitiva = "hash"
 oids = ["2.16.840.1.101.3.4.2.3"]
+alias = ["xmldsig:http://www.w3.org/2001/04/xmlenc#sha512"]
 riesgo = "resistente-cuantico"
 garantia = "integridad"
 nivel_nist_cuantico = 5
@@ -1069,6 +1094,7 @@ id = "des"
 nombre = "DES"
 familia = "DES"
 primitiva = "block-cipher"
+alias = ["kerberos:des-cbc-crc", "kerberos:des-cbc-md5", "kerberos:des-cbc-md4", "kerberos:des", "oracle:des", "oracle:des40"]
 oids = ["1.3.14.3.2.7"]
 tamano_llave = 56
 riesgo = "roto-clasico"
@@ -1080,6 +1106,7 @@ id = "rc4"
 nombre = "RC4"
 familia = "RC4"
 primitiva = "stream-cipher"
+alias = ["kerberos:rc4-hmac", "kerberos:arcfour-hmac", "kerberos:arcfour-hmac-md5", "kerberos:rc4", "oracle:rc4_256", "oracle:rc4_128", "oracle:rc4_56", "oracle:rc4_40"]
 oids = ["1.2.840.113549.3.4"]
 riesgo = "roto-clasico"
 garantia = "confidencialidad"
@@ -1143,6 +1170,7 @@ id = "ecdh"
 nombre = "ECDH (curva no determinada)"
 familia = "ECDH"
 primitiva = "key-agree"
+alias = ["jose:ecdh-es", "jose:ecdh-es+a128kw", "jose:ecdh-es+a256kw"]
 riesgo = "vulnerable-cuantico"
 garantia = "confidencialidad"
 
@@ -1359,3 +1387,739 @@ riesgo = "hibrido-pq"
 garantia = "autenticacion"
 nivel_nist_cuantico = 5
 nota = "Firma compuesta: ML-DSA-87 junto con ECDSA P-521, prehash SHA512. El validador debe exigir ambas firmas; aceptar solo la clásica anula la protección poscuántica (despojo)."
+
+# ---------------------------------------------------------------------------
+# 1.7: firmas basadas en hash con estado (NIST SP 800-208, RFC 9708, RFC 9802)
+# ---------------------------------------------------------------------------
+[[algoritmo]]
+id = "hss-lms"
+nombre = "HSS/LMS (firma basada en hash con estado)"
+familia = "LMS"
+primitiva = "signature"
+oids = ["1.2.840.113549.1.9.16.3.17"]
+alias = ["x509:hss-lms"]
+riesgo = "resistente-cuantico"
+garantia = "autenticacion"
+funciones = ["sign", "verify"]
+nota = "Aprobada por NIST SP 800-208; CNSA 2.0 la admite para firmar software y firmware."
+advertencia = "Firma con estado: reutilizar un índice de la llave privada rompe la seguridad. El firmante debe llevar el estado de forma confiable (por ejemplo, en un HSM) y nunca restaurar respaldos de la llave."
+
+[[algoritmo]]
+id = "xmss"
+nombre = "XMSS (firma basada en hash con estado)"
+familia = "XMSS"
+primitiva = "signature"
+oids = ["1.3.6.1.5.5.7.6.34"]
+alias = ["x509:xmss"]
+riesgo = "resistente-cuantico"
+garantia = "autenticacion"
+funciones = ["sign", "verify"]
+nota = "Aprobada por NIST SP 800-208; CNSA 2.0 la admite para firmar software y firmware."
+advertencia = "Firma con estado: reutilizar un índice de la llave privada rompe la seguridad. El firmante debe llevar el estado de forma confiable (por ejemplo, en un HSM) y nunca restaurar respaldos de la llave."
+
+[[algoritmo]]
+id = "xmssmt"
+nombre = "XMSS^MT (firma basada en hash con estado, multiárbol)"
+familia = "XMSS"
+primitiva = "signature"
+oids = ["1.3.6.1.5.5.7.6.35"]
+alias = ["x509:xmssmt"]
+riesgo = "resistente-cuantico"
+garantia = "autenticacion"
+funciones = ["sign", "verify"]
+nota = "Aprobada por NIST SP 800-208; CNSA 2.0 la admite para firmar software y firmware."
+advertencia = "Firma con estado: reutilizar un índice de la llave privada rompe la seguridad. El firmante debe llevar el estado de forma confiable (por ejemplo, en un HSM) y nunca restaurar respaldos de la llave."
+
+# ---------------------------------------------------------------------------
+# 1.7: algoritmos poscuánticos en estandarización
+# ---------------------------------------------------------------------------
+[[algoritmo]]
+id = "fn-dsa-512"
+nombre = "FN-DSA-512 (Falcon)"
+primitiva = "signature"
+conjunto_parametros = "512"
+riesgo = "resistente-cuantico"
+garantia = "autenticacion"
+funciones = ["sign", "verify"]
+nivel_nist_cuantico = 1
+nota = "Estándar en borrador (FIPS 206). Las implementaciones de Falcon anteriores no son compatibles con FN-DSA; no forma parte de CNSA 2.0."
+
+[[algoritmo]]
+id = "fn-dsa-1024"
+nombre = "FN-DSA-1024 (Falcon)"
+primitiva = "signature"
+conjunto_parametros = "1024"
+riesgo = "resistente-cuantico"
+garantia = "autenticacion"
+funciones = ["sign", "verify"]
+nivel_nist_cuantico = 5
+nota = "Estándar en borrador (FIPS 206). Las implementaciones de Falcon anteriores no son compatibles con FN-DSA; no forma parte de CNSA 2.0."
+
+[[algoritmo]]
+id = "hqc-128"
+nombre = "HQC-128"
+primitiva = "kem"
+conjunto_parametros = "128"
+riesgo = "resistente-cuantico"
+garantia = "confidencialidad"
+funciones = ["keygen", "encapsulate", "decapsulate"]
+nivel_nist_cuantico = 1
+nota = "Seleccionado por NIST en 2025 como respaldo de ML-KEM basado en códigos; estándar en preparación (FIPS 207)."
+
+[[algoritmo]]
+id = "hqc-192"
+nombre = "HQC-192"
+primitiva = "kem"
+conjunto_parametros = "192"
+riesgo = "resistente-cuantico"
+garantia = "confidencialidad"
+funciones = ["keygen", "encapsulate", "decapsulate"]
+nivel_nist_cuantico = 3
+nota = "Seleccionado por NIST en 2025 como respaldo de ML-KEM basado en códigos; estándar en preparación (FIPS 207)."
+
+[[algoritmo]]
+id = "hqc-256"
+nombre = "HQC-256"
+primitiva = "kem"
+conjunto_parametros = "256"
+riesgo = "resistente-cuantico"
+garantia = "confidencialidad"
+funciones = ["keygen", "encapsulate", "decapsulate"]
+nivel_nist_cuantico = 5
+nota = "Seleccionado por NIST en 2025 como respaldo de ML-KEM basado en códigos; estándar en preparación (FIPS 207)."
+
+[[algoritmo]]
+id = "frodokem"
+nombre = "FrodoKEM"
+primitiva = "kem"
+riesgo = "resistente-cuantico"
+garantia = "confidencialidad"
+funciones = ["keygen", "encapsulate", "decapsulate"]
+nota = "KEM conservador basado en LWE sin estructura; lo recomiendan agencias europeas como alternativa a ML-KEM. No está estandarizado por NIST."
+
+[[algoritmo]]
+id = "classic-mceliece"
+nombre = "Classic McEliece"
+primitiva = "kem"
+riesgo = "resistente-cuantico"
+garantia = "confidencialidad"
+funciones = ["keygen", "encapsulate", "decapsulate"]
+nota = "KEM basado en códigos con llaves públicas muy grandes (cientos de KB); recomendado por agencias europeas para usos de largo plazo. No está estandarizado por NIST."
+
+[[algoritmo]]
+id = "kem-xwing"
+nombre = "X-Wing (ML-KEM-768 con X25519)"
+familia = "ML-KEM"
+primitiva = "kem"
+alias = ["gcp-kms:kem_xwing"]
+conjunto_parametros = "768"
+riesgo = "hibrido-pq"
+garantia = "confidencialidad"
+nivel_nist_cuantico = 3
+nota = "KEM híbrido de propósito general que combina ML-KEM-768 y X25519."
+
+# ---------------------------------------------------------------------------
+# 1.7: ML-KEM compuesto (draft-ietf-lamps-pq-composite-kem; OID registrados
+# por IANA en «SMI Security for PKIX Algorithms», documento en la cola del
+# RFC Editor al 6 de noviembre de 2026)
+# ---------------------------------------------------------------------------
+[[algoritmo]]
+id = "composite-mlkem768-rsa2048"
+nombre = "ML-KEM-768 compuesto con RSA 2048"
+familia = "ML-KEM"
+primitiva = "kem"
+oids = ["1.3.6.1.5.5.7.6.55"]
+riesgo = "hibrido-pq"
+garantia = "confidencialidad"
+nivel_nist_cuantico = 3
+nota = "KEM compuesto (combinador SHA3-256): la llave queda protegida mientras uno de los dos componentes resista."
+
+[[algoritmo]]
+id = "composite-mlkem768-rsa3072"
+nombre = "ML-KEM-768 compuesto con RSA 3072"
+familia = "ML-KEM"
+primitiva = "kem"
+oids = ["1.3.6.1.5.5.7.6.56"]
+riesgo = "hibrido-pq"
+garantia = "confidencialidad"
+nivel_nist_cuantico = 3
+nota = "KEM compuesto (combinador SHA3-256): la llave queda protegida mientras uno de los dos componentes resista."
+
+[[algoritmo]]
+id = "composite-mlkem768-rsa4096"
+nombre = "ML-KEM-768 compuesto con RSA 4096"
+familia = "ML-KEM"
+primitiva = "kem"
+oids = ["1.3.6.1.5.5.7.6.57"]
+riesgo = "hibrido-pq"
+garantia = "confidencialidad"
+nivel_nist_cuantico = 3
+nota = "KEM compuesto (combinador SHA3-256): la llave queda protegida mientras uno de los dos componentes resista."
+
+[[algoritmo]]
+id = "composite-mlkem768-x25519"
+nombre = "ML-KEM-768 compuesto con X25519"
+familia = "ML-KEM"
+primitiva = "kem"
+oids = ["1.3.6.1.5.5.7.6.58"]
+riesgo = "hibrido-pq"
+garantia = "confidencialidad"
+nivel_nist_cuantico = 3
+nota = "KEM compuesto (combinador SHA3-256): la llave queda protegida mientras uno de los dos componentes resista."
+
+[[algoritmo]]
+id = "composite-mlkem768-ecdh-p256"
+nombre = "ML-KEM-768 compuesto con ECDH P-256"
+familia = "ML-KEM"
+primitiva = "kem"
+oids = ["1.3.6.1.5.5.7.6.59"]
+riesgo = "hibrido-pq"
+garantia = "confidencialidad"
+nivel_nist_cuantico = 3
+nota = "KEM compuesto (combinador SHA3-256): la llave queda protegida mientras uno de los dos componentes resista."
+
+[[algoritmo]]
+id = "composite-mlkem768-ecdh-p384"
+nombre = "ML-KEM-768 compuesto con ECDH P-384"
+familia = "ML-KEM"
+primitiva = "kem"
+oids = ["1.3.6.1.5.5.7.6.60"]
+riesgo = "hibrido-pq"
+garantia = "confidencialidad"
+nivel_nist_cuantico = 3
+nota = "KEM compuesto (combinador SHA3-256): la llave queda protegida mientras uno de los dos componentes resista."
+
+[[algoritmo]]
+id = "composite-mlkem768-ecdh-brainpoolp256r1"
+nombre = "ML-KEM-768 compuesto con ECDH brainpoolP256r1"
+familia = "ML-KEM"
+primitiva = "kem"
+oids = ["1.3.6.1.5.5.7.6.61"]
+riesgo = "hibrido-pq"
+garantia = "confidencialidad"
+nivel_nist_cuantico = 3
+nota = "KEM compuesto (combinador SHA3-256): la llave queda protegida mientras uno de los dos componentes resista."
+
+[[algoritmo]]
+id = "composite-mlkem1024-rsa3072"
+nombre = "ML-KEM-1024 compuesto con RSA 3072"
+familia = "ML-KEM"
+primitiva = "kem"
+oids = ["1.3.6.1.5.5.7.6.62"]
+riesgo = "hibrido-pq"
+garantia = "confidencialidad"
+nivel_nist_cuantico = 5
+nota = "KEM compuesto (combinador SHA3-256): la llave queda protegida mientras uno de los dos componentes resista."
+
+[[algoritmo]]
+id = "composite-mlkem1024-ecdh-p384"
+nombre = "ML-KEM-1024 compuesto con ECDH P-384"
+familia = "ML-KEM"
+primitiva = "kem"
+oids = ["1.3.6.1.5.5.7.6.63"]
+riesgo = "hibrido-pq"
+garantia = "confidencialidad"
+nivel_nist_cuantico = 5
+nota = "KEM compuesto (combinador SHA3-256): la llave queda protegida mientras uno de los dos componentes resista."
+
+[[algoritmo]]
+id = "composite-mlkem1024-ecdh-brainpoolp384r1"
+nombre = "ML-KEM-1024 compuesto con ECDH brainpoolP384r1"
+familia = "ML-KEM"
+primitiva = "kem"
+oids = ["1.3.6.1.5.5.7.6.64"]
+riesgo = "hibrido-pq"
+garantia = "confidencialidad"
+nivel_nist_cuantico = 5
+nota = "KEM compuesto (combinador SHA3-256): la llave queda protegida mientras uno de los dos componentes resista."
+
+[[algoritmo]]
+id = "composite-mlkem1024-x448"
+nombre = "ML-KEM-1024 compuesto con X448"
+familia = "ML-KEM"
+primitiva = "kem"
+oids = ["1.3.6.1.5.5.7.6.65"]
+riesgo = "hibrido-pq"
+garantia = "confidencialidad"
+nivel_nist_cuantico = 5
+nota = "KEM compuesto (combinador SHA3-256): la llave queda protegida mientras uno de los dos componentes resista."
+
+[[algoritmo]]
+id = "composite-mlkem1024-ecdh-p521"
+nombre = "ML-KEM-1024 compuesto con ECDH P-521"
+familia = "ML-KEM"
+primitiva = "kem"
+oids = ["1.3.6.1.5.5.7.6.66"]
+riesgo = "hibrido-pq"
+garantia = "confidencialidad"
+nivel_nist_cuantico = 5
+nota = "KEM compuesto (combinador SHA3-256): la llave queda protegida mientras uno de los dos componentes resista."
+
+# ---------------------------------------------------------------------------
+# 1.7: curvas brainpool (RFC 5639; TLS 1.3 según RFC 8734)
+# ---------------------------------------------------------------------------
+[[algoritmo]]
+id = "ec-brainpoolp256r1"
+nombre = "Curva brainpoolP256r1"
+familia = "ECDSA"
+primitiva = "signature"
+oids = ["1.3.36.3.3.2.8.1.1.7"]
+alias = ["x509:brainpoolp256r1"]
+curva = "brainpool/brainpoolP256r1"
+riesgo = "vulnerable-cuantico"
+garantia = "autenticacion"
+nivel_clasico = 128
+nivel_nist_cuantico = 0
+
+[[algoritmo]]
+id = "ec-brainpoolp384r1"
+nombre = "Curva brainpoolP384r1"
+familia = "ECDSA"
+primitiva = "signature"
+oids = ["1.3.36.3.3.2.8.1.1.11"]
+alias = ["x509:brainpoolp384r1"]
+curva = "brainpool/brainpoolP384r1"
+riesgo = "vulnerable-cuantico"
+garantia = "autenticacion"
+nivel_clasico = 192
+nivel_nist_cuantico = 0
+
+[[algoritmo]]
+id = "ec-brainpoolp512r1"
+nombre = "Curva brainpoolP512r1"
+familia = "ECDSA"
+primitiva = "signature"
+oids = ["1.3.36.3.3.2.8.1.1.13"]
+alias = ["x509:brainpoolp512r1"]
+curva = "brainpool/brainpoolP512r1"
+riesgo = "vulnerable-cuantico"
+garantia = "autenticacion"
+nivel_clasico = 256
+nivel_nist_cuantico = 0
+
+[[algoritmo]]
+id = "ecdh-brainpoolp256r1"
+codigos_tls = [31]
+nombre = "ECDH sobre brainpoolP256r1"
+familia = "ECDH"
+primitiva = "key-agree"
+alias = ["tls-grupo:brainpoolp256r1tls13", "tls-grupo:brainpoolp256r1", "ipsec:ecp256bp"]
+curva = "brainpool/brainpoolP256r1"
+riesgo = "vulnerable-cuantico"
+garantia = "confidencialidad"
+nivel_clasico = 128
+nivel_nist_cuantico = 0
+
+[[algoritmo]]
+id = "ecdh-brainpoolp384r1"
+codigos_tls = [32]
+nombre = "ECDH sobre brainpoolP384r1"
+familia = "ECDH"
+primitiva = "key-agree"
+alias = ["tls-grupo:brainpoolp384r1tls13", "tls-grupo:brainpoolp384r1", "ipsec:ecp384bp"]
+curva = "brainpool/brainpoolP384r1"
+riesgo = "vulnerable-cuantico"
+garantia = "confidencialidad"
+nivel_clasico = 192
+nivel_nist_cuantico = 0
+
+[[algoritmo]]
+id = "ecdh-brainpoolp512r1"
+codigos_tls = [33]
+nombre = "ECDH sobre brainpoolP512r1"
+familia = "ECDH"
+primitiva = "key-agree"
+alias = ["tls-grupo:brainpoolp512r1tls13", "tls-grupo:brainpoolp512r1", "ipsec:ecp512bp"]
+curva = "brainpool/brainpoolP512r1"
+riesgo = "vulnerable-cuantico"
+garantia = "confidencialidad"
+nivel_clasico = 256
+nivel_nist_cuantico = 0
+
+# ---------------------------------------------------------------------------
+# 1.7: algoritmos nacionales (ShangMi de China, GOST de Rusia) y otros
+# cifradores de bloque regionales
+# ---------------------------------------------------------------------------
+[[algoritmo]]
+id = "sm2"
+nombre = "SM2"
+familia = "SM2"
+primitiva = "signature"
+oids = ["1.2.156.10197.1.301", "1.2.156.10197.1.501"]
+alias = ["aws-kms:sm2", "dnssec-alg:17"]
+curva = "oscaa/SM2"
+riesgo = "vulnerable-cuantico"
+garantia = "autenticacion"
+nivel_clasico = 128
+nivel_nist_cuantico = 0
+nota = "Algoritmo de curva elíptica chino (GB/T 32918); vulnerable a Shor como ECDSA."
+
+[[algoritmo]]
+id = "ecdh-sm2"
+codigos_tls = [41]
+nombre = "ECDH sobre curveSM2"
+familia = "SM2"
+primitiva = "key-agree"
+alias = ["tls-grupo:curvesm2"]
+curva = "oscaa/SM2"
+riesgo = "vulnerable-cuantico"
+garantia = "confidencialidad"
+nivel_clasico = 128
+nivel_nist_cuantico = 0
+
+[[algoritmo]]
+id = "sm3"
+nombre = "SM3"
+familia = "SM3"
+primitiva = "hash"
+oids = ["1.2.156.10197.1.401"]
+alias = ["dnssec-ds:6"]
+riesgo = "resistente-cuantico"
+garantia = "integridad"
+[[algoritmo]]
+id = "sm4"
+nombre = "SM4"
+familia = "SM4"
+primitiva = "block-cipher"
+oids = ["1.2.156.10197.1.104"]
+tamano_llave = 128
+riesgo = "debilitado-grover"
+garantia = "confidencialidad"
+nivel_clasico = 128
+[[algoritmo]]
+id = "gost-3410-2012-256"
+nombre = "GOST R 34.10-2012 (256 bits)"
+familia = "GOST"
+primitiva = "signature"
+oids = ["1.2.643.7.1.1.1.1", "1.2.643.7.1.1.3.2"]
+alias = ["dnssec-alg:23"]
+curva = "gost/gost256"
+riesgo = "vulnerable-cuantico"
+garantia = "autenticacion"
+nivel_clasico = 128
+nivel_nist_cuantico = 0
+
+[[algoritmo]]
+id = "gost-3410-2012-512"
+nombre = "GOST R 34.10-2012 (512 bits)"
+familia = "GOST"
+primitiva = "signature"
+oids = ["1.2.643.7.1.1.1.2", "1.2.643.7.1.1.3.3"]
+curva = "gost/gost512"
+riesgo = "vulnerable-cuantico"
+garantia = "autenticacion"
+nivel_clasico = 256
+nivel_nist_cuantico = 0
+
+[[algoritmo]]
+id = "gost-3410-2001"
+nombre = "GOST R 34.10-2001"
+familia = "GOST"
+primitiva = "signature"
+alias = ["dnssec-alg:12"]
+oids = ["1.2.643.2.2.19", "1.2.643.2.2.3"]
+riesgo = "obsoleto"
+garantia = "autenticacion"
+nivel_nist_cuantico = 0
+nota = "Reemplazado por GOST R 34.10-2012."
+
+[[algoritmo]]
+id = "streebog"
+nombre = "Streebog (GOST R 34.11-2012)"
+familia = "GOST"
+primitiva = "hash"
+oids = ["1.2.643.7.1.1.2.2", "1.2.643.7.1.1.2.3"]
+alias = ["dnssec-ds:5"]
+riesgo = "resistente-cuantico"
+garantia = "integridad"
+[[algoritmo]]
+id = "kuznyechik"
+nombre = "Kuznyechik (GOST R 34.12-2015)"
+familia = "GOST"
+primitiva = "block-cipher"
+tamano_llave = 256
+riesgo = "resistente-cuantico"
+garantia = "confidencialidad"
+nivel_clasico = 256
+[[algoritmo]]
+id = "magma"
+nombre = "Magma (GOST 28147-89)"
+familia = "GOST"
+primitiva = "block-cipher"
+riesgo = "obsoleto"
+garantia = "confidencialidad"
+nota = "Bloque de 64 bits: expuesto a ataques de cumpleaños con volúmenes grandes, como 3DES."
+[[algoritmo]]
+id = "camellia-128"
+nombre = "Camellia-128"
+familia = "CAMELLIA"
+primitiva = "block-cipher"
+oids = ["1.2.392.200011.61.1.1.1.2"]
+alias = ["kerberos:camellia128-cts-cmac", "kerberos:camellia128-cts"]
+tamano_llave = 128
+riesgo = "debilitado-grover"
+garantia = "confidencialidad"
+nivel_clasico = 128
+
+[[algoritmo]]
+id = "camellia-256"
+nombre = "Camellia-256"
+familia = "CAMELLIA"
+primitiva = "block-cipher"
+oids = ["1.2.392.200011.61.1.1.1.4"]
+alias = ["kerberos:camellia256-cts-cmac", "kerberos:camellia256-cts"]
+tamano_llave = 256
+riesgo = "resistente-cuantico"
+garantia = "confidencialidad"
+nivel_clasico = 256
+
+[[algoritmo]]
+id = "aria-128"
+nombre = "ARIA-128"
+familia = "ARIA"
+primitiva = "block-cipher"
+tamano_llave = 128
+riesgo = "debilitado-grover"
+garantia = "confidencialidad"
+nivel_clasico = 128
+[[algoritmo]]
+id = "aria-256"
+nombre = "ARIA-256"
+familia = "ARIA"
+primitiva = "block-cipher"
+tamano_llave = 256
+riesgo = "resistente-cuantico"
+garantia = "confidencialidad"
+nivel_clasico = 256
+[[algoritmo]]
+id = "seed"
+nombre = "SEED"
+familia = "SEED"
+primitiva = "block-cipher"
+tamano_llave = 128
+riesgo = "debilitado-grover"
+garantia = "confidencialidad"
+nivel_clasico = 128
+# ---------------------------------------------------------------------------
+# 1.7: envoltura de llaves, cifrado autenticado, MAC, derivación y contraseñas
+# ---------------------------------------------------------------------------
+[[algoritmo]]
+id = "aes-128-kw"
+nombre = "AES-128 Key Wrap"
+familia = "AES"
+primitiva = "key-wrap"
+oids = ["2.16.840.1.101.3.4.1.5"]
+alias = ["xmldsig:http://www.w3.org/2001/04/xmlenc#kw-aes128", "jose:a128kw"]
+tamano_llave = 128
+riesgo = "debilitado-grover"
+garantia = "confidencialidad"
+nivel_clasico = 128
+[[algoritmo]]
+id = "aes-256-kw"
+nombre = "AES-256 Key Wrap"
+familia = "AES"
+primitiva = "key-wrap"
+oids = ["2.16.840.1.101.3.4.1.45"]
+alias = ["xmldsig:http://www.w3.org/2001/04/xmlenc#kw-aes256", "jose:a256kw"]
+tamano_llave = 256
+riesgo = "resistente-cuantico"
+garantia = "confidencialidad"
+nivel_clasico = 256
+[[algoritmo]]
+id = "aes-128-ccm"
+nombre = "AES-128-CCM"
+familia = "AES"
+primitiva = "ae"
+modo = "ccm"
+oids = ["2.16.840.1.101.3.4.1.7"]
+tamano_llave = 128
+riesgo = "debilitado-grover"
+garantia = "confidencialidad"
+nivel_clasico = 128
+[[algoritmo]]
+id = "aes-256-ccm"
+nombre = "AES-256-CCM"
+familia = "AES"
+primitiva = "ae"
+modo = "ccm"
+oids = ["2.16.840.1.101.3.4.1.47"]
+tamano_llave = 256
+riesgo = "resistente-cuantico"
+garantia = "confidencialidad"
+nivel_clasico = 256
+[[algoritmo]]
+id = "aes-256-gcm-siv"
+nombre = "AES-256-GCM-SIV"
+familia = "AES"
+primitiva = "ae"
+tamano_llave = 256
+riesgo = "resistente-cuantico"
+garantia = "confidencialidad"
+nivel_clasico = 256
+nota = "Resistente al uso indebido de nonces (RFC 8452)."
+[[algoritmo]]
+id = "aes-cmac"
+nombre = "AES-CMAC"
+familia = "CMAC"
+primitiva = "mac"
+riesgo = "resistente-cuantico"
+garantia = "integridad"
+[[algoritmo]]
+id = "hkdf"
+nombre = "HKDF"
+familia = "HKDF"
+primitiva = "kdf"
+oids = ["1.2.840.113549.1.9.16.3.28", "1.2.840.113549.1.9.16.3.29", "1.2.840.113549.1.9.16.3.30"]
+riesgo = "resistente-cuantico"
+garantia = "confidencialidad"
+[[algoritmo]]
+id = "argon2"
+nombre = "Argon2"
+familia = "Argon2"
+primitiva = "kdf"
+alias = ["contrasena:argon2id", "contrasena:argon2i"]
+riesgo = "resistente-cuantico"
+garantia = "confidencialidad"
+nota = "Función recomendada para derivar llaves de contraseñas (RFC 9106); prefiera Argon2id."
+
+[[algoritmo]]
+id = "bcrypt"
+nombre = "bcrypt"
+familia = "bcrypt"
+primitiva = "kdf"
+alias = ["contrasena:bcrypt"]
+riesgo = "resistente-cuantico"
+garantia = "confidencialidad"
+nota = "Adecuado para contraseñas con costo de 10 o más; trunca las contraseñas a 72 bytes."
+
+[[algoritmo]]
+id = "yescrypt"
+nombre = "yescrypt"
+familia = "yescrypt"
+primitiva = "kdf"
+alias = ["contrasena:yescrypt"]
+riesgo = "resistente-cuantico"
+garantia = "confidencialidad"
+
+[[algoritmo]]
+id = "sha512-crypt"
+nombre = "SHA-512-crypt (contraseñas)"
+familia = "SHA-2"
+primitiva = "kdf"
+alias = ["contrasena:sha512", "contrasena:sha512crypt"]
+riesgo = "resistente-cuantico"
+garantia = "confidencialidad"
+nota = "Aceptable con suficientes rondas; yescrypt o Argon2id resisten mejor los ataques con GPU."
+
+[[algoritmo]]
+id = "md5-crypt"
+nombre = "MD5-crypt (contraseñas)"
+familia = "MD5"
+primitiva = "kdf"
+alias = ["contrasena:md5", "contrasena:md5crypt"]
+riesgo = "roto-clasico"
+garantia = "confidencialidad"
+nota = "Derivación de contraseñas rápida y retirada: se rompe con fuerza bruta en hardware común."
+
+[[algoritmo]]
+id = "shake128"
+nombre = "SHAKE128"
+familia = "SHA-3"
+primitiva = "xof"
+oids = ["2.16.840.1.101.3.4.2.11"]
+riesgo = "resistente-cuantico"
+garantia = "integridad"
+[[algoritmo]]
+id = "shake256"
+nombre = "SHAKE256"
+familia = "SHA-3"
+primitiva = "xof"
+oids = ["2.16.840.1.101.3.4.2.12"]
+riesgo = "resistente-cuantico"
+garantia = "integridad"
+[[algoritmo]]
+id = "sha512-256"
+nombre = "SHA-512/256"
+familia = "SHA-2"
+primitiva = "hash"
+oids = ["2.16.840.1.101.3.4.2.6"]
+riesgo = "resistente-cuantico"
+garantia = "integridad"
+[[algoritmo]]
+id = "md4"
+nombre = "MD4"
+familia = "MD4"
+primitiva = "hash"
+oids = ["1.2.840.113549.2.4"]
+riesgo = "roto-clasico"
+garantia = "integridad"
+nota = "Roto; sigue presente en NTLM."
+[[algoritmo]]
+id = "elgamal"
+nombre = "ElGamal"
+familia = "ElGamal"
+primitiva = "pke"
+riesgo = "vulnerable-cuantico"
+garantia = "confidencialidad"
+tamano_minimo_clasico = 2048
+nivel_nist_cuantico = 0
+# ---------------------------------------------------------------------------
+# 1.7: tipos de cifrado de Kerberos (RFC 3962, RFC 8009)
+# ---------------------------------------------------------------------------
+[[algoritmo]]
+id = "krb-aes128-cts-hmac-sha1-96"
+nombre = "Kerberos AES128-CTS-HMAC-SHA1-96"
+familia = "AES"
+primitiva = "ae"
+alias = ["kerberos:aes128-cts-hmac-sha1-96", "kerberos:aes128-cts", "kerberos:aes128-sha1"]
+tamano_llave = 128
+riesgo = "debilitado-grover"
+garantia = "confidencialidad"
+nivel_clasico = 128
+
+[[algoritmo]]
+id = "krb-aes256-cts-hmac-sha1-96"
+nombre = "Kerberos AES256-CTS-HMAC-SHA1-96"
+familia = "AES"
+primitiva = "ae"
+alias = ["kerberos:aes256-cts-hmac-sha1-96", "kerberos:aes256-cts", "kerberos:aes256-sha1", "kerberos:aes"]
+tamano_llave = 256
+riesgo = "resistente-cuantico"
+garantia = "confidencialidad"
+nivel_clasico = 256
+
+[[algoritmo]]
+id = "krb-aes128-cts-hmac-sha256-128"
+nombre = "Kerberos AES128-CTS-HMAC-SHA256-128"
+familia = "AES"
+primitiva = "ae"
+alias = ["kerberos:aes128-cts-hmac-sha256-128", "kerberos:aes128-sha2"]
+tamano_llave = 128
+riesgo = "debilitado-grover"
+garantia = "confidencialidad"
+nivel_clasico = 128
+
+[[algoritmo]]
+id = "krb-aes256-cts-hmac-sha384-192"
+nombre = "Kerberos AES256-CTS-HMAC-SHA384-192"
+familia = "AES"
+primitiva = "ae"
+alias = ["kerberos:aes256-cts-hmac-sha384-192", "kerberos:aes256-sha2"]
+tamano_llave = 256
+riesgo = "resistente-cuantico"
+garantia = "confidencialidad"
+nivel_clasico = 256
+
+[[algoritmo]]
+id = "ec-p224"
+nombre = "Curva NIST P-224"
+familia = "ECDSA"
+primitiva = "signature"
+oids = ["1.3.132.0.33"]
+alias = ["x509:p-224"]
+curva = "nist/P-224"
+riesgo = "vulnerable-cuantico"
+garantia = "autenticacion"
+nivel_clasico = 112
+nivel_nist_cuantico = 0
+nota = "112 bits de seguridad clásica: NIST la retira después de 2030 aun sin considerar el cómputo cuántico."

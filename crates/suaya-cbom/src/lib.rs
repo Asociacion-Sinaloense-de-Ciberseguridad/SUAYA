@@ -3,7 +3,9 @@
 //! - [`exportar`]: traduce el inventario de Suaya a un CBOM CycloneDX 1.7.
 //! - [`lectura`]: interpreta un CBOM generado por Suaya.
 //! - [`reporte`]: produce el reporte ejecutivo en español (Markdown).
-//! - [`comparar`]: compara dos CBOM para seguir el avance de una migración.
+//! - [`comparar`](mod@comparar): compara dos CBOM para seguir el avance de una migración.
+//! - [`formatos`]: SARIF, CSV, JSON Lines, tickets e inventario PCI DSS.
+//! - [`tendencias`]: evolución de varios CBOM en el tiempo.
 //!
 //! La clasificación de Suaya viaja dentro del CBOM como propiedades con el
 //! prefijo `suaya:`, de modo que el CBOM es autosuficiente: cualquier
@@ -13,8 +15,10 @@
 pub mod comparar;
 pub mod exportar;
 pub mod firma;
+pub mod formatos;
 pub mod lectura;
 pub mod reporte;
+pub mod tendencias;
 
 pub use comparar::comparar;
 pub use exportar::{OpcionesCbom, generar};

@@ -15,11 +15,13 @@ suaya-escaneo.workspace = true
 rustls = { version = "0.23.46", default-features = false, features = ["aws_lc_rs", "prefer-post-quantum", "std", "tls12"] }
 uuid.workspace = true
 base64 = "0.23.1"
+serde.workspace = true
 serde_json.workspace = true
 yaml-rust2 = { version = "0.13.0", default-features = false }
 rustls-native-certs = "0.8.3"
 sha2.workspace = true
 hex.workspace = true
+time.workspace = true
 
 [lints]
 workspace = true
@@ -30,3 +32,4 @@ rcgen = { version = "0.14.10", default-features = false, features = ["aws_lc_rs"
 serde_json.workspace = true
 base64 = "0.23.1"
 rustls = { version = "0.23.46", default-features = false, features = ["aws_lc_rs", "std"] }
+time.workspace = true

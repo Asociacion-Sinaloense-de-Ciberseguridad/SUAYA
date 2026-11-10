@@ -1,0 +1,41 @@
+# Perfil de política: calendario del NCSC del Reino Unido para la migración a
+# criptografía poscuántica (marzo de 2025).
+#
+# Hitos: para 2028, definir metas, completar el descubrimiento y tener un plan;
+# para 2031, completar las migraciones de mayor prioridad; para 2035,
+# completar la migración.
+#
+# Suaya asigna el plazo de 2031 a los activos de sistemas con criticidad
+# «alta» en el archivo de contexto (--contexto); sin contexto, aplica 2035.
+# Es una interpretación de Suaya: verifique la guía vigente del NCSC.
+
+[perfil]
+id = "ncsc-reino-unido"
+nombre = "Reino Unido (NCSC): calendario de migración a PQC"
+referencia = "National Cyber Security Centre, Timelines for migration to post-quantum cryptography (marzo de 2025)"
+predeterminado = "sin-evaluar"
+ignorar_primitivas = ["other", "kdf"]
+
+[[regla]]
+riesgos = ["roto-clasico", "obsoleto"]
+estado = "no-conforme"
+nota = "Inseguro o retirado por los estándares vigentes."
+
+[[regla]]
+riesgos = ["vulnerable-cuantico"]
+criticidades = ["alta"]
+estado = "transicion"
+retiro = 2028
+prohibicion = 2031
+nota = "Migración de mayor prioridad: el NCSC pide completarla en 2031."
+
+[[regla]]
+riesgos = ["vulnerable-cuantico"]
+estado = "transicion"
+retiro = 2028
+prohibicion = 2035
+nota = "El NCSC pide completar el descubrimiento y el plan en 2028 y la migración en 2035."
+
+[[regla]]
+riesgos = ["debilitado-grover", "hibrido-pq", "resistente-cuantico"]
+estado = "conforme"

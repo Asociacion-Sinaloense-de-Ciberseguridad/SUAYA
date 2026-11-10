@@ -8,9 +8,10 @@ Lo siguiente solo cambia de forma incompatible en una versión mayor (2.0.0):
 
 ### Línea de órdenes
 
-- Los nombres de las órdenes y sus alias en inglés: `escanear` (`scan`), `sondear` (`probe`), `kubernetes` (`k8s`), `reporte` (`report`), `comparar` (`diff`), `importar` (`import`), `perfiles` (`profiles`), `llaves` (`keygen`), `firmar` (`sign`), `verificar` (`verify`), `conocimiento` (`knowledge`), y las órdenes auxiliares `completado` y `manual`.
+- Los nombres de las órdenes y sus alias en inglés: `escanear` (`scan`), `sondear` (`probe`), `diagnosticar` (`diagnose`), `kubernetes` (`k8s`), `reporte` (`report`), `comparar` (`diff`), `importar` (`import`), `perfiles` (`profiles`), `llaves` (`keygen`), `firmar` (`sign`), `verificar` (`verify`), `conocimiento` (`knowledge`), `tendencias` (`trends`, desde 1.7), y las órdenes auxiliares `completado` y `manual`.
 - Los nombres y el significado de las opciones documentadas en `suaya <orden> --ayuda`. Se pueden agregar opciones nuevas; una opción existente no se elimina ni cambia de significado.
-- Las variables de entorno `SUAYA_IDIOMA`, `SUAYA_CLAVE_FIRMA`, `SUAYA_REGISTRO_USUARIO`, `SUAYA_REGISTRO_CLAVE` y `SUAYA_FECHA`.
+- Los esquemas de objetivo de red: `tls://`, `ssh://`, `smtp://`, `imap://`, `pop3://`, `ldap://`, `postgres://`, `mysql://` y, desde 1.7, `ike://`, `ftp://`, `xmpp://`, `rdp://`, `dns://`, `oidc://` y `saml://`.
+- Las variables de entorno `SUAYA_IDIOMA` (`es`, `en` y, desde 1.7, `pt`), `SUAYA_CLAVE_FIRMA`, `SUAYA_REGISTRO_USUARIO`, `SUAYA_REGISTRO_CLAVE`, `SUAYA_FECHA` y, desde 1.7, `SUAYA_CLAVE_ALMACEN` y `SUAYA_DNS`.
 
 ### Códigos de salida
 
@@ -20,14 +21,22 @@ Lo siguiente solo cambia de forma incompatible en una versión mayor (2.0.0):
 | 1 | Error: argumentos inválidos, archivo ilegible, conexión fallida, llave cifrada sin frase de paso. |
 | 2 | Se alcanzó el umbral pedido con `--fallar-en` o `--fallar-si-empeora`. |
 | 3 | `verificar`: la firma no es válida. |
+| 4 | `--fallar-si-incompleto`: hubo avisos o archivos omitidos (resultado parcial). |
 
 ### Formato del CBOM
 
 - El CBOM es CycloneDX 1.7 válido contra el esquema oficial. Una versión menor puede adoptar una versión menor posterior de CycloneDX solo si sigue siendo legible por quien lee 1.7.
-- Las propiedades `suaya:` existentes conservan su nombre y el tipo de su valor: `suaya:riesgo`, `suaya:accion`, `suaya:prioridad`, `suaya:prioridad-etiqueta`, `suaya:capacidad`, `suaya:madurez-ecosistema`, `suaya:fuente-madurez`, `suaya:justificacion`, `suaya:advertencia`, `suaya:nota`, `suaya:contexto`, `suaya:identidad-llave`, `suaya:biblioteca`, `suaya:garantia`, `suaya:retiro`, `suaya:plazo`, `suaya:cumplimiento`, `suaya:cumplimiento-nota`, `suaya:perfil`, `suaya:perfil-politica`, `suaya:perfil-referencia`, `suaya:ruta-escaneada`, `suaya:idioma`, `suaya:base-conocimiento`, `suaya:version-algoritmos` y `suaya:version-madurez`. Se pueden agregar propiedades nuevas.
+- Las propiedades `suaya:` existentes conservan su nombre y el tipo de su valor: `suaya:riesgo`, `suaya:accion`, `suaya:prioridad`, `suaya:prioridad-etiqueta`, `suaya:capacidad`, `suaya:madurez-ecosistema`, `suaya:fuente-madurez`, `suaya:justificacion`, `suaya:advertencia`, `suaya:nota`, `suaya:contexto`, `suaya:identidad-llave`, `suaya:biblioteca`, `suaya:garantia`, `suaya:retiro`, `suaya:plazo`, `suaya:cumplimiento`, `suaya:cumplimiento-nota`, `suaya:perfil`, `suaya:perfil-politica`, `suaya:perfil-referencia`, `suaya:ruta-escaneada`, `suaya:idioma`, `suaya:base-conocimiento`, `suaya:version-algoritmos` y `suaya:version-madurez`; desde 1.7, `suaya:tipo-protocolo`, `suaya:sistema`, `suaya:responsable`, `suaya:criticidad`, `suaya:exposicion`, `suaya:mosca-vida-datos`, `suaya:mosca-migracion`, `suaya:mosca-horizonte`, `suaya:mosca-holgura`, `suaya:excepcion`, `suaya:excepcion-vence`, `suaya:excepcion-vigente`, `suaya:excepcion-justificacion`, `suaya:excepcion-aprobada-por`, `suaya:horizonte-cuantico`, `suaya:contexto-sistema` y `suaya:contexto-excepcion`. Se pueden agregar propiedades nuevas.
 - Los valores con vocabulario cerrado (riesgo, acción, prioridad del 1 al 4, estado de cumplimiento) solo crecen: no se renombra ni se elimina un valor existente.
 - Las referencias `bom-ref` son deterministas: el mismo activo en el mismo lugar conserva su referencia entre versiones menores, para que `comparar` funcione entre un escaneo hecho con 1.0 y otro hecho con 1.x.
 - Suaya 1.x lee cualquier CBOM producido por Suaya 1.0 o posterior.
+
+### Otros formatos (desde 1.7)
+
+- SARIF 2.1.0 válido contra el esquema oficial; los identificadores de regla (`suaya/<receta>` o `suaya/<riesgo>`) y la huella `suayaReferencia/v1` son estables.
+- Las columnas del CSV y los campos de JSON Lines y de los tickets solo crecen, al final o como campos nuevos.
+- Los nombres y las etiquetas de las métricas de `diagnosticar --metricas` (`suaya_diagnostico_*`) solo crecen.
+- El esquema de `--organizacion` y de `remediacion.toml`: los campos nuevos serán opcionales.
 
 ### Firma
 
@@ -43,7 +52,7 @@ Lo siguiente solo cambia de forma incompatible en una versión mayor (2.0.0):
 - **Los textos.** Las justificaciones, los avisos, la ayuda y los reportes en Markdown y HTML pueden cambiar de redacción en cualquier versión. No los analice con expresiones regulares: lea las propiedades del CBOM.
 - **Qué se detecta.** Las versiones nuevas detectan más cosas; un CBOM puede crecer al actualizar Suaya sin que el sistema haya cambiado. `comparar` distingue los activos nuevos de los que empeoraron.
 - **Las bibliotecas de Rust** (`suaya-core`, `suaya-escaneo`, `suaya-cbom`, `suaya-red`). Su API pública es interna del proyecto y puede cambiar en versiones menores hasta que se publique en crates.io con su propio compromiso.
-- **La salida en pantalla** de `escanear` y `sondear`, pensada para personas.
+- **La salida en pantalla** de `escanear`, `sondear` y `diagnosticar`, pensada para personas. Para automatizar, use el JSON de `diagnosticar --json`: sus campos y los códigos de hallazgo (`CERT-VENCE`, `KEX-PQ`...) solo crecen; los textos de los mensajes pueden cambiar.
 
 ## Obsolescencia
 

@@ -12,7 +12,7 @@
 # `suaya escanear --base-conocimiento <directorio>`.
 
 [meta]
-version = "2026.09.0"
+version = "2026.11.0"
 fuente = "MITRE, Post-Quantum Cryptography (PQC) Capability Development Report"
 edicion = "2026-09"
 fecha_evidencia = "2026-07"
@@ -138,6 +138,27 @@ id = "codigo-aplicacion"
 nombre = "Código de aplicaciones"
 confidencialidad = "integracion"
 autenticacion = "integracion"
+
+# Decisión de Suaya (no del reporte): DNSSEC y DKIM autentican lo que publica
+# un dominio y no aportan confidencialidad. IANA asignó el número 18 a
+# ML-DSA-44 para DNSSEC (registro actualizado en agosto de 2026, con un
+# borrador informativo como referencia) y no hay algoritmo poscuántico para
+# DKIM, así que se evalúa como "habilitado". Editable.
+[[capacidad]]
+id = "infraestructura-dns"
+nombre = "Infraestructura DNS (DNSSEC, DKIM, CAA y TLSA)"
+confidencialidad = "no-aplica"
+autenticacion = "habilitado"
+
+# Decisión de Suaya (no del reporte): RFC 9964 (mayo de 2026) define ML-DSA
+# para JOSE, que usan OpenID Connect y OAuth; la firma XML de SAML aún no tiene
+# un identificador poscuántico. La confidencialidad de los intercambios la da
+# TLS, que se evalúa aparte. Se evalúa como "habilitado". Editable.
+[[capacidad]]
+id = "identidad-federada"
+nombre = "Identidad federada (OpenID Connect y SAML)"
+confidencialidad = "no-aplica"
+autenticacion = "habilitado"
 
 # Capacidad comodín para hallazgos sin contexto suficiente.
 [[capacidad]]

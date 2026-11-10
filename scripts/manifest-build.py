@@ -15,5 +15,5 @@ for folder in ('crates','conocimiento','macos','scripts','empaquetado','security
    files[str(path.relative_to(root))]=hashlib.sha256(path.read_bytes()).hexdigest()
 for name in ('Cargo.toml','Cargo.lock'):
  files[name]=hashlib.sha256((root/name).read_bytes()).hexdigest()
-result={'version':'1.5.0','platform':platform.platform(),'rustc':run('rustc','--version','--verbose'),'cargo':run('cargo','--version'),'source_date_epoch':os.environ.get('SOURCE_DATE_EPOCH'),'packages':packages,'sources_sha256':files,'note':'Manifest de contenido y dependencias; la autenticidad requiere attestation del pipeline.'}
+result={'version':tomllib.loads((root/'Cargo.toml').read_text())['workspace']['package']['version'],'platform':platform.platform(),'rustc':run('rustc','--version','--verbose'),'cargo':run('cargo','--version'),'source_date_epoch':os.environ.get('SOURCE_DATE_EPOCH'),'packages':packages,'sources_sha256':files,'note':'Manifest de contenido y dependencias; la autenticidad requiere attestation del pipeline.'}
 a.output.parent.mkdir(parents=True,exist_ok=True);a.output.write_text(json.dumps(result,indent=2)+'\n')

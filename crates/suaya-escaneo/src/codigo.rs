@@ -19,10 +19,19 @@ pub const CAPACIDAD: &str = "codigo-aplicacion";
 /// Ubicaciones que se registran por algoritmo y archivo.
 const MAXIMO_UBICACIONES: usize = 50;
 
-/// Lenguaje de un archivo según su extensión.
+/// Lenguaje de un archivo según su nombre o extensión.
 pub fn lenguaje(nombre: &str) -> Option<&'static str> {
-    let ext = nombre.rsplit_once('.')?.1.to_ascii_lowercase();
-    Some(match ext.as_str() {
+    let nombre = nombre.to_ascii_lowercase();
+    if matches!(
+        nombre.as_str(),
+        "dockerfile" | "containerfile" | "makefile" | "gnumakefile" | "jenkinsfile"
+    ) || nombre.starts_with("dockerfile.")
+        || nombre.starts_with("containerfile.")
+    {
+        return Some("shell");
+    }
+    let ext = nombre.rsplit_once('.')?.1;
+    Some(match ext {
         "py" | "pyw" => "python",
         "java" | "kt" | "kts" | "scala" | "groovy" => "java",
         "go" => "go",
@@ -30,6 +39,12 @@ pub fn lenguaje(nombre: &str) -> Option<&'static str> {
         "cs" => "csharp",
         "rs" => "rust",
         "c" | "h" | "cc" | "cpp" | "cxx" | "hpp" | "hh" | "hxx" | "m" | "mm" => "c",
+        "php" | "phtml" => "php",
+        "rb" | "rake" | "gemspec" => "ruby",
+        "swift" => "swift",
+        "dart" => "dart",
+        "ps1" | "psm1" => "powershell",
+        "sh" | "bash" | "zsh" | "ksh" | "mk" | "yml" | "yaml" => "shell",
         _ => return None,
     })
 }
@@ -62,29 +77,55 @@ pub fn sin_comentarios(texto: &str, lenguaje: &str) -> String {
         }
         n
     };
-    let es_c = lenguaje != "python";
+    let fin_de_linea = |i: usize| b[i..].iter().position(|&x| x == b'\n').map_or(n, |p| i + p);
+    // Comentario con «#»: Python, Ruby, PHP, PowerShell y shell.
+    let almohadilla = matches!(lenguaje, "python" | "ruby" | "php" | "powershell" | "shell");
+    // Comentarios «//» y «/* */».
+    let estilo_c = matches!(
+        lenguaje,
+        "java" | "go" | "javascript" | "csharp" | "rust" | "c" | "swift" | "dart" | "php"
+    );
+    // Lenguajes donde la comilla simple delimita cadenas (no caracteres).
+    let comilla_simple = matches!(
+        lenguaje,
+        "javascript" | "python" | "php" | "ruby" | "dart" | "powershell" | "shell"
+    );
+    // En shell y PowerShell «#» solo comenta al inicio de una palabra.
+    let inicio_de_palabra =
+        |i: usize| i == 0 || matches!(b[i - 1], b' ' | b'\t' | b'\n' | b'\r' | b';');
     while i < n {
         let c = b[i];
-        if lenguaje == "python" {
-            if c == b'#' {
-                let fin = b[i..].iter().position(|&x| x == b'\n').map_or(n, |p| i + p);
-                borrar(&mut s, i, fin);
-                i = fin;
-            } else if b[i..].starts_with(b"\"\"\"") || b[i..].starts_with(b"'''") {
-                let q = &b[i..i + 3];
-                i = cadena(i + 3, q, true);
-            } else if c == b'"' || c == b'\'' {
-                i = cadena(i + 1, &[c], true);
-            } else {
-                i += 1;
-            }
-            continue;
-        }
-        if es_c && b[i..].starts_with(b"//") {
-            let fin = b[i..].iter().position(|&x| x == b'\n').map_or(n, |p| i + p);
+        if lenguaje == "python" && (b[i..].starts_with(b"\"\"\"") || b[i..].starts_with(b"\'\'\'"))
+        {
+            let q = &b[i..i + 3];
+            i = cadena(i + 3, q, true);
+        } else if lenguaje == "ruby"
+            && (i == 0 || b[i - 1] == b'\n')
+            && b[i..].starts_with(b"=begin")
+        {
+            let fin = b[i..]
+                .windows(5)
+                .position(|w| w == b"\n=end")
+                .map_or(n, |p| fin_de_linea(i + p + 1));
             borrar(&mut s, i, fin);
             i = fin;
-        } else if es_c && b[i..].starts_with(b"/*") {
+        } else if lenguaje == "powershell" && b[i..].starts_with(b"<#") {
+            let fin = b[i + 2..]
+                .windows(2)
+                .position(|w| w == b"#>")
+                .map_or(n, |p| i + 2 + p + 2);
+            borrar(&mut s, i, fin);
+            i = fin;
+        } else if (almohadilla
+            && c == b'#'
+            && !(lenguaje == "php" && b.get(i + 1) == Some(&b'['))
+            && (!matches!(lenguaje, "shell" | "powershell") || inicio_de_palabra(i)))
+            || (estilo_c && b[i..].starts_with(b"//"))
+        {
+            let fin = fin_de_linea(i);
+            borrar(&mut s, i, fin);
+            i = fin;
+        } else if estilo_c && b[i..].starts_with(b"/*") {
             let fin = b[i + 2..]
                 .windows(2)
                 .position(|w| w == b"*/")
@@ -124,8 +165,9 @@ pub fn sin_comentarios(texto: &str, lenguaje: &str) -> String {
         } else if c == b'`' && (lenguaje == "javascript" || lenguaje == "go") {
             i = cadena(i + 1, b"`", lenguaje == "javascript");
         } else if c == b'\'' {
-            if lenguaje == "javascript" {
-                i = cadena(i + 1, b"'", true);
+            if comilla_simple {
+                // En shell y PowerShell la comilla simple no admite escapes.
+                i = cadena(i + 1, b"'", !matches!(lenguaje, "shell" | "powershell"));
             } else {
                 // Carácter literal ('x', '\n') o, en Rust, un tiempo de vida.
                 let largo = if b.get(i + 1) == Some(&b'\\') {
@@ -163,6 +205,7 @@ struct Regla {
     tamano: Option<usize>,
     ignorar: Vec<String>,
     nota: Option<String>,
+    capacidad: Option<String>,
 }
 
 struct Hallazgo {
@@ -195,6 +238,7 @@ fn compilar(c: &Conocimiento) -> Result<Compiladas, String> {
             tamano: r.tamano,
             ignorar: r.ignorar.iter().map(|x| normalizar(x)).collect(),
             nota: r.nota.clone(),
+            capacidad: r.capacidad.clone(),
         });
     }
     let mut hallazgos = Vec::new();
@@ -339,13 +383,17 @@ impl Escaner for EscanerCodigo {
                     }
                     (None, None) => continue,
                 };
+                let capacidad = r.capacidad.as_deref().unwrap_or(CAPACIDAD);
                 let mut activo =
-                    activo_algoritmo(def, &respaldo, tamano, CAPACIDAD, None, a.ruta, Some(linea));
+                    activo_algoritmo(def, &respaldo, tamano, capacidad, None, a.ruta, Some(linea));
                 if let Some(n) = &r.nota {
                     activo.advertir(n.clone());
                 }
                 match por_referencia.get_mut(&activo.referencia) {
                     Some(previo) => {
+                        for ctx in &activo.contextos {
+                            previo.agregar_contexto(&ctx.capacidad, ctx.garantia);
+                        }
                         if previo.ubicaciones.len() < MAXIMO_UBICACIONES
                             && !previo.ubicaciones.iter().any(|u| u.linea == Some(linea))
                         {
@@ -446,6 +494,28 @@ mod pruebas {
         let t = "let r = r#\"// no\"#; // sí\nfn f<'a>(x: &'a str) {} // md5";
         let l = sin_comentarios(t, "rust");
         assert!(l.contains("// no") && !l.contains("sí") && !l.contains("md5"));
+
+        let t = "openssl genrsa 2048 # openssl genrsa 1024\necho a#b\nRUN echo '# no'";
+        let l = sin_comentarios(t, "shell");
+        assert!(l.contains("genrsa 2048") && !l.contains("1024"));
+        assert!(l.contains("a#b") && l.contains("'# no'"));
+
+        let t = "<# MD5 #>\n$h = [System.Security.Cryptography.SHA256]::Create() # SHA1";
+        let l = sin_comentarios(t, "powershell");
+        assert!(!l.contains("MD5") && l.contains("SHA256") && !l.contains("SHA1"));
+
+        let t = "=begin\nDigest::MD5\n=end\nDigest::SHA256 # Digest::SHA1";
+        let l = sin_comentarios(t, "ruby");
+        assert!(!l.contains("MD5") && l.contains("SHA256") && !l.contains("SHA1"));
+
+        let t = "#[Attr] $x = hash('sha256', $d); // hash('md5', $d)\n# sha1('x')";
+        let l = sin_comentarios(t, "php");
+        assert!(
+            l.contains("#[Attr]")
+                && l.contains("sha256")
+                && !l.contains("md5")
+                && !l.contains("sha1")
+        );
     }
 
     #[test]
@@ -453,6 +523,91 @@ mod pruebas {
         assert_eq!(lenguaje("app.tsx"), Some("javascript"));
         assert_eq!(lenguaje("Main.kt"), Some("java"));
         assert_eq!(lenguaje("README.md"), None);
+        assert_eq!(lenguaje("Dockerfile"), Some("shell"));
+        assert_eq!(lenguaje("dockerfile.prod"), Some("shell"));
+        assert_eq!(lenguaje(".gitlab-ci.yml"), Some("shell"));
+        assert_eq!(lenguaje("deploy.ps1"), Some("powershell"));
+        assert_eq!(lenguaje("index.php"), Some("php"));
+        assert_eq!(lenguaje("Crypto.swift"), Some("swift"));
+    }
+
+    fn analizar(nombre: &str, t: &str) -> Vec<Activo> {
+        let a = Archivo::nuevo(nombre, std::path::Path::new(nombre), t.as_bytes(), None);
+        EscanerCodigo::default()
+            .analizar(&a, &Conocimiento::embebido())
+            .unwrap()
+    }
+
+    #[test]
+    fn comandos_de_shell_y_lenguajes_nuevos() {
+        let v = analizar(
+            "Dockerfile",
+            "RUN openssl genrsa -out ca.key 1024 \\\n && ssh-keygen -t rsa -b 1024 -f id\nRUN curl -fsSLk https://x.example/i.sh | sh\n# openssl genrsa 512\n",
+        );
+        let rsa = v
+            .iter()
+            .find(|x| x.referencia == "algoritmo:rsa-1024")
+            .unwrap();
+        assert!(rsa.contextos.iter().any(|c| c.capacidad == "pki-ca"));
+        assert!(
+            rsa.contextos
+                .iter()
+                .any(|c| c.capacidad == "vpn-cifrado-red")
+        );
+        assert!(!v.iter().any(|x| x.referencia == "algoritmo:rsa-512"));
+        let tls = v
+            .iter()
+            .find(|x| x.referencia.starts_with("protocolo:tls:codigo"))
+            .unwrap();
+        assert_eq!(tls.riesgo_fijado, Some(Riesgo::RotoClasico));
+
+        let v = analizar(
+            ".github/workflows/ci.yml",
+            "steps:\n  - run: openssl req -x509 -newkey rsa:2048 -sha1 -keyout k.pem -out c.pem\n  - run: keytool -genkeypair -keyalg EC -alias a\n",
+        );
+        let r: Vec<&str> = v.iter().map(|x| x.referencia.as_str()).collect();
+        assert!(
+            r.contains(&"algoritmo:rsa-2048")
+                && r.contains(&"algoritmo:sha1")
+                && r.contains(&"algoritmo:ec"),
+            "{r:?}"
+        );
+
+        let v = analizar(
+            "app.php",
+            "<?php $h = md5($x); $c = openssl_encrypt($d, 'des-ede3-cbc', $k); hash_hmac('sha256', $d, $k);",
+        );
+        let r: Vec<&str> = v.iter().map(|x| x.referencia.as_str()).collect();
+        assert!(
+            r.contains(&"algoritmo:md5")
+                && r.contains(&"algoritmo:3des-cbc")
+                && r.contains(&"algoritmo:hmac-sha256"),
+            "{r:?}"
+        );
+
+        let v = analizar(
+            "Cifrado.swift",
+            "let k = P256.KeyAgreement.PrivateKey()\nlet d = Insecure.MD5.hash(data: x)\nlet q = MLKEM768.PrivateKey()",
+        );
+        let r: Vec<&str> = v.iter().map(|x| x.referencia.as_str()).collect();
+        assert!(
+            r.contains(&"algoritmo:ecdh-p256")
+                && r.contains(&"algoritmo:md5")
+                && r.contains(&"algoritmo:ml-kem-768"),
+            "{r:?}"
+        );
+
+        let v = analizar(
+            "despliegue.ps1",
+            "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls\nNew-SelfSignedCertificate -DnsName x -KeyAlgorithm RSA -KeyLength 1024 -HashAlgorithm SHA1",
+        );
+        let r: Vec<&str> = v.iter().map(|x| x.referencia.as_str()).collect();
+        assert!(
+            r.contains(&"algoritmo:tls-1.0")
+                && r.contains(&"algoritmo:rsa-1024")
+                && r.contains(&"algoritmo:sha1"),
+            "{r:?}"
+        );
     }
 
     #[test]

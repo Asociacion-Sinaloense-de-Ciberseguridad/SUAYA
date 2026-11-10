@@ -11,7 +11,7 @@ members = [
 exclude = ["fuzz"]
 
 [workspace.package]
-version = "1.5.0"
+version = "1.7.0"
 edition = "2024"
 rust-version = "1.89"
 license = "Apache-2.0"
@@ -21,10 +21,10 @@ keywords = ["cbom", "cryptography", "post-quantum", "pqc", "cyclonedx"]
 categories = ["cryptography", "command-line-utilities"]
 
 [workspace.dependencies]
-suaya-core = { path = "crates/suaya-core", version = "1.5.0" }
-suaya-escaneo = { path = "crates/suaya-escaneo", version = "1.5.0" }
-suaya-cbom = { path = "crates/suaya-cbom", version = "1.5.0" }
-suaya-red = { path = "crates/suaya-red", version = "1.5.0" }
+suaya-core = { path = "crates/suaya-core", version = "1.7.0" }
+suaya-escaneo = { path = "crates/suaya-escaneo", version = "1.7.0" }
+suaya-cbom = { path = "crates/suaya-cbom", version = "1.7.0" }
+suaya-red = { path = "crates/suaya-red", version = "1.7.0" }
 
 anyhow = "1.0.104"
 clap = { version = "4.6.7", features = ["derive"] }

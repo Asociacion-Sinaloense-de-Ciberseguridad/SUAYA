@@ -18,10 +18,26 @@ const ALGORITMOS_EMBEBIDOS: &str = include_str!("../../../conocimiento/algoritmo
 const MADUREZ_EMBEBIDA: &str = include_str!("../../../conocimiento/madurez.toml");
 const CODIGO_EMBEBIDO: &str = include_str!("../../../conocimiento/codigo.toml");
 const BIBLIOTECAS_EMBEBIDAS: &str = include_str!("../../../conocimiento/bibliotecas.toml");
+const SERVICIOS_EMBEBIDOS: &str = include_str!("../../../conocimiento/servicios.toml");
+const RECETAS_EMBEBIDAS: &str = include_str!("../../../conocimiento/remediacion.toml");
 
-/// Lenguajes que entiende el escáner de código.
-pub const LENGUAJES_CODIGO: [&str; 7] =
-    ["python", "java", "go", "javascript", "csharp", "rust", "c"];
+/// Lenguajes que entiende el escáner de código. «shell» abarca scripts,
+/// Dockerfile, Makefile y los YAML de integración continua y Ansible.
+pub const LENGUAJES_CODIGO: [&str; 13] = [
+    "python",
+    "java",
+    "go",
+    "javascript",
+    "csharp",
+    "rust",
+    "c",
+    "php",
+    "ruby",
+    "swift",
+    "dart",
+    "powershell",
+    "shell",
+];
 
 #[derive(Debug, thiserror::Error)]
 pub enum ErrorConocimiento {
@@ -170,6 +186,9 @@ pub struct ReglaCodigo {
     pub requiere: Option<String>,
     #[serde(default)]
     pub ignorar: Vec<String>,
+    /// Capacidad tecnológica del hallazgo (predeterminada: código de aplicaciones).
+    #[serde(default)]
+    pub capacidad: Option<String>,
     #[serde(default)]
     pub nota: Option<String>,
 }
@@ -208,6 +227,196 @@ impl BaseCodigo {
     }
 }
 
+/// Valor peligroso de una clave de configuración de un servicio.
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct AvisoServicio {
+    pub clave: String,
+    pub valores: Vec<String>,
+    pub texto: String,
+    pub riesgo: Riesgo,
+}
+
+/// Clave cuyo valor es una lista de algoritmos con alias en `algoritmos.toml`.
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ListaAlgoritmosServicio {
+    pub clave: String,
+    pub espacio: String,
+}
+
+/// Dónde declara un servicio su configuración de TLS (`servicios.toml`).
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ServicioDef {
+    pub id: String,
+    pub nombre: String,
+    pub archivos: Vec<String>,
+    #[serde(default)]
+    pub pistas: Vec<String>,
+    pub capacidad: String,
+    #[serde(default)]
+    pub versiones: Vec<String>,
+    #[serde(default)]
+    pub version_minima: Vec<String>,
+    #[serde(default)]
+    pub version_maxima: Vec<String>,
+    #[serde(default)]
+    pub versiones_excluidas: Vec<String>,
+    #[serde(default)]
+    pub cifrados: Vec<String>,
+    #[serde(default)]
+    pub grupos: Vec<String>,
+    #[serde(default)]
+    pub algoritmos: Vec<ListaAlgoritmosServicio>,
+    #[serde(default)]
+    pub avisos: Vec<AvisoServicio>,
+    #[serde(default)]
+    pub nota: Option<String>,
+}
+
+/// Servicios descritos en `servicios.toml`.
+#[derive(Debug, Clone, Deserialize)]
+pub struct BaseServicios {
+    pub meta: Meta,
+    #[serde(rename = "servicio", default)]
+    pub servicios: Vec<ServicioDef>,
+}
+
+/// Receta de corrección (`remediacion.toml`).
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Receta {
+    pub id: String,
+    pub titulo: String,
+    pub titulo_en: String,
+    #[serde(default)]
+    pub pasos: Vec<String>,
+    #[serde(default)]
+    pub pasos_en: Vec<String>,
+    #[serde(default)]
+    pub referencias: Vec<String>,
+    #[serde(default)]
+    pub algoritmos: Vec<String>,
+    #[serde(default)]
+    pub tipos: Vec<String>,
+    #[serde(default)]
+    pub riesgos: Vec<Riesgo>,
+    #[serde(default)]
+    pub capacidades: Vec<String>,
+    #[serde(default)]
+    pub garantias: Vec<Garantia>,
+    /// Códigos de hallazgo del diagnóstico (`CERT-VENCE`, `IKE-CLASICO`...).
+    #[serde(default)]
+    pub hallazgos: Vec<String>,
+}
+
+/// Tipos de activo que puede nombrar una receta.
+const TIPOS_RECETA: [&str; 5] = [
+    "algorithm",
+    "certificate",
+    "related-crypto-material",
+    "protocol",
+    "library",
+];
+
+impl Receta {
+    /// Título en el idioma actual.
+    pub fn titulo(&self) -> &str {
+        if crate::idioma::es_ingles() {
+            &self.titulo_en
+        } else {
+            &self.titulo
+        }
+    }
+
+    /// Pasos en el idioma actual.
+    pub fn pasos(&self) -> &[String] {
+        if crate::idioma::es_ingles() && !self.pasos_en.is_empty() {
+            &self.pasos_en
+        } else {
+            &self.pasos
+        }
+    }
+
+    fn criterios_de_activo(&self) -> bool {
+        !(self.algoritmos.is_empty()
+            && self.tipos.is_empty()
+            && self.riesgos.is_empty()
+            && self.capacidades.is_empty()
+            && self.garantias.is_empty())
+    }
+
+    fn aplica(&self, a: &ActivoReceta) -> bool {
+        self.criterios_de_activo()
+            && (self.algoritmos.is_empty()
+                || a.algoritmo
+                    .is_some_and(|x| self.algoritmos.iter().any(|y| y == x)))
+            && (self.tipos.is_empty() || self.tipos.iter().any(|t| t == a.tipo))
+            && (self.riesgos.is_empty() || self.riesgos.contains(&a.riesgo))
+            && (self.capacidades.is_empty() || self.capacidades.iter().any(|c| c == a.capacidad))
+            && (self.garantias.is_empty()
+                || a.garantia.is_some_and(|g| self.garantias.contains(&g)))
+    }
+}
+
+/// Lo que una receta necesita saber de un activo.
+#[derive(Debug, Clone, Copy)]
+pub struct ActivoReceta<'a> {
+    /// Identificador de `algoritmos.toml`, si el activo es un algoritmo.
+    pub algoritmo: Option<&'a str>,
+    /// Tipo de activo según CycloneDX (`algorithm`, `certificate`...).
+    pub tipo: &'a str,
+    pub riesgo: Riesgo,
+    pub capacidad: &'a str,
+    pub garantia: Option<Garantia>,
+}
+
+/// Recetas descritas en `remediacion.toml`.
+#[derive(Debug, Clone, Deserialize)]
+pub struct BaseRecetas {
+    pub meta: Meta,
+    #[serde(rename = "receta", default)]
+    pub recetas: Vec<Receta>,
+}
+
+impl BaseRecetas {
+    /// Interpreta y valida `remediacion.toml` contra el resto de la base.
+    fn desde_texto(t: &str, c: &Conocimiento) -> Result<Self, ErrorConocimiento> {
+        let b: BaseRecetas = toml::from_str(t).map_err(|e| ErrorConocimiento::Formato {
+            archivo: "remediacion.toml".into(),
+            fuente: Box::new(e),
+        })?;
+        let error = |t: String| {
+            Err(ErrorConocimiento::Inconsistencia(format!(
+                "remediacion.toml: {t}"
+            )))
+        };
+        let mut ids = std::collections::HashSet::new();
+        for r in &b.recetas {
+            if !ids.insert(r.id.as_str()) {
+                return error(format!("receta duplicada: {}", r.id));
+            }
+            if !r.criterios_de_activo() && r.hallazgos.is_empty() {
+                return error(format!("{} no declara a qué se aplica", r.id));
+            }
+            if r.pasos.is_empty() || (!r.pasos_en.is_empty() && r.pasos_en.len() != r.pasos.len()) {
+                return error(format!("{} debe tener pasos, y en inglés los mismos", r.id));
+            }
+            if let Some(x) = r.algoritmos.iter().find(|x| c.por_id(x).is_none()) {
+                return error(format!("{} usa un algoritmo inexistente: {x}", r.id));
+            }
+            if let Some(x) = r.capacidades.iter().find(|x| c.capacidad(x).is_none()) {
+                return error(format!("{} usa una capacidad inexistente: {x}", r.id));
+            }
+            if let Some(x) = r.tipos.iter().find(|x| !TIPOS_RECETA.contains(&x.as_str())) {
+                return error(format!("{} usa un tipo de activo desconocido: {x}", r.id));
+            }
+        }
+        Ok(b)
+    }
+}
+
 /// Rama de una biblioteca con su fecha de fin de soporte.
 #[derive(Debug, Clone, Deserialize)]
 pub struct RamaDef {
@@ -234,6 +443,9 @@ pub struct BibliotecaDef {
     pub nota: Option<String>,
     #[serde(default)]
     pub version_en_metadatos: bool,
+    /// Capacidad tecnológica (predeterminada: código de aplicaciones).
+    #[serde(default)]
+    pub capacidad: Option<String>,
     #[serde(rename = "rama", default)]
     pub ramas: Vec<RamaDef>,
 }
@@ -400,6 +612,8 @@ pub struct Conocimiento {
     pub codigo: BaseCodigo,
     pub meta_bibliotecas: Meta,
     pub bibliotecas: Vec<BibliotecaDef>,
+    pub servicios: BaseServicios,
+    pub recetas: BaseRecetas,
     por_paquete: HashMap<String, usize>,
     por_oid: HashMap<String, usize>,
     por_alias: HashMap<String, usize>,
@@ -436,12 +650,16 @@ impl Conocimiento {
                 Ok(incrustado.to_string())
             }
         };
-        Self::desde_partes(
+        let mut c = Self::desde_partes_con_servicios(
             &leer("algoritmos.toml")?,
             &leer("madurez.toml")?,
             &opcional("codigo.toml", CODIGO_EMBEBIDO)?,
             &opcional("bibliotecas.toml", BIBLIOTECAS_EMBEBIDAS)?,
-        )
+            &opcional("servicios.toml", SERVICIOS_EMBEBIDOS)?,
+        )?;
+        c.recetas =
+            BaseRecetas::desde_texto(&opcional("remediacion.toml", RECETAS_EMBEBIDAS)?, &c)?;
+        Ok(c)
     }
 
     pub fn desde_textos(algoritmos: &str, madurez: &str) -> Result<Self, ErrorConocimiento> {
@@ -453,6 +671,22 @@ impl Conocimiento {
         madurez: &str,
         codigo: &str,
         bibliotecas: &str,
+    ) -> Result<Self, ErrorConocimiento> {
+        Self::desde_partes_con_servicios(
+            algoritmos,
+            madurez,
+            codigo,
+            bibliotecas,
+            SERVICIOS_EMBEBIDOS,
+        )
+    }
+
+    pub fn desde_partes_con_servicios(
+        algoritmos: &str,
+        madurez: &str,
+        codigo: &str,
+        bibliotecas: &str,
+        servicios: &str,
     ) -> Result<Self, ErrorConocimiento> {
         let a: ArchivoAlgoritmos =
             toml::from_str(algoritmos).map_err(|e| ErrorConocimiento::Formato {
@@ -520,11 +754,20 @@ impl Conocimiento {
                 }
             }
         }
+        let capacidad_valida = |id: &str| m.capacidades.iter().any(|c| c.id == id);
         for r in &codigo.reglas {
             for l in &r.lenguajes {
                 if !LENGUAJES_CODIGO.contains(&l.as_str()) {
                     return incoherencia(format!("codigo.toml: lenguaje desconocido: {l}"));
                 }
+            }
+            if let Some(cap) = &r.capacidad
+                && !capacidad_valida(cap)
+            {
+                return incoherencia(format!(
+                    "codigo.toml: la regla «{}» usa una capacidad inexistente: {cap}",
+                    r.patron
+                ));
             }
             match (&r.algoritmo, &r.espacio) {
                 (Some(id), None) if !por_id.contains_key(id) => {
@@ -566,6 +809,14 @@ impl Conocimiento {
                     return incoherencia(format!("bibliotecas.toml: paquete duplicado: {p}"));
                 }
             }
+            if let Some(cap) = &def.capacidad
+                && !capacidad_valida(cap)
+            {
+                return incoherencia(format!(
+                    "bibliotecas.toml: {} usa una capacidad inexistente: {cap}",
+                    def.id
+                ));
+            }
             for r in &def.ramas {
                 if fecha_en_dias(&r.fin_soporte).is_none() {
                     return incoherencia(format!(
@@ -575,13 +826,33 @@ impl Conocimiento {
                 }
             }
         }
+        let sv: BaseServicios =
+            toml::from_str(servicios).map_err(|e| ErrorConocimiento::Formato {
+                archivo: "servicios.toml".into(),
+                fuente: Box::new(e),
+            })?;
+        let mut ids_servicio = std::collections::HashSet::new();
+        for s in &sv.servicios {
+            if !ids_servicio.insert(s.id.as_str()) {
+                return incoherencia(format!("servicios.toml: servicio duplicado: {}", s.id));
+            }
+            if !capacidad_valida(&s.capacidad) {
+                return incoherencia(format!(
+                    "servicios.toml: {} usa una capacidad inexistente: {}",
+                    s.id, s.capacidad
+                ));
+            }
+            if s.archivos.is_empty() {
+                return incoherencia(format!("servicios.toml: {} no declara archivos", s.id));
+            }
+        }
         if !m.capacidades.iter().any(|c| c.id == "sin-clasificar") {
             return Err(ErrorConocimiento::Inconsistencia(
                 "madurez.toml debe definir la capacidad 'sin-clasificar'".into(),
             ));
         }
 
-        Ok(Self {
+        let mut c = Self {
             meta_algoritmos: a.meta,
             meta_madurez: m.meta,
             politica: a.politica,
@@ -591,12 +862,40 @@ impl Conocimiento {
             codigo,
             meta_bibliotecas: b.meta,
             bibliotecas: b.bibliotecas,
+            servicios: sv,
+            recetas: BaseRecetas {
+                meta: Meta {
+                    version: String::new(),
+                    descripcion: None,
+                    fuente: None,
+                    edicion: None,
+                    fecha_evidencia: None,
+                    caso_difusion: None,
+                },
+                recetas: Vec::new(),
+            },
             por_paquete,
             por_oid,
             por_alias,
             por_id,
             por_codigo_tls,
-        })
+        };
+        // Las recetas se validan contra los algoritmos y capacidades ya cargados.
+        c.recetas = BaseRecetas::desde_texto(RECETAS_EMBEBIDAS, &c)?;
+        Ok(c)
+    }
+
+    /// Primera receta que se aplica a un activo.
+    pub fn receta_para(&self, a: &ActivoReceta) -> Option<&Receta> {
+        self.recetas.recetas.iter().find(|r| r.aplica(a))
+    }
+
+    /// Receta para un código de hallazgo del diagnóstico.
+    pub fn receta_de_hallazgo(&self, codigo: &str) -> Option<&Receta> {
+        self.recetas
+            .recetas
+            .iter()
+            .find(|r| r.hallazgos.iter().any(|h| h == codigo))
     }
 
     /// Biblioteca por paquete: ecosistema («pypi», «npm»...) y nombre.
@@ -664,10 +963,12 @@ impl Conocimiento {
     /// Texto de procedencia para reportes y metadatos del CBOM.
     pub fn procedencia(&self) -> String {
         format!(
-            "algoritmos {} · código {} · bibliotecas {} · madurez {} ({}, edición {})",
+            "algoritmos {} · código {} · bibliotecas {} · servicios {} · remediación {} · madurez {} ({}, edición {})",
             self.meta_algoritmos.version,
             self.codigo.meta.version,
             self.meta_bibliotecas.version,
+            self.servicios.meta.version,
+            self.recetas.meta.version,
             self.meta_madurez.version,
             self.meta_madurez
                 .fuente
@@ -728,8 +1029,88 @@ mod pruebas {
         let c = Conocimiento::embebido();
         assert!(c.algoritmos.len() > 60);
         assert_eq!(c.politica.as_ref().unwrap().anio_retiro_vulnerables, 2030);
-        assert_eq!(c.capacidades.len(), 11);
+        assert_eq!(c.capacidades.len(), 13);
         assert_eq!(c.niveles.len(), 7);
+    }
+
+    #[test]
+    fn recetas_de_correccion() {
+        let c = Conocimiento::embebido();
+        let receta = |algoritmo: Option<&str>, tipo: &str, riesgo, capacidad: &str, garantia| {
+            c.receta_para(&ActivoReceta {
+                algoritmo,
+                tipo,
+                riesgo,
+                capacidad,
+                garantia,
+            })
+            .map(|r| r.id.as_str())
+        };
+        let conf = Some(Garantia::Confidencialidad);
+        let aut = Some(Garantia::Autenticacion);
+        assert_eq!(
+            receta(
+                Some("x25519"),
+                "algorithm",
+                Riesgo::VulnerableCuantico,
+                "servidores-web",
+                conf
+            ),
+            Some("tls-hibrido")
+        );
+        assert_eq!(
+            receta(
+                Some("x25519"),
+                "algorithm",
+                Riesgo::VulnerableCuantico,
+                "vpn-cifrado-red",
+                conf
+            ),
+            Some("vpn-hibrido")
+        );
+        assert_eq!(
+            receta(Some("rsa"), "algorithm", Riesgo::RotoClasico, "pki-ca", aut),
+            Some("rsa-corta")
+        );
+        assert_eq!(
+            receta(
+                None,
+                "certificate",
+                Riesgo::VulnerableCuantico,
+                "servidores-web",
+                aut
+            ),
+            Some("firmas-pq")
+        );
+        assert_eq!(
+            receta(
+                None,
+                "library",
+                Riesgo::VulnerableCuantico,
+                "codigo-aplicacion",
+                conf
+            ),
+            Some("bibliotecas")
+        );
+        assert_eq!(
+            receta(None, "protocol", Riesgo::HibridoPq, "servidores-web", conf),
+            None
+        );
+        assert_eq!(
+            c.receta_de_hallazgo("KEX-CLASICO").map(|r| r.id.as_str()),
+            Some("tls-hibrido")
+        );
+        assert_eq!(
+            c.receta_de_hallazgo("CERT-VENCE").map(|r| r.id.as_str()),
+            Some("vigencia-certificados")
+        );
+        assert!(c.receta_de_hallazgo("CON-LENTO").is_none());
+        assert!(
+            c.recetas
+                .recetas
+                .iter()
+                .all(|r| r.pasos_en.len() == r.pasos.len())
+        );
     }
 
     #[test]

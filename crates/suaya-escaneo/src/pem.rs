@@ -184,6 +184,17 @@ fn capacidad_del_certificado(cert: &X509Certificate) -> &'static str {
     "sin-clasificar"
 }
 
+/// Analiza un certificado DER hallado dentro de otro archivo (un almacén de
+/// llaves), con la capacidad que se deduce de sus usos.
+pub(crate) fn certificado_en_archivo(
+    der: &[u8],
+    a: &Archivo,
+    c: &Conocimiento,
+    almacen: bool,
+) -> Result<Vec<Activo>, String> {
+    analizar_certificado(der, a, None, c, almacen)
+}
+
 fn analizar_certificado(
     der: &[u8],
     a: &Archivo,
@@ -326,6 +337,119 @@ fn analizar_certificado(
 fn fecha(dt: ::time::OffsetDateTime) -> String {
     dt.format(&::time::format_description::well_known::Rfc3339)
         .unwrap_or_default()
+}
+
+/// Datos de un certificado para diagnosticar un intercambio de certificados.
+#[derive(Debug, Clone, PartialEq)]
+pub struct ResumenCertificado {
+    pub nombre: String,
+    pub sujeto: String,
+    pub emisor: String,
+    /// Nombres DNS y direcciones IP de la extensión SubjectAltName.
+    pub nombres_alternativos: Vec<String>,
+    pub no_antes: String,
+    pub no_despues: String,
+    /// Días completos hasta `no_despues` (negativo si ya venció).
+    pub dias_restantes: i64,
+    pub es_ca: bool,
+    /// Sujeto y emisor idénticos.
+    pub autofirmado: bool,
+    pub algoritmo_llave: String,
+    pub tamano_llave: Option<u32>,
+    pub riesgo_llave: suaya_core::Riesgo,
+    pub algoritmo_firma: String,
+    pub riesgo_firma: suaya_core::Riesgo,
+    /// Huella SHA-256 del TBSCertificate, en hexadecimal.
+    pub huella_sha256: String,
+    pub tamano_der: usize,
+    /// Sujeto y emisor en DER, para comprobar el orden de una cadena.
+    pub sujeto_der: Vec<u8>,
+    pub emisor_der: Vec<u8>,
+}
+
+/// Resume un certificado DER con los nombres y riesgos de la base de conocimiento.
+pub fn resumen_certificado(der: &[u8], c: &Conocimiento) -> Result<ResumenCertificado, String> {
+    let (_, cert) =
+        X509Certificate::from_der(der).map_err(|e| format!("certificado inválido: {e}"))?;
+    let oid_firma = cert.signature_algorithm.algorithm.to_id_string();
+    let def_firma = c.por_oid(&oid_firma);
+    let spki = cert.public_key();
+    let (def_llave, respaldo) = def_de_spki(spki, c);
+    let tamano = spki
+        .parsed()
+        .ok()
+        .map(|p| p.key_size() as u32)
+        .filter(|&t| t > 0);
+    let mut nombres_alternativos = Vec::new();
+    if let Ok(Some(san)) = cert.subject_alternative_name() {
+        for n in &san.value.general_names {
+            match n {
+                GeneralName::DNSName(d) => nombres_alternativos.push(d.to_string()),
+                GeneralName::IPAddress(ip) => match ip.len() {
+                    4 => nombres_alternativos
+                        .push(std::net::Ipv4Addr::new(ip[0], ip[1], ip[2], ip[3]).to_string()),
+                    16 => {
+                        let mut b = [0u8; 16];
+                        b.copy_from_slice(ip);
+                        nombres_alternativos.push(std::net::Ipv6Addr::from(b).to_string());
+                    }
+                    _ => {}
+                },
+                _ => {}
+            }
+        }
+    }
+    let sujeto = cert.subject().to_string();
+    let no_despues = cert.validity().not_after.to_datetime();
+    Ok(ResumenCertificado {
+        nombre: cert
+            .subject()
+            .iter_common_name()
+            .next()
+            .and_then(|cn| cn.as_str().ok())
+            .map(str::to_string)
+            .unwrap_or_else(|| sujeto.clone()),
+        sujeto,
+        emisor: cert.issuer().to_string(),
+        nombres_alternativos,
+        no_antes: fecha(cert.validity().not_before.to_datetime()),
+        no_despues: fecha(no_despues),
+        dias_restantes: (no_despues - ::time::OffsetDateTime::now_utc()).whole_days(),
+        es_ca: cert.is_ca(),
+        autofirmado: cert.subject().as_raw() == cert.issuer().as_raw(),
+        algoritmo_llave: def_llave.map(|d| d.nombre.clone()).unwrap_or(respaldo),
+        tamano_llave: tamano,
+        riesgo_llave: def_llave
+            .map(|d| d.riesgo_para_tamano(tamano))
+            .unwrap_or(suaya_core::Riesgo::Desconocido),
+        algoritmo_firma: def_firma
+            .map(|d| d.nombre.clone())
+            .unwrap_or_else(|| format!("OID {oid_firma}")),
+        riesgo_firma: def_firma
+            .map(|d| d.riesgo)
+            .unwrap_or(suaya_core::Riesgo::Desconocido),
+        huella_sha256: huella_sha256(cert.tbs_certificate.as_ref()),
+        tamano_der: der.len(),
+        sujeto_der: cert.subject().as_raw().to_vec(),
+        emisor_der: cert.issuer().as_raw().to_vec(),
+    })
+}
+
+/// Algoritmo (id de la base), nombre y tamaño de una llave
+/// pública en SubjectPublicKeyInfo DER (por ejemplo, una llave DKIM).
+pub fn llave_de_spki(
+    der: &[u8],
+    c: &Conocimiento,
+) -> Option<(Option<String>, String, Option<u32>)> {
+    let (_, spki) = SubjectPublicKeyInfo::from_der(der).ok()?;
+    let (def, respaldo) = def_de_spki(&spki, c);
+    let tamano = spki
+        .parsed()
+        .ok()
+        .map(|p| p.key_size() as u32)
+        .filter(|&t| t > 0);
+    let nombre = def.map_or(respaldo, |d| d.nombre.clone());
+    Some((def.map(|d| d.id.clone()), nombre, tamano))
 }
 
 /// Resuelve la definición del algoritmo de una SubjectPublicKeyInfo.

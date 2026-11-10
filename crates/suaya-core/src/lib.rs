@@ -13,6 +13,7 @@
 
 pub mod clasificacion;
 pub mod conocimiento;
+pub mod contexto;
 pub mod enlace;
 pub mod idioma;
 pub mod modelo;
@@ -20,8 +21,8 @@ pub mod politica;
 
 pub use clasificacion::{Accion, Clasificacion, clasificar, etiqueta_prioridad};
 pub use conocimiento::{
-    AlgoritmoDef, BibliotecaDef, Conocimiento, ErrorConocimiento, EvaluacionBiblioteca,
-    comparar_versiones,
+    ActivoReceta, AlgoritmoDef, BibliotecaDef, Conocimiento, ErrorConocimiento,
+    EvaluacionBiblioteca, Receta, ServicioDef, comparar_versiones,
 };
 pub use modelo::*;
 pub use politica::{Cumplimiento, EstadoCumplimiento, Perfil};

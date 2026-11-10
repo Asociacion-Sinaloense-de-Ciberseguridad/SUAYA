@@ -1,0 +1,11 @@
+   Compiling tokio v1.54.1
+   Compiling rustls-webpki v0.103.16
+   Compiling rustls v0.23.46
+   Compiling hyper v1.12.0
+   Compiling tower v0.5.3
+   Compiling hyper-util v0.1.21
+   Compiling axum v0.8.9
+   Compiling suaya-red v1.6.0 (/Users/enriquerangel/Documents/Quantum/SUAYA/suaya v1.6/crates/suaya-red)
+   Compiling suaya-api v1.6.0 (/Users/enriquerangel/Documents/Quantum/SUAYA/suaya v1.6/crates/suaya-api)
+   Compiling suaya v1.6.0 (/Users/enriquerangel/Documents/Quantum/SUAYA/suaya v1.6/crates/suaya-cli)
+    Finished `release` profile [optimized] target(s) in 36.17s

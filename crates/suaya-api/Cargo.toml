@@ -1,5 +1,6 @@
 [package]
 name = "suaya-api"
+description = "API local de inventario criptográfico de Suaya, con autenticación, ownership y cuotas."
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -8,6 +9,7 @@ license.workspace = true
 suaya-core.workspace = true
 suaya-escaneo.workspace = true
 suaya-cbom.workspace = true
+suaya-red.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 sha2.workspace = true
@@ -18,7 +20,7 @@ anyhow.workspace = true
 clap = { workspace = true, features = ["derive"] }
 axum = "0.8"
 tokio = { version = "1", features = ["macros", "rt-multi-thread", "net", "signal", "sync", "time"] }
-rusqlite = { version = "0.37", features = ["bundled"] }
+rusqlite = { version = "0.41", features = ["bundled"] }
 subtle = "2.6"
 [dev-dependencies]
 tower = { version = "0.5", features = ["util"] }

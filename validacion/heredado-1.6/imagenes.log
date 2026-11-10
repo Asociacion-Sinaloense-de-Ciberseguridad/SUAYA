@@ -1,0 +1,9 @@
+test_complete_docker_archive (__main__.ImageSecurity.test_complete_docker_archive) ... ok
+test_duplicate_layers_and_entries_rejected (__main__.ImageSecurity.test_duplicate_layers_and_entries_rejected) ... ok
+test_invalid_layer_type_rejected (__main__.ImageSecurity.test_invalid_layer_type_rejected) ... ok
+test_oci_digest_and_missing_layer (__main__.ImageSecurity.test_oci_digest_and_missing_layer) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.144s
+
+OK

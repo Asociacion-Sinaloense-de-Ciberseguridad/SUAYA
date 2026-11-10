@@ -9,6 +9,26 @@ use crate::VERSION_CYCLONEDX;
 /// Modos válidos en el enum `mode` de CycloneDX 1.7.
 const MODOS: &[&str] = &["cbc", "ecb", "ccm", "gcm", "cfb", "ofb", "ctr"];
 
+/// Valores de `protocolProperties.type` en CycloneDX 1.7. Los demás
+/// protocolos (Kerberos, NTLM, DNSSEC, OpenID Connect...) se exportan como
+/// `other` y conservan su tipo en la propiedad `suaya:tipo-protocolo`.
+const TIPOS_PROTOCOLO: &[&str] = &[
+    "tls",
+    "ssh",
+    "ipsec",
+    "ike",
+    "sstp",
+    "wpa",
+    "dtls",
+    "quic",
+    "eap-aka",
+    "eap-aka-prime",
+    "prins",
+    "5g-aka",
+    "other",
+    "unknown",
+];
+
 #[derive(Debug, Clone, Default)]
 pub struct OpcionesCbom {
     /// Nombre del sistema escaneado (componente principal del CBOM).
@@ -291,6 +311,11 @@ fn componente(a: &Activo, c: &Conocimiento) -> Value {
     if let Detalles::Biblioteca { biblioteca_id, .. } = &a.detalles {
         props.push(prop("suaya:biblioteca", biblioteca_id));
     }
+    if let Detalles::Protocolo { tipo_protocolo, .. } = &a.detalles
+        && !TIPOS_PROTOCOLO.contains(&tipo_protocolo.as_str())
+    {
+        props.push(prop("suaya:tipo-protocolo", tipo_protocolo));
+    }
     if let Detalles::Certificado {
         identidad_llave: Some(id),
         ..
@@ -327,6 +352,38 @@ fn componente(a: &Activo, c: &Conocimiento) -> Value {
         }
         if !cu.nota.is_empty() {
             props.push(prop("suaya:cumplimiento-nota", &traducir(&cu.nota)));
+        }
+    }
+    if let Some(o) = &a.organizacion {
+        for x in &o.sistemas {
+            props.push(prop("suaya:sistema", x));
+        }
+        for x in &o.responsables {
+            props.push(prop("suaya:responsable", x));
+        }
+        if let Some(x) = o.criticidad {
+            props.push(prop("suaya:criticidad", x.como_texto()));
+        }
+        if let Some(x) = o.exposicion {
+            props.push(prop("suaya:exposicion", x.como_texto()));
+        }
+        if let Some(m) = &o.mosca {
+            props.push(prop("suaya:mosca-vida-datos", &m.vida_datos.to_string()));
+            props.push(prop("suaya:mosca-migracion", &m.migracion.to_string()));
+            props.push(prop("suaya:mosca-horizonte", &m.horizonte.to_string()));
+            props.push(prop("suaya:mosca-holgura", &m.holgura.to_string()));
+        }
+        if let Some(e) = &o.excepcion {
+            props.push(prop("suaya:excepcion", &e.id));
+            props.push(prop("suaya:excepcion-vence", &e.vence));
+            props.push(prop(
+                "suaya:excepcion-vigente",
+                if e.vigente { "true" } else { "false" },
+            ));
+            props.push(prop("suaya:excepcion-justificacion", &e.justificacion));
+            if let Some(x) = &e.aprobada_por {
+                props.push(prop("suaya:excepcion-aprobada-por", x));
+            }
         }
     }
     if !props.is_empty() {
@@ -475,7 +532,12 @@ fn propiedades_cripto(a: &Activo, c: &Conocimiento) -> Value {
             cifrados,
         } => {
             let mut p = Map::new();
-            p.insert("type".into(), json!(tipo_protocolo));
+            let tipo = if TIPOS_PROTOCOLO.contains(&tipo_protocolo.as_str()) {
+                tipo_protocolo.as_str()
+            } else {
+                "other"
+            };
+            p.insert("type".into(), json!(tipo));
             if !versiones.is_empty() {
                 p.insert("version".into(), json!(versiones.join(", ")));
             }

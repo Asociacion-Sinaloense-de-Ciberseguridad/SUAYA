@@ -563,7 +563,7 @@ fn perfiles_de_politica() {
 
     // Un perfil propio en TOML se carga desde archivo; uno inexistente falla.
     assert!(Perfil::cargar("no-existe").is_err());
-    assert_eq!(Perfil::incluidos().len(), 3);
+    assert_eq!(Perfil::incluidos().len(), 7);
 }
 
 #[test]

@@ -1,4 +1,1 @@
-    Checking suaya-red v1.5.0 (/private/tmp/suaya-v1.5/crates/suaya-red)
-    Checking suaya-api v1.5.0 (/private/tmp/suaya-v1.5/crates/suaya-api)
-    Checking suaya v1.5.0 (/private/tmp/suaya-v1.5/crates/suaya-cli)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.74s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.21s

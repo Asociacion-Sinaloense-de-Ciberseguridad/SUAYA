@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Suaya · panel</title>
+<link rel="stylesheet" href="/panel/app.css">
+<script src="/panel/app.js" defer></script>
+</head>
+<body>
+<header>
+  <h1>Suaya</h1>
+  <p data-t="lema">Inventario criptográfico y preparación poscuántica</p>
+</header>
+<main>
+  <section id="acceso">
+    <h2 data-t="acceso">Acceso</h2>
+    <form id="form-token" autocomplete="off">
+      <label for="token" data-t="token">Token de la API</label>
+      <input id="token" type="password" minlength="32" maxlength="256" required>
+      <button type="submit" data-t="conectar">Conectar</button>
+      <button type="button" id="salir" data-t="salir" hidden>Salir</button>
+    </form>
+    <p class="nota" data-t="nota-token">El token se guarda solo en esta pestaña (sessionStorage) y se envía en la cabecera Authorization.</p>
+  </section>
+
+  <div id="trabajo" hidden>
+    <section>
+      <h2 data-t="escanear">Escanear</h2>
+      <div class="fila">
+        <label><span data-t="objetivo">Objetivo</span> <select id="objetivo"></select></label>
+        <label><span data-t="perfil">Perfil</span> <select id="perfil"><option value="" data-t="sin-perfil">Sin perfil</option></select></label>
+        <button id="escanear" data-t="escanear">Escanear</button>
+      </div>
+      <p class="nota" id="nota-organizacion" hidden data-t="nota-organizacion">El servidor aplica el contexto de la organización configurado por el operador.</p>
+    </section>
+
+    <section>
+      <h2 data-t="diagnosticar">Diagnosticar un servicio</h2>
+      <div class="fila">
+        <label><span data-t="servicio">Servicio</span> <select id="servicio"></select></label>
+        <button id="diagnosticar" data-t="diagnosticar-boton">Diagnosticar</button>
+      </div>
+      <div id="diagnostico"></div>
+    </section>
+
+    <section>
+      <h2 data-t="escaneos">Escaneos</h2>
+      <div class="fila">
+        <label><span data-t="formato">Formato de descarga</span>
+          <select id="formato">
+            <option value="html">HTML</option>
+            <option value="md">Markdown</option>
+            <option value="pci">PCI DSS (Markdown)</option>
+            <option value="sarif">SARIF</option>
+            <option value="csv">CSV</option>
+            <option value="jsonl">JSON Lines</option>
+            <option value="tickets">Tickets (JSON)</option>
+          </select>
+        </label>
+        <button id="comparar" data-t="comparar">Comparar los dos marcados</button>
+        <button id="actualizar" data-t="actualizar">Actualizar</button>
+      </div>
+      <div class="tabla"><table>
+        <thead><tr><th></th><th data-t="fecha">Fecha</th><th data-t="estado">Estado</th><th data-t="acciones">Acciones</th></tr></thead>
+        <tbody id="escaneos"></tbody>
+      </table></div>
+      <div id="detalle"></div>
+    </section>
+
+    <section>
+      <h2 data-t="tendencias">Tendencias</h2>
+      <div class="fila">
+        <label><span data-t="objetivo">Objetivo</span> <select id="objetivo-tendencias"><option value="" data-t="todos">Todos</option></select></label>
+        <button id="ver-tendencias" data-t="ver">Ver</button>
+      </div>
+      <div id="tendencias"></div>
+    </section>
+  </div>
+  <p id="estado" role="status" aria-live="polite"></p>
+</main>
+</body>
+</html>

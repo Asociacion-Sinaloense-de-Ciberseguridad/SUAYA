@@ -1,0 +1,67 @@
+:root {
+  --fondo: #f6f4ef;
+  --papel: #ffffff;
+  --texto: #1d2321;
+  --suave: #5b6461;
+  --linea: #d9d5cc;
+  --acento: #1f6f5c;
+  --peligro: #a3322c;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fondo: #151918;
+    --papel: #1d2321;
+    --texto: #e8ebe9;
+    --suave: #a7b0ad;
+    --linea: #34403c;
+    --acento: #5fbfa5;
+    --peligro: #e2827b;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--fondo);
+  color: var(--texto);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+header, main { max-width: 1100px; margin: 0 auto; padding: 16px; }
+header h1 { margin: 8px 0 0; font-size: 26px; }
+header p { margin: 0; color: var(--suave); }
+section {
+  background: var(--papel);
+  border: 1px solid var(--linea);
+  border-radius: 10px;
+  padding: 16px;
+  margin: 0 0 16px;
+}
+h2 { margin: 0 0 12px; font-size: 18px; }
+h3 { font-size: 16px; margin: 16px 0 8px; }
+h4 { font-size: 14px; margin: 12px 0 6px; color: var(--suave); }
+.fila, form { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+label { display: inline-flex; gap: 6px; align-items: center; }
+input, select, button {
+  font: inherit;
+  padding: 6px 10px;
+  border: 1px solid var(--linea);
+  border-radius: 6px;
+  background: var(--papel);
+  color: var(--texto);
+}
+button { background: var(--acento); color: #fff; border-color: var(--acento); cursor: pointer; }
+button.peligro { background: transparent; color: var(--peligro); border-color: var(--peligro); }
+.acciones button { margin-right: 6px; padding: 3px 8px; }
+.nota { color: var(--suave); font-size: 13px; margin: 8px 0 0; }
+.tabla { overflow-x: auto; margin: 8px 0; }
+table { border-collapse: collapse; width: 100%; }
+th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--linea); vertical-align: top; }
+th { color: var(--suave); font-weight: 600; font-size: 13px; }
+pre { white-space: pre-wrap; background: var(--fondo); padding: 10px; border-radius: 6px; overflow-x: auto; }
+.receta { font-weight: 600; margin: 10px 0 4px; }
+#estado { min-height: 1.5em; }
+#estado.error { color: var(--peligro); }
+@media (max-width: 600px) {
+  .fila, form { flex-direction: column; align-items: stretch; }
+  label { flex-direction: column; align-items: stretch; }
+}

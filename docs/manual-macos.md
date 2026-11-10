@@ -1,393 +1,152 @@
-# Manual de Uso de Suaya en macOS
+# Suaya en macOS · versión 1.7
 
-Este manual cubre la instalación, configuración y uso de Suaya en macOS 13 (Ventana) o posterior.
+Esta guía cubre la aplicación de escritorio y el uso de la línea de órdenes en macOS. El uso general de Suaya está en el [manual de uso](../Manual_SUAYA%20v1.7.md) y la referencia de cada escáner en el [manual de la CLI](manual-cli.md).
 
-## Requisitos de macOS
+## Requisitos
 
-- **macOS 13** o posterior.
-- **Rust 1.99.1** o posterior (para compilación desde fuente).
-- **Xcode Command Line Tools** instalados.
-- Binarios precompilados para macOS (arm64 para Apple Silicon, x86_64 para Intel).
+- macOS 13 o posterior. La entrega incluye binarios para Apple Silicon (arm64); en un Mac con Intel, compile desde la fuente.
+- Para compilar: Rust 1.89 o posterior (validado con 1.99.1) y las herramientas de línea de órdenes de Xcode (`xcode-select --install`).
 
 ## Instalación
 
-### Opción 1: Binario precompilado (Recomendado)
+### Aplicación
 
-1. Descarga el paquete desde GitHub Releases:
+1. Abra `build/SUAYA-1.7.0-macos-arm64.dmg`.
+2. Arrastre **SUAYA.app** a **Aplicaciones**.
+3. La app tiene firma local ad hoc, sin notarización: la primera vez, haga clic derecho sobre ella y elija **Abrir**.
 
-```bash
-# Para Apple Silicon (arm64)
-curl -LO https://github.com/[OWNER]/suaya/releases/download/v1.5.0/suaya-1.5.0-arm64.tar.gz
+Para comprobar la integridad, compare el hash del DMG con `validacion/dmg.sha256` o con `SHA256SUMS`:
 
-# Para Intel (x86_64)
-curl -LO https://github.com/[OWNER]/suaya/releases/download/v1.5.0/suaya-1.5.0-x86_64.tar.gz
+```sh
+shasum -a 256 build/SUAYA-1.7.0-macos-arm64.dmg
 ```
 
-2. Extrae y mueve a `/usr/local/bin`:
+La aplicación incluye su propio motor (`SUAYA.app/Contents/MacOS/suaya-engine`); no necesita la CLI instalada.
 
-```bash
-tar xzf suaya-1.5.0-*.tar.gz
-sudo mv suaya /usr/local/bin/
-chmod +x /usr/local/bin/suaya
+### Línea de órdenes
+
+```sh
+sudo cp bin/suaya bin/suaya-api /usr/local/bin/
+suaya --version     # suaya 1.7.0
 ```
 
-3. Verifica la instalación:
+### Desde la fuente
 
-```bash
-suaya --version
+```sh
+cargo build --release --locked -p suaya -p suaya-api
+SUAYA_BUILD_DIR=/private/tmp/suaya-build SUAYA_DMG=1 bash empaquetado/build-macos.sh
 ```
 
-### Opción 2: Instalación con Homebrew
+El script compila el motor y la app, los firma ad hoc, verifica la firma y crea el DMG; ante cualquier error se detiene sin generar un paquete incompleto.
 
-```bash
-# Agrega el tap (si está disponible)
-brew tap [OWNER]/suaya
+**Si el proyecto está en iCloud Drive**, compile fuera de la carpeta sincronizada:
 
-# Instala
-brew install suaya
+- `SUAYA_BUILD_DIR` fuera de iCloud, porque iCloud agrega atributos extendidos que hacen fallar `codesign` («resource fork, Finder information, or similar detritus»).
+- `CARGO_TARGET_DIR=/private/tmp/suaya-target`, para no sincronizar gigabytes de compilación.
 
-# Verifica
-suaya --version
+Copie los resultados con `ditto --norsrc --noextattr`. Por la misma razón, una copia de `SUAYA.app` dentro de iCloud puede no pasar `codesign --verify` aunque la del DMG sea válida.
+
+## La aplicación
+
+### Inventario
+
+1. **Elegir archivo o carpeta**: el objetivo del escaneo. **Quitar** lo deja vacío si solo quiere el llavero.
+2. **Perfil**: NIST IR 8547, CNSA 2.0, Unión Europea, Reino Unido (NCSC), Canadá (CCCS) o PCI DSS v4.0.1, para evaluar el cumplimiento. Sin perfil, solo se clasifica.
+3. **Organización (TOML)…**: el archivo de contexto con sistemas, responsables, desigualdad de Mosca y excepciones (ejemplo en [ejemplos/suaya-organizacion.toml](ejemplos/suaya-organizacion.toml)).
+4. **Incluir el llavero de macOS**: agrega los certificados de las raíces del sistema y de los llaveros del sistema y del usuario. Suaya nunca lee llaves privadas ni pide la contraseña del llavero.
+5. **Escanear**. El resumen muestra los activos y los críticos; la lista, cada activo.
+6. **Exportar CBOM**, **HTML**, **CSV** o **SARIF**. Los archivos se escriben de forma atómica con permisos 0600 y sin heredar las ACL de la carpeta de destino.
+
+**Cancelar** detiene el escaneo y **Limpiar** borra el inventario de la sesión; ninguno de los dos permite que un escaneo anterior vuelva a llenar la pantalla. Si el resultado es parcial (archivos omitidos o avisos), la app lo indica: revise con la CLI antes de concluir que no hay riesgo.
+
+### Diagnóstico de red
+
+1. Escriba uno o más servicios separados por espacios o comas (hasta 20): `www.ejemplo.mx`, `smtp://correo.ejemplo.mx`, `ssh://bastion:22`, `ike://vpn.ejemplo.mx`, `dns://ejemplo.mx`, `oidc://login.ejemplo.mx`, `saml://idp.ejemplo.mx/ruta/metadata.xml`.
+2. Opcional: **Autoridad propia (PEM)…** para validar certificados de una PKI interna.
+3. **Diagnosticar**. Cada servicio muestra un indicador de su hallazgo más grave y, al desplegarlo:
+   - conectividad por dirección;
+   - intercambio de llaves TLS, SSH o IKEv2;
+   - certificados;
+   - DNS (DNSSEC, CAA, TLSA, DKIM) o identidad (algoritmos, JWKS, certificados SAML);
+   - hallazgos por nivel;
+   - **Cómo corregir**, con los pasos de cada receta.
+4. **Exportar JSON** con el diagnóstico completo.
+
+Los servicios se entregan al motor después de `--`, de modo que nada de lo escrito puede interpretarse como una opción. Diagnostique solo sistemas que administre o que tenga autorización expresa para evaluar.
+
+## La línea de órdenes en macOS
+
+Todo lo descrito en el [manual de uso](../Manual_SUAYA%20v1.7.md) funciona igual. Algunos usos propios de macOS:
+
+```sh
+# Certificados del llavero, con reporte HTML
+suaya escanear --llavero -r llavero.html && open llavero.html
+
+# Aplicaciones y binarios instalados (firmas de código y bibliotecas)
+suaya escanear /Applications/MiApp.app --binarios -r app.html
+
+# Reporte en inglés o portugués
+suaya --idioma en reporte inventario.json -o report.html
+suaya --idioma pt reporte inventario.json -o relatorio.html
 ```
 
-### Opción 3: Compilación desde fuente
+### Frases de paso en el llavero
 
-1. Instala Rust:
+Guarde la frase de paso de la llave de firma en el llavero y pásela por la variable que Suaya lee:
 
-```bash
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-source ~/.cargo/env
-rustc --version  # Debe mostrar 1.99.1 o posterior
+```sh
+security add-generic-password -s suaya-firma -a "$USER" -w     # la pide sin mostrarla
+export SUAYA_CLAVE_FIRMA="$(security find-generic-password -s suaya-firma -a "$USER" -w)"
+suaya firmar inventario.json --llave equipo.privada.json
 ```
 
-2. Instala Xcode Command Line Tools:
+Lo mismo sirve para `SUAYA_CLAVE_ALMACEN` (contenedores PKCS#12). Guarde las llaves `.privada.json` con permisos 600.
 
-```bash
-xcode-select --install
+### Diagnóstico periódico con launchd
+
+`scripts/automatizar.py` ejecuta escaneos o diagnósticos con tiempo límite y sin intérprete de shell; `--once` lo hace apto para launchd:
+
+```sh
+python3 scripts/automatizar.py --binary /usr/local/bin/suaya \
+  --diagnosticar tls://portal.ejemplo.mx:443 --diagnosticar dns://ejemplo.mx \
+  --metricas "$HOME/Library/Application Support/suaya/suaya.prom" \
+  --output "$HOME/Library/Application Support/suaya/resultados" --once
 ```
 
-3. Compila Suaya:
+El directorio de resultados debe ser privado (0700). Programe la ejecución con un `LaunchAgent` (`StartInterval`) que llame a esa orden.
 
-```bash
-git clone https://github.com/[OWNER]/suaya && cd suaya
-cargo build --release
+### API local y panel
+
+```sh
+python3 scripts/configurar-api.py --directory "$HOME/Library/Application Support/suaya/api" \
+  --target proyecto="$HOME/Proyectos/mi-app" --user admin:admin
+suaya-api --config "$HOME/Library/Application Support/suaya/api/config.json" \
+  --database "$HOME/Library/Application Support/suaya/api/scans.db"
+open http://127.0.0.1:8787/panel
 ```
 
-4. Instala el binario:
-
-```bash
-sudo cp target/release/suaya /usr/local/bin/
-```
-
-## Configuración inicial
-
-### Generar llaves de usuario
-
-```bash
-# Generar llave para firmar CBOMs personales
-suaya llaves usuario --firma-hibrida
-
-# Mueve las llaves a un lugar seguro
-mkdir -p ~/.suaya/llaves
-mv usuario.privada.json usuario.publica.json ~/.suaya/llaves/
-chmod 600 ~/.suaya/llaves/usuario.*.json
-```
-
-### Configurar variables de entorno
-
-Agrega a `~/.zshrc` (o `~/.bash_profile` si usas bash):
-
-```bash
-# Idioma de salida
-export SUAYA_IDIOMA=es
-
-# Ruta a llaves de usuario
-export SUAYA_REGISTRO_USUARIO=info
-
-# Frase de paso para llaves cifradas (no guardar en el archivo)
-# export SUAYA_CLAVE_FIRMA="tu-frase-de-paso"
-
-# Fecha para compilación reproducible (opcional)
-# export SUAYA_FECHA=$(git log -1 --format=%ct)
-```
-
-Recarga tu shell:
-
-```bash
-source ~/.zshrc
-```
-
-## Comandos de uso común
-
-### Escanear directorios y archivos
-
-```bash
-# Escanear directorio completo
-suaya escanear /etc/ssl
-
-# Escanear archivo específico
-suaya escanear /etc/ssl/certs/ca-certificates.crt
-
-# Escanear con perfil CNSA 2.0
-suaya escanear ~/proyecto --perfil cnsa-2.0
-
-# Escanear y generar reporte HTML
-suaya escanear . --reporte-html --salida reporte.html
-```
-
-### Sondear hosts remotos
-
-```bash
-# Sondear un host
-suaya sondear ejemplo.com:443
-
-# Sondear múltiples hosts
-suaya sondear host1:443 host2:22 host3:993
-
-# Sondear con lista desde archivo
-cat hosts.txt | xargs -I {} suaya sondear {}
-```
-
-### Escanear imágenes de contenedor
-
-```bash
-# Escanear imagen desde Docker Hub
-suaya escanear --imagen docker://nginx:latest
-
-# Escanear con credenciales
-suaya escanear --imagen docker://usuario/imagen:tag \
-  --registro-credenciales ~/.docker/config.json
-
-# Escanear desde registro OCI privado
-suaya escanear --imagen oci://registry.ejemplo.com/app:v1.0
-```
-
-### Trabajar con Kubernetes
-
-```bash
-# Escanear clúster con contexto por defecto
-suaya kubernetes
-
-# Escanear con contexto específico
-suaya kubernetes --context minikube
-
-# Autenticación con token
-suaya kubernetes --token <token> --context gke_prod
-
-# Autenticación con certificado
-suaya kubernetes --certificado client.crt --clave client.key
-```
-
-### Gestionar firmas
-
-```bash
-# Firmar un CBOM
-suaya firmar resultado.cbom \
-  --llave-privida ~/.suaya/llaves/usuario.privada.json \
-  --salida resultado.firma
-
-# Verificar firma
-suaya verificar resultado.cbom \
-  --firma resultado.firma \
-  --llave-publica ~/.suaya/llaves/usuario.publica.json
-
-# Verificar SHA256SUMS
-suaya verificar SHA256SUMS \
-  --llave-publica suaya-publicacion.publica.json
-```
-
-### Generar reportes
-
-```bash
-# Generar reporte HTML
-suaya reporte resultado.cbom --formato html --salida reporte.html
-
-# Abrir reporte en navegador
-open reporte.html
-
-# Generar reporte en inglés
-suaya reporte resultado.cbom --formato html --salida reporte_en.html --idioma en
-```
-
-### Comparar escaneos
-
-```bash
-# Comparar dos CBOMs
-suaya comparar anterior.cbom actual.cbom
-
-# Comparar con umbral de falla
-suaya comparar anterior.cbom actual.cbom --fallar-en 3
-
-# Comparar y generar reporte de diferencias
-suaya comparar anterior.cbom actual.cbom --reporte-diff diff.html
-```
-
-## Integración con CI/CD en macOS
-
-### GitHub Actions para macOS
-
-```yaml
-# .github/workflows/suaya.yml
-name: Suaya Escaneo
-
-on: [push, pull_request]
-
-jobs:
-  escaneo:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Instalar Rust
-        uses: dtolnay/rust-toolchain@stable
-      
-      - name: Instalar Suaya
-        run: cargo install --path .
-      
-      - name: Escanar proyecto
-        run: suaya escanear . --perfil cnsa-2.0 --fallar-en 3
-      
-      - name: Generar reporte
-        run: suaya reporte resultado.cbom --formato html --salida reporte.html
-      
-      - name: Subir reporte
-        uses: actions/upload-artifact@v4
-        with:
-          name: reporte-suaya
-          path: reporte.html
-```
-
-### Script de validación local
-
-```bash
-#!/bin/bash
-# scripts/validar-macos.sh
-
-set -e
-
-echo "Validando proyecto con Suaya en macOS..."
-
-# Escanear
-suaya escanear . --perfil cnsa-2.0 --salida resultado.cbom
-
-# Verificar que no haya riesgo 4
-if suaya comparar resultado.cbom resultado.cbom --fallar-en 4; then
-  echo "✅ Validación exitosa"
-  exit 0
-else
-  echo "❌ Se encontraron riesgos críticos"
-  suaya reporte resultado.cbom --formato html --salida reporte.html
-  open reporte.html
-  exit 1
-fi
-```
-
-## Seguridad en macOS
-
-### Firmar binario con codesign
-
-```bash
-# Si desarrollas Suaya desde fuente
-codesign --sign "Developer ID Application" \
-  --entitlements scripts/entitlements.plist \
-  target/release/suaya
-```
-
-### Restringir acceso a llaves
-
-```bash
-# Las llaves deben tener permisos 600
-chmod 600 ~/.suaya/llaves/*.json
-
-# Opcional: cifrar llaves adicionales con Keychain
-security add-generic-password -s suaya-llave \
-  -w -D "Suaya llave privada"
-```
-
-### Usar Keychain para frases de paso
-
-```bash
-# Guardar frase de paso en Keychain
-security add-generic-password -s suaya-clave \
-  -w -D "Frase de paso Suaya"
-
-# Recuperar frase de paso en script
-export SUAYA_CLAVE_FIRMA=$(security find-generic-password -s suaya-clave -w)
-```
+El token está en `tokens.json` (0600) dentro de ese directorio; péguelo en el panel. La API solo escucha en loopback.
 
 ## Solución de problemas
 
-### Error: "command not found: suaya"
+| Síntoma | Solución |
+|---|---|
+| macOS dice que la app «no se puede abrir» | Clic derecho > **Abrir** la primera vez (firma ad hoc sin notarización) |
+| «El paquete no contiene el motor SUAYA» | La app está incompleta: reinstálela desde el DMG |
+| El escaneo de la app falla con un código | Repita con la CLI y `-d` para ver el motivo (permisos, archivo de organización inválido...) |
+| `command not found: suaya` | Copie `bin/suaya` a `/usr/local/bin` o agregue la carpeta al `PATH` |
+| `codesign` falla al construir | Construya fuera de iCloud con `SUAYA_BUILD_DIR` |
+| El diagnóstico de `dns://` no muestra firmas | El resolvedor del módem no valida DNSSEC: `SUAYA_DNS=1.1.1.1 suaya diagnosticar dns://...` |
+| Fallan solo las direcciones IPv6 | Puede ser la red del Mac (por ejemplo, un módem sin IPv6); se informa con nivel bajo |
+| Faltan certificados del llavero | Solo se leen los llaveros de la lista de búsqueda del usuario y las raíces del sistema |
+| La carpeta del proyecto ocupa muchos gigabytes | Es `target/`, la caché de compilación: se puede borrar y se regenera |
 
-```bash
-# Verifica que esté en PATH
-echo $PATH
+## Distribución
 
-# Si no está en /usr/local/bin, muévelo
-sudo mv suaya /usr/local/bin/
-```
+La firma ad hoc sirve para uso local. Para distribuir la app a otras personas hace falta firmarla con un certificado Developer ID y notarizarla con la cuenta del propietario; vea [publicación](publicacion.md).
 
-### Error: "cannot open file"
+## Más información
 
-```bash
-# Verifica permisos de lectura
-ls -la /ruta/al/archivo
-
-# Si es un certificado, verifica que no esté corrupto
-openssl x509 -in /ruta/al/archivo -text -noout
-```
-
-### Error: "connection refused" al sondear
-
-```bash
-# Verifica que el host sea accesible
-telnet ejemplo.com 443
-
-# Verifica firewall
-sudo /usr/libexec/ApplicationFirewall/socketfilterfw --getlogstate
-```
-
-### Error: "compilation failed" al compilar desde fuente
-
-```bash
-# Instala Xcode Command Line Tools
-xcode-select --install
-
-# Actualiza Rust
-rustup update stable
-
-# Limpia y vuelve a compilar
-cargo clean && cargo build --release
-```
-
-## Actualizaciones
-
-### Actualizar desde binario precompilado
-
-```bash
-# Descarga la nueva versión
-curl -LO https://github.com/[OWNER]/suaya/releases/download/v1.5.1/suaya-1.5.1-arm64.tar.gz
-
-# Extrae y reemplaza
-tar xzf suaya-1.5.1-arm64.tar.gz
-sudo mv suaya /usr/local/bin/
-```
-
-### Actualizar desde Homebrew
-
-```bash
-brew update && brew upgrade suaya
-```
-
-## Recursos adicionales
-
-- [Manual CLI](manual-1.5.md): Referencia completa de comandos.
-- [Publicación y verificación](publicacion.md): Cómo verificar descargas.
-- [Contrato de estabilidad](estabilidad.md): Qué cambia entre versiones.
-- [Hoja de ruta](hoja-de-ruta.md): Próximas características.
-
-## Soporte
-
-- Issues: https://github.com/[OWNER]/suaya/issues
-- Documentación: https://github.com/[OWNER]/suaya/tree/main/docs
-- Comunidad: [enlace a Discord/Slack si aplica]
+- [Manual de uso 1.7](../Manual_SUAYA%20v1.7.md) y [manual de la CLI](manual-cli.md)
+- [Integraciones](integraciones.md): GitHub, GitLab, pre-commit y Prometheus
+- [Contrato de estabilidad](estabilidad.md), [hoja de ruta](hoja-de-ruta.md) y [cierre 1.7](cierre-1.7.md)

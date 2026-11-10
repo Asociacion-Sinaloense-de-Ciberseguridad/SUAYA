@@ -1,0 +1,123 @@
+# Acción de GitHub para Suaya: compila Suaya desde esta copia del
+# repositorio, escanea las rutas indicadas, publica los hallazgos como SARIF
+# en el análisis de código y aplica el umbral de falla al final, después de
+# publicar.
+#
+# Uso:
+#   permissions:
+#     contents: read
+#     security-events: write   # para publicar el SARIF
+#   steps:
+#     - uses: actions/checkout@<commit>
+#     - uses: <organizacion>/suaya@<commit>   # v1.7.0
+#       with:
+#         rutas: "infra src"
+#         perfil: cnsa-2.0
+#         fallar-en: "1"
+#
+# Las entradas llegan al script como variables de entorno, nunca
+# interpoladas en el código, para que un valor no pueda inyectar órdenes.
+
+name: Suaya
+description: Inventario criptográfico (CBOM CycloneDX 1.7) con evaluación de preparación poscuántica; publica los hallazgos como SARIF.
+author: Suaya
+branding:
+  icon: shield
+  color: green
+
+inputs:
+  rutas:
+    description: Archivos o directorios a escanear, separados por espacios.
+    required: false
+    default: "."
+  perfil:
+    description: Perfil de política (nist-ir-8547, cnsa-2.0, pci-dss-4...) o archivo TOML propio; vacío para no evaluar.
+    required: false
+    default: ""
+  organizacion:
+    description: Archivo TOML con el contexto de la organización (sistemas, Mosca y excepciones); vacío si no hay.
+    required: false
+    default: ""
+  fallar-en:
+    description: Prioridad que hace fallar el paso (1 = crítica ... 4 = baja); vacío para no fallar nunca.
+    required: false
+    default: "1"
+  cbom:
+    description: CBOM que se genera.
+    required: false
+    default: suaya-cbom.json
+  reporte:
+    description: Reporte ejecutivo (HTML si termina en .html, Markdown en otro caso).
+    required: false
+    default: suaya-reporte.html
+  sarif:
+    description: SARIF que se genera.
+    required: false
+    default: suaya.sarif
+  publicar-sarif:
+    description: Publica el SARIF en el análisis de código del repositorio (requiere security-events write).
+    required: false
+    default: "true"
+
+outputs:
+  cbom:
+    description: Ruta del CBOM generado.
+    value: ${{ inputs.cbom }}
+  sarif:
+    description: Ruta del SARIF generado.
+    value: ${{ inputs.sarif }}
+  codigo:
+    description: Código de salida de Suaya (0 sin hallazgos sobre el umbral, 2 con ellos, 4 resultado parcial).
+    value: ${{ steps.escaneo.outputs.codigo }}
+
+runs:
+  using: composite
+  steps:
+    # Acción fijada por commit (rama stable).
+    - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec
+      with:
+        toolchain: "1.99.1"
+    - name: Compilar Suaya
+      shell: bash
+      run: cargo install --locked --quiet --path "$GITHUB_ACTION_PATH/crates/suaya-cli" --root "$RUNNER_TEMP/suaya"
+    - name: Escanear
+      id: escaneo
+      shell: bash
+      env:
+        SUAYA_RUTAS: ${{ inputs.rutas }}
+        SUAYA_PERFIL: ${{ inputs.perfil }}
+        SUAYA_ORGANIZACION: ${{ inputs.organizacion }}
+        SUAYA_FALLAR_EN: ${{ inputs.fallar-en }}
+        SUAYA_CBOM: ${{ inputs.cbom }}
+        SUAYA_REPORTE: ${{ inputs.reporte }}
+        SUAYA_SARIF: ${{ inputs.sarif }}
+      run: |
+        read -r -a rutas <<< "$SUAYA_RUTAS"
+        args=(escanear -o "$SUAYA_CBOM" -r "$SUAYA_REPORTE" --sarif "$SUAYA_SARIF")
+        if [ -n "$SUAYA_PERFIL" ]; then args+=(--perfil "$SUAYA_PERFIL"); fi
+        if [ -n "$SUAYA_ORGANIZACION" ]; then args+=(--organizacion "$SUAYA_ORGANIZACION"); fi
+        if [ -n "$SUAYA_FALLAR_EN" ]; then args+=(--fallar-en "$SUAYA_FALLAR_EN"); fi
+        # Las rutas van después de «--»: una que empiece con «-» no es una opción.
+        args+=(-- "${rutas[@]}")
+        set +e
+        "$RUNNER_TEMP/suaya/bin/suaya" "${args[@]}"
+        codigo=$?
+        set -e
+        echo "codigo=$codigo" >> "$GITHUB_OUTPUT"
+        if [ "$codigo" -ne 0 ] && [ "$codigo" -ne 2 ] && [ "$codigo" -ne 4 ]; then
+          echo "::error::Suaya terminó con el código $codigo."
+          exit "$codigo"
+        fi
+    # v4.39.3
+    - name: Publicar SARIF
+      if: ${{ always() && inputs.publicar-sarif == 'true' && steps.escaneo.outputs.codigo != '' }}
+      uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066
+      with:
+        sarif_file: ${{ inputs.sarif }}
+        category: suaya
+    - name: Aplicar el umbral
+      if: ${{ steps.escaneo.outputs.codigo == '2' }}
+      shell: bash
+      run: |
+        echo "::error::Suaya encontró hallazgos de la prioridad indicada o más grave; vea el reporte y el análisis de código."
+        exit 2

@@ -130,6 +130,40 @@ fn activos_de_publica(
     v
 }
 
+/// Activos de una llave de host recibida por la red: el blob del protocolo
+/// SSH (una llave pública o un certificado SSH). `ubicacion` es el servicio
+/// (`ssh://host:22`); la identidad de llave permite enlazarla con el archivo
+/// `ssh_host_*_key.pub` del servidor.
+pub fn activos_de_llave_ssh(
+    blob: &[u8],
+    ubicacion: &str,
+    c: &Conocimiento,
+) -> Result<Vec<Activo>, String> {
+    let a = Archivo::nuevo(ubicacion, std::path::Path::new(ubicacion), &[], None);
+    if let Ok(k) = PublicKey::from_bytes(blob) {
+        return Ok(activos_de_publica(&k, &a, None, c));
+    }
+    let cert = ssh_key::Certificate::from_bytes(blob)
+        .map_err(|e| format!("llave de host ilegible: {e}"))?;
+    let k = PublicKey::from(cert.public_key().clone());
+    let mut v = activos_de_publica(&k, &a, None, c);
+    let ca = PublicKey::from(cert.signature_key().clone());
+    let vence =
+        time::OffsetDateTime::from_unix_timestamp(cert.valid_before().min(253_402_300_799) as i64)
+            .map(|t| format!("{:04}-{:02}-{:02}", t.year(), u8::from(t.month()), t.day()))
+            .unwrap_or_default();
+    if let Some(m) = v.last_mut() {
+        m.advertir(format!(
+            "Certificado SSH de host firmado por una autoridad {} (vigente hasta {vence}).",
+            ca.algorithm().as_str()
+        ));
+        if cert.valid_before() < time::OffsetDateTime::now_utc().unix_timestamp().max(0) as u64 {
+            m.advertir("El certificado SSH de host está vencido.");
+        }
+    }
+    Ok(v)
+}
+
 /// Llave privada en formato OpenSSH (bloque PEM `OPENSSH PRIVATE KEY`).
 pub(crate) fn analizar_privada_openssh(
     texto_pem: &str,

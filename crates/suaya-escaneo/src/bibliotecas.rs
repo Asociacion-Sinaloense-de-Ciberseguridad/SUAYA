@@ -356,6 +356,39 @@ fn en_manifiesto(a: &Archivo, texto: &str) -> Vec<Encontrada> {
                 nota: None,
             });
         }
+    } else if n == "info.plist" {
+        // Paquete de aplicación de macOS (por ejemplo, un navegador).
+        static ID: OnceLock<Regex> = OnceLock::new();
+        static VER: OnceLock<Regex> = OnceLock::new();
+        let id = ID
+            .get_or_init(|| re(r"<key>CFBundleIdentifier</key>\s*<string>([^<]{1,200})</string>"));
+        let ver = VER.get_or_init(|| {
+            re(r"<key>CFBundleShortVersionString</key>\s*<string>([0-9][0-9.]{0,40})</string>")
+        });
+        if let Some(c) = id.captures(texto) {
+            v.push(Encontrada {
+                ecosistema: "aplicacion",
+                paquete: c[1].trim().to_lowercase(),
+                version: ver.captures(texto).map(|x| x[1].to_string()),
+                linea: linea(c.get(0).map_or(0, |m| m.start())),
+                nota: None,
+            });
+        }
+    } else if n == "application.ini" {
+        // Firefox y derivados: [App] Name=Firefox, Version=132.0.
+        static R: OnceLock<Regex> = OnceLock::new();
+        let r = R.get_or_init(|| re(r"(?m)^Name=([A-Za-z][A-Za-z0-9 ._-]{0,60})\s*$"));
+        static V: OnceLock<Regex> = OnceLock::new();
+        let ver = V.get_or_init(|| re(r"(?m)^Version=([0-9][0-9A-Za-z.]{0,40})\s*$"));
+        if let Some(c) = r.captures(texto) {
+            v.push(Encontrada {
+                ecosistema: "aplicacion",
+                paquete: c[1].trim().to_lowercase(),
+                version: ver.captures(texto).map(|x| x[1].to_string()),
+                linea: linea(c.get(0).map_or(0, |m| m.start())),
+                nota: None,
+            });
+        }
     } else if n == "release" {
         static R: OnceLock<Regex> = OnceLock::new();
         let r = R.get_or_init(|| re(r#"(?m)^JAVA_VERSION="([0-9][0-9._]*)""#));
@@ -441,7 +474,10 @@ fn activos(encontradas: Vec<Encontrada>, a: &Archivo, c: &Conocimiento) -> Vec<A
                 purl: purl(e.ecosistema, &e.paquete, e.version.as_deref()),
             },
         )
-        .con_contexto(CAPACIDAD, Garantia::Confidencialidad)
+        .con_contexto(
+            def.capacidad.as_deref().unwrap_or(CAPACIDAD),
+            Garantia::Confidencialidad,
+        )
         .con_ubicacion(a.ruta, e.linea);
         activo.riesgo_fijado = Some(evaluacion.riesgo);
         for adv in evaluacion.advertencias {
@@ -564,6 +600,8 @@ impl Escaner for EscanerBibliotecas {
             || n.ends_with(".csproj")
             || (n == "metadata" && a.ruta.contains(".dist-info"))
             || (n == "release" && a.contiene(b"JAVA_VERSION="))
+            || (n == "info.plist" && a.contiene(b"CFBundleIdentifier"))
+            || (n == "application.ini" && a.contiene(b"[App]"))
             || jar_por_nombre(n).is_some()
             || es_binario(a.contenido)
     }
@@ -591,6 +629,35 @@ mod pruebas {
         assert!(es_biblioteca_compartida("libcrypto.so.3"));
         assert!(es_biblioteca_compartida("libssl-3-x64.dll"));
         assert!(!es_biblioteca_compartida("libz.so.1"));
+    }
+
+    #[test]
+    fn navegadores_por_info_plist_y_application_ini() {
+        let c = Conocimiento::embebido();
+        let plist = b"<plist><dict><key>CFBundleIdentifier</key><string>com.google.Chrome</string>\n<key>CFBundleShortVersionString</key><string>120.0.6099.109</string></dict></plist>";
+        let a = Archivo::nuevo(
+            "Chrome.app/Contents/Info.plist",
+            std::path::Path::new("Info.plist"),
+            plist,
+            None,
+        );
+        let v = EscanerBibliotecas.analizar(&a, &c).unwrap();
+        assert_eq!(v.len(), 1);
+        assert_eq!(v[0].contextos[0].capacidad, "navegadores-web");
+        assert_eq!(
+            v[0].riesgo_fijado,
+            Some(suaya_core::Riesgo::VulnerableCuantico)
+        );
+        let ini = b"[App]\nVendor=Mozilla\nName=Firefox\nVersion=133.0.3\n";
+        let a = Archivo::nuevo(
+            "firefox/application.ini",
+            std::path::Path::new("application.ini"),
+            ini,
+            None,
+        );
+        assert!(EscanerBibliotecas.aplica(&a));
+        let v = EscanerBibliotecas.analizar(&a, &c).unwrap();
+        assert_eq!(v[0].riesgo_fijado, Some(suaya_core::Riesgo::HibridoPq));
     }
 
     #[test]

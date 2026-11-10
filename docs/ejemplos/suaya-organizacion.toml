@@ -1,0 +1,48 @@
+# Contexto de la organización para Suaya (`--organizacion`).
+#
+# Asigna cada activo a un sistema por sus rutas u objetivos de red, y con
+# ello a un responsable, una criticidad y una exposición. Con `vida_datos`,
+# Suaya evalúa la desigualdad de Mosca (x + y > z): si los datos deben
+# protegerse más años de los que faltan para el horizonte supuesto, menos lo
+# que tarda la migración, lo que hoy se captura cifrado podrá descifrarse
+# mientras siga siendo valioso; esos activos suben a prioridad alta.
+#
+# Las excepciones son riesgos aceptados con vencimiento: no cambian la
+# clasificación ni ocultan el activo, pero lo excluyen de `--fallar-en`
+# mientras estén vigentes. Vencidas, vuelven a contar y se advierte.
+#
+# Patrones: `**` cruza directorios, `*` no y `?` es un carácter. Un patrón
+# relativo coincide con cualquier sufijo de la ruta; los objetivos de red se
+# escriben como en `suaya sondear` (p. ej. tls://portal.ejemplo.mx:443).
+
+[organizacion]
+nombre = "Ejemplo, S.A. de C.V."
+horizonte_cuantico = 2035        # año supuesto de una computadora cuántica relevante
+migracion_predeterminada = 3     # años de migración si un sistema no lo declara
+
+[[sistema]]
+nombre = "Portal de clientes"
+responsable = "equipo-web@ejemplo.mx"
+criticidad = "alta"              # alta | media | baja
+exposicion = "internet"          # internet | interna
+vida_datos = 10                  # años que los datos deben seguir confidenciales
+migracion = 3
+rutas = ["srv/portal/**", "etc/nginx/**"]
+objetivos = ["tls://portal.ejemplo.mx:443"]
+
+[[sistema]]
+nombre = "VPN corporativa"
+responsable = "redes@ejemplo.mx"
+criticidad = "media"
+exposicion = "interna"
+vida_datos = 5
+rutas = ["etc/swanctl/**", "etc/wireguard/**"]
+objetivos = ["ike://vpn.ejemplo.mx"]
+
+[[excepcion]]
+id = "EXC-2026-014"
+justificacion = "Equipo heredado sin soporte de TLS 1.2; se reemplaza en el segundo trimestre de 2027."
+aprobada_por = "Comité de riesgos"
+vence = "2027-06-30"
+algoritmos = ["tls-1.0"]
+rutas = ["srv/legado/**"]

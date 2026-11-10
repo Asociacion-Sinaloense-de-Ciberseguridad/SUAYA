@@ -1,8 +1,32 @@
-# SUAYA 1.5.0
+# SUAYA 1.7.0
 
 Inventario criptográfico real, CBOM CycloneDX 1.7, evaluación poscuántica y firma híbrida ML-DSA-65 + Ed25519. Interfaz nativa macOS, CLI y API autenticada con SQLite.
 
-Esta versión corrige los cinco hallazgos de la auditoría 1.4 e incorpora límites, trazabilidad y gates adicionales. Consulte [cierre 1.5](docs/cierre-1.5.md) y [operación 1.5](docs/operacion-1.5.md) para cambios de compatibilidad y validación. Los informes 1.3/1.4 se conservan como antecedentes; no describen el estado actual.
+La versión 1.7 amplía la cobertura (servicios declarados como datos, configuración del sistema, registro de Windows, nube e infraestructura como código, OpenPGP, almacenes Java, Secure Boot, LUKS, Active Directory, ejecutables, aplicaciones Java y Android, y el llavero de macOS), sondea IKEv2, DNS (DNSSEC, DKIM, CAA, TLSA) e identidad federada (OIDC y SAML), agrega el **contexto de la organización** (sistemas, desigualdad de Mosca y excepciones), **recetas de corrección**, SARIF, CSV, JSON Lines, tickets, inventario PCI DSS, tendencias, métricas para Prometheus, integraciones de CI, un panel web y el portugués. Detalle en el [registro de cambios](CHANGELOG.md), el [manual de la CLI](docs/manual-cli.md) y las [integraciones](docs/integraciones.md); validación y límites en el [cierre 1.7](docs/cierre-1.7.md). La 1.6 agregó el diagnóstico de conectividad e intercambio de llaves y certificados ([cierre 1.6](docs/cierre-1.6.md)). La 1.5 corrigió los cinco hallazgos de la auditoría 1.4 e incorpora límites, trazabilidad y gates adicionales. Consulte [cierre 1.5](docs/cierre-1.5.md) y [operación 1.5](docs/operacion-1.5.md) para cambios de compatibilidad y validación. Los informes 1.3/1.4 se conservan como antecedentes; no describen el estado actual.
+
+## Instalación
+
+El repositorio requiere acceso de lectura mientras sea privado. Las versiones se identifican con etiquetas (`v1.7.0`, `v1.6.0`, `v1.5.0`); use la más reciente.
+
+**Binarios:** descargue el paquete de su plataforma desde la página de [publicaciones](https://github.com/Asociacion-Sinaloense-de-Ciberseguridad/SUAYA/releases), si la versión ya está publicada, y compruébelo con su `SHA256SUMS`. Mientras el repositorio sea privado, las publicaciones no llevan atestación de procedencia: GitHub solo la admite en repositorios públicos o con Enterprise Cloud.
+
+Cada publicación incluye un instalador por sistema, que verifica la suma SHA-256 antes de instalar. Descargue en una misma carpeta el paquete, `SHA256SUMS` y el instalador:
+
+- **Windows:** `suaya-<versión>-x86_64-pc-windows-msvc.zip` e `instalar-windows.ps1` (clic derecho, «Ejecutar con PowerShell»). Instala en su usuario, sin permisos de administrador, y agrega la carpeta al PATH.
+- **macOS y Linux:** el `.tar.gz` de su equipo e `instalar.sh` (`sh instalar.sh`; con `PREFIJO="$HOME/.local"` no necesita `sudo`). En Debian, Ubuntu, Fedora o RHEL también puede instalar el paquete `.deb` o `.rpm`.
+
+Ambos instaladores aceptan la desinstalación (`-Desinstalar` y `--desinstalar`).
+
+**Desde fuentes** (requiere Rust 1.89 o posterior y, según la plataforma, un compilador de C y CMake para AWS-LC):
+
+```sh
+git clone --branch v1.7.0 https://github.com/Asociacion-Sinaloense-de-Ciberseguridad/SUAYA.git
+cd SUAYA
+cargo build --release --locked -p suaya -p suaya-api
+./target/release/suaya --version
+```
+
+La compilación en Windows no se ha validado en esta entrega. Guía de uso completa: [manual 1.7](docs/manual-1.7.md) y [manual de macOS](docs/manual-macos.md).
 
 ## Compilar y verificar
 
@@ -17,26 +41,32 @@ python3 pruebas/test_release.py
 
 ## Interfaz macOS
 
-Abra `build/SUAYA.app`. Seleccione un archivo o carpeta, ejecute el escaneo y exporte CBOM o HTML. Los resultados provienen del motor incluido en la aplicación. Cancelar o limpiar impide que una tarea antigua repueble el inventario.
+Abra `build/SUAYA.app`. En **Inventario**, seleccione un archivo o carpeta (o solo el llavero de macOS), elija opcionalmente un perfil y un archivo de organización, ejecute el escaneo y exporte CBOM, HTML, CSV o SARIF. En **Diagnóstico de red**, escriba uno o más servicios (`www.ejemplo.mx`, `ssh://bastion:22`, `ike://vpn.ejemplo.mx`, `dns://ejemplo.mx`, `oidc://login.ejemplo.mx`), opcionalmente elija una autoridad propia en PEM, y revise por servicio la conectividad, el grupo negociado, la cadena, DNS o identidad, los hallazgos por nivel y cómo corregirlos; el resultado se exporta como JSON con la misma escritura privada (0600) que el inventario. Los resultados provienen del motor incluido en la aplicación. Cancelar o limpiar impide que una tarea antigua repueble el inventario.
 
 ```sh
 ./empaquetado/build-macos.sh
 SUAYA_DMG=1 ./empaquetado/build-macos.sh
 ```
 
+Si el proyecto vive en una carpeta sincronizada con iCloud Drive, macOS vuelve a agregar atributos extendidos y `codesign` falla con «resource fork, Finder information, or similar detritus»; construya fuera de ella con `SUAYA_BUILD_DIR=/private/tmp/suaya-build SUAYA_DMG=1 ./empaquetado/build-macos.sh` y copie el resultado con `ditto --norsrc --noextattr`.
+
 El paquete local tiene firma ad-hoc; la publicación pública requiere Developer ID y notarización del propietario. El build aborta ante cualquier error y nunca crea un stub.
 
 ## CLI
 
-La entrega incluye `bin/suaya` y `bin/suaya-api` listos para macOS arm64. Las rutas `target/release/` de los ejemplos se usan al compilar desde fuentes; puede sustituirlas por `bin/`.
+Las rutas `target/release/` de los ejemplos se usan al compilar desde fuentes; si instaló un paquete, sustitúyalas por la ubicación de sus binarios.
 
 ```sh
 ./target/release/suaya escanear pruebas/fixtures/sistema-demo -o inventario.json -r reporte.html
 ./target/release/suaya escanear /ruta/autorizada --fallar-si-incompleto --fallar-en 1 -o inventario.json
+./target/release/suaya diagnosticar www.ejemplo.mx ssh://bastion.ejemplo.mx --json diagnostico.json
+./target/release/suaya diagnosticar dns://ejemplo.mx oidc://login.ejemplo.mx --metricas suaya.prom
+./target/release/suaya escanear /srv --organizacion docs/ejemplos/suaya-organizacion.toml --sarif suaya.sarif --csv suaya.csv
+./target/release/suaya tendencias escaneos/*.cbom.json
 ./target/release/suaya --help
 ```
 
-Consulte `--help` para los valores concretos de `--fallar-en` y las órdenes `sondear`, `kubernetes`, `importar`, `reporte`, `comparar`, `llaves`, `firmar`, `verificar`, `perfiles` y `conocimiento`.
+Consulte `--help` para los valores concretos de `--fallar-en` y las órdenes `diagnosticar`, `sondear`, `kubernetes`, `importar`, `reporte`, `comparar`, `tendencias`, `llaves`, `firmar`, `verificar`, `perfiles` y `conocimiento`.
 
 Los resultados parciales llevan `suaya:estado=partial`; sus reportes muestran una advertencia. `--fallar-si-incompleto` devuelve 4 si hay avisos o archivos omitidos. Los archivos de salida se reemplazan atómicamente con permisos privados. Los límites de recursos pueden producir un inventario parcial y no deben omitirse de la evaluación.
 
@@ -47,7 +77,7 @@ python3 scripts/configurar-api.py --directory /ruta/privada/suaya-data --target 
 ./target/release/suaya-api --config /ruta/privada/suaya-data/config.json --database /ruta/privada/suaya-data/scans.db
 ```
 
-`configurar-api.py` genera tokens aleatorios de 48 bytes, almacena solo sus hashes en config.json y entrega los tokens en tokens.json (0600). El directorio requiere 0700. No incluya esos archivos en Git. Los tokens expiran, por defecto, a los 30 días. Para rotar o revocar, actualice los hashes/expiraciones y reinicie el proceso; no hay JWT ni cookies de sesión.
+`configurar-api.py` acepta `--network-target web=tls://www.ejemplo.mx:443` (repetible) para autorizar servicios de diagnóstico y `--organization contexto.toml` para aplicar el contexto de la organización a todos los escaneos; el cliente nunca envía hosts, URLs ni rutas, y de los perfiles solo puede elegir los incluidos. Genera tokens aleatorios de 48 bytes, almacena solo sus hashes en config.json y entrega los tokens en tokens.json (0600). El directorio requiere 0700. No incluya esos archivos en Git. Los tokens expiran, por defecto, a los 30 días. Para rotar o revocar, actualice los hashes/expiraciones y reinicie el proceso; no hay JWT ni cookies de sesión.
 
 La API escucha únicamente en loopback (`127.0.0.1:8787`). Para acceso remoto necesita un proxy TLS, límites de conexiones y control de acceso propios. No habilite un proxy público sin configurar esos controles.
 
@@ -55,12 +85,21 @@ La API escucha únicamente en loopback (`127.0.0.1:8787`). Para acceso remoto ne
 |---|---|
 | GET /api/v1/health | Salud pública, sin datos del inventario |
 | POST /api/v1/scan | JSON `{"target":"demo"}`; solo alias autorizados en config |
+| POST /api/v1/diagnose | JSON `{"target":"web"}`; solo alias de `network_targets`; devuelve el diagnóstico de conectividad, llaves y certificados (no se guarda) |
 | GET /api/v1/scans | Resultados del propietario; admin puede ver todos |
 | GET /api/v1/scan/{id} | CBOM del propietario o admin |
 | DELETE /api/v1/scan/{id} | Borrado del propietario o admin |
-| GET /api/v1/config | Alias y límites; solo admin; nunca hashes/tokens/rutas |
+| GET /api/v1/config | Alias de rutas y de red, y límites; solo admin; nunca hashes/tokens/rutas |
+| GET /api/v1/targets | Alias que el usuario puede escanear o diagnosticar |
+| GET /api/v1/profiles | Perfiles incluidos; `POST /api/v1/scan` acepta `"profile":"cnsa-2.0"` |
+| GET /api/v1/scan/{id}/report?format= | Reporte `html`, `md`, `pci`, `sarif`, `csv`, `jsonl` o `tickets` |
+| GET /api/v1/scan/{id}/summary | Totales por prioridad y lo más urgente |
+| GET /api/v1/compare/{a}/{b} | Diferencias entre dos escaneos del usuario |
+| GET /api/v1/trends?target= | Evolución de los últimos 100 escaneos |
+| GET /api/v1/openapi.json | Descripción OpenAPI 3.1 (pública) |
+| GET /panel | Panel web estático (público; pide el token y lo guarda solo en la pestaña) |
 
-Todas las rutas salvo health requieren `Authorization: Bearer TOKEN`. Configuración inmutable desde HTTP. El usuario analista puede escanear cualquiera de los alias que el administrador configuró para esa instancia; separe instancias si los usuarios necesitan conjuntos de objetivos distintos. Límites: 4 KiB por request, 2 escaneos simultáneos, 60 requests/min por identidad, 600/min globales y 1000 resultados por usuario. La falta de acceso a un resultado ajeno devuelve 404.
+Todas las rutas salvo health, OpenAPI y el panel requieren `Authorization: Bearer TOKEN`. Configuración inmutable desde HTTP. El usuario analista puede escanear cualquiera de los alias que el administrador configuró para esa instancia; separe instancias si los usuarios necesitan conjuntos de objetivos distintos. Límites: 4 KiB por request, 2 escaneos o diagnósticos simultáneos, 60 requests/min por identidad, 600/min globales y 1000 resultados por usuario. La falta de acceso a un resultado ajeno devuelve 404.
 
 ## Automatización
 
@@ -68,11 +107,11 @@ Todas las rutas salvo health requieren `Authorization: Bearer TOKEN`. Configurac
 python3 scripts/automatizar.py --binary ./target/release/suaya --target /ruta/autorizada --output /ruta/privada/resultados --interval 3600 --timeout 1800
 ```
 
-Usa subprocess sin shell, sin ejecuciones solapadas, resultados separados y timeout. `--once` ejecuta una vez para launchd/systemd/CI. Los eventos distinguen completed, partial, failed y timeout. Configure rotación/retención de resultados según su política; el runner no elimina evidencia automáticamente.
+Usa subprocess sin shell, sin ejecuciones solapadas, resultados separados y timeout. `--once` ejecuta una vez para launchd/systemd/CI. Con `--diagnosticar tls://...` (repetible) y `--metricas archivo.prom` diagnostica además servicios y reescribe las métricas para Prometheus. La acción de GitHub, la plantilla de GitLab y los ganchos de pre-commit se describen en [integraciones](docs/integraciones.md). Los eventos distinguen completed, partial, failed y timeout. Configure rotación/retención de resultados según su política; el runner no elimina evidencia automáticamente.
 
 ## Alcance funcional real
 
-Incluye escaneo de certificados, llaves, configuración TLS/SSH/VPN, código, bibliotecas, imágenes Docker/OCI, sondeos explícitos TLS/SSH/STARTTLS, Kubernetes y CBOM externos. El modelo conserva las prioridades críticas y las muestra en el resumen. RSA/ECC/DH no se consideran resistentes a ataques cuánticos por aumentar su tamaño.
+Incluye escaneo de certificados, llaves, configuración TLS/SSH/VPN y de servicios, configuración del sistema, registro de Windows, nube, OpenPGP, almacenes Java, plataforma, Active Directory, ejecutables, código, bibliotecas, imágenes Docker/OCI, el llavero de macOS, sondeos explícitos TLS/SSH/STARTTLS/IKEv2/DNS/OIDC/SAML, Kubernetes y CBOM externos. El modelo conserva las prioridades críticas y las muestra en el resumen. RSA/ECC/DH no se consideran resistentes a ataques cuánticos por aumentar su tamaño.
 
 No se ofrecen como funciones operativas PDF/Excel, auditoría IAM de nubes, HSM, timestamping confiable, actualizaciones automáticas, notificaciones Slack/email/Discord o un asistente LLM: las pantallas/stubs de 1.3 no implementaban esas capacidades. Esta entrega elimina tales promesas y no comunica éxito ficticio. La fecha firmada es una declaración del firmante, no una autoridad de tiempo.
 

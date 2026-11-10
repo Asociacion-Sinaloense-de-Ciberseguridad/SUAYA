@@ -41,6 +41,22 @@ pub enum Accion {
 }
 
 impl Accion {
+    /// Interpreta el texto de [`Accion::como_texto`] (p. ej. de un CBOM).
+    pub fn desde_texto(t: &str) -> Option<Self> {
+        [
+            Accion::CorregirYa,
+            Accion::Reemplazar,
+            Accion::MigrarAhora,
+            Accion::PlanificarPiloto,
+            Accion::Monitorear,
+            Accion::RevisarParametros,
+            Accion::Verificar,
+            Accion::Conforme,
+        ]
+        .into_iter()
+        .find(|a| a.como_texto() == t)
+    }
+
     pub fn como_texto(self) -> &'static str {
         match self {
             Accion::CorregirYa => "corregir-ya",

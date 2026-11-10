@@ -1,6 +1,19 @@
 # Hoja de ruta
 
-## 1.0 (actual): estable
+## 1.7 (actual): cobertura, contexto e integraciones
+
+- Base de conocimiento ampliada (firmas basadas en hash, KEM alternativos y compuestos, algoritmos nacionales, JOSE, XML Signature) y recetas de corrección como datos.
+- Escáneres de servicios declarados como datos, configuración del sistema, registro de Windows, nube e infraestructura como código, OpenPGP, almacenes Java, plataforma (Secure Boot, kernel, LUKS), Active Directory, ejecutables y aplicaciones Java y Android, y el llavero de macOS.
+- Red: suites de TLS 1.2, cadenas por familia de firma, llaves de host SSH, IKEv2 con ML-KEM, DNS (DNSSEC, DKIM, CAA, TLSA) e identidad federada (OIDC y SAML).
+- Contexto de la organización (Mosca y excepciones), SARIF, CSV, JSON Lines, tickets, inventario PCI DSS, tendencias, métricas para Prometheus, integraciones de CI, panel web y portugués.
+
+## 1.6: diagnóstico de conectividad e intercambio de llaves y certificados
+
+- Orden `diagnosticar` (`diagnose`) con conectividad por dirección, saludos TLS completos de un cliente moderno y uno clásico, validación estándar de la cadena y análisis del `KEXINIT` de SSH, en texto y JSON, con umbral `--fallar-en`.
+- `--diagnostico` en el sondeo para llevar los hallazgos al CBOM.
+- Diagnóstico en la API (`POST /api/v1/diagnose`, alias preconfigurados) y en la interfaz macOS (pestaña «Diagnóstico de red»).
+
+## 1.0: estable
 
 - Contrato de estabilidad para órdenes, opciones, códigos de salida, propiedades `suaya:` del CBOM, formato de firma y esquema de la base de conocimiento ([estabilidad.md](estabilidad.md)).
 - Rendimiento: análisis en paralelo determinista, detección de marcas en una sola pasada (Aho-Corasick) y lectura por bloques de binarios grandes.
@@ -62,6 +75,14 @@
 - Modelo de datos, base de conocimiento como datos y motor de clasificación en cuatro ejes.
 - Escáneres de archivos: certificados, llaves (PKCS#8, PKCS#1, SEC1, OpenSSH), llaves SSH, configuración SSH, nginx, Apache, `crypttab` y contenedores PKCS#12/JKS.
 - CBOM CycloneDX 1.7 validado contra el esquema oficial, reporte ejecutivo en español y comparación entre escaneos.
+
+## Después de la 1.7
+
+- Revocación: consultar OCSP y CRL (hoy se informa el engrapado OCSP).
+- Firmas Sigstore y cosign de imágenes y artefactos; cadenas `#US` de ensamblados .NET; configuración de IIS.
+- Consultas en vivo a las API de nube (KMS, balanceadores) con credenciales de solo lectura; PKCS#11 y HashiCorp Vault.
+- Cifrado de bases de datos (TDE de SQL Server y Oracle).
+- Recetas de corrección y mensajes de hallazgos también en portugués.
 
 ## Después de la 1.0
 

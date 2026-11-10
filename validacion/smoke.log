@@ -1,11 +1,11 @@
-Suaya 1.5.0 · algoritmos 2026.10.0 · código 2026.10.0 · bibliotecas 2026.10.0 · madurez 2026.09.0 (MITRE, Post-Quantum Cryptography (PQC) Capability Development Report, edición 2026-09)
-Archivos revisados: 62 · omitidos por tamaño: 0 · servicios sondeados: 0 · activos criptográficos: 115
+Suaya 1.7.0 · algoritmos 2026.11.1 · código 2026.11.0 · bibliotecas 2026.11.0 · servicios 2026.11.0 · remediación 2026.11.0 · madurez 2026.11.0 (MITRE, Post-Quantum Cryptography (PQC) Capability Development Report, edición 2026-09)
+Archivos revisados: 62 · omitidos por tamaño: 0 · servicios sondeados: 0 · activos criptográficos: 116
 
   Crítica        20
   Alta           20
-  Media          16
+  Media          15
   Baja           34
-  Informativa    25
+  Informativa    27
 
 Atención prioritaria:
   [Crítica] Triple DES (CBC) · Corregir de inmediato · pruebas/fixtures/sistema-demo/legado/ssh/sshd_config
@@ -24,3 +24,135 @@ Atención prioritaria:
 
 CBOM: validacion/demo.json
 Reporte: validacion/demo.html
+SARIF: validacion/demo.sarif
+# Cryptographic inventory for PCI DSS v4.0
+
+| | |
+|---|---|
+| **System** | Sistema escaneado |
+| **Inventory date** | 2026-11-07 |
+| **Next review (12 months)** | 2027-11-07 |
+| **Tool** | Suaya 1.7.0 |
+
+Requirement 12.3.3 calls for documenting and reviewing, at least once a year, the cryptographic cipher suites and protocols in use, with their purpose and location, monitoring their continued viability and having a strategy to respond to changes; 4.2.1.1, for keeping an inventory of the trusted keys and certificates that protect cardholder data in transit. This document was generated from the Suaya CBOM; assessing scope (which systems touch cardholder data) is the organization's responsibility.
+
+## Protocols and cipher suites · requirement 12.3.3, 68 items
+
+| Item | Use (capability / assurance) | Location | Viability (risk) | Planned response |
+|---|---|---|---|---|
+| Blowfish (CBC) | VPN and network encryption / Confidentiality | pruebas/fixtures/sistema-demo/legado/vpn/cliente.ovpn:4 | Broken (classical) | Fix immediately |
+| SSH configuration (sshd_config) | VPN and network encryption / Confidentiality | pruebas/fixtures/sistema-demo/legado/ssh/sshd_config | Broken (classical) | Fix immediately |
+| Diffie-Hellman with SHA-1 | VPN and network encryption / Confidentiality | pruebas/fixtures/sistema-demo/legado/ssh/sshd_config:1 | Broken (classical) | Fix immediately |
+| 1024- or 1536-bit Diffie-Hellman | VPN and network encryption / Confidentiality | pruebas/fixtures/sistema-demo/legado/vpn/ipsec.conf:3 | Broken (classical) | Fix immediately |
+| HMAC-MD5 | VPN and network encryption / Integrity | pruebas/fixtures/sistema-demo/legado/vpn/ipsec.conf:3 (and 1 more) | Broken (classical) | Fix immediately |
+| Java (java.security) | Web servers / Confidentiality | pruebas/fixtures/sistema-demo/legado/java/java.security:4 | Broken (classical) | Fix immediately |
+| MD5 | Application code / Integrity | pruebas/fixtures/sistema-demo/srv/app/pagos.py:7 | Broken (classical) | Fix immediately |
+| OpenVPN (cliente.ovpn) | VPN and network encryption / Confidentiality | pruebas/fixtures/sistema-demo/legado/vpn/cliente.ovpn | Broken (classical) | Fix immediately |
+| Postfix SMTP (main.cf) | Web servers / Confidentiality | pruebas/fixtures/sistema-demo/legado/postfix/main.cf:3 | Broken (classical) | Fix immediately |
+| PostgreSQL (postgresql.conf) | Web servers / Confidentiality | pruebas/fixtures/sistema-demo/legado/pgsql/postgresql.conf:2 | Broken (classical) | Fix immediately |
+| RSA-1024 | PKI and certificate authority management / Authentication | pruebas/fixtures/sistema-demo/legado/legado.crt:1 (and 2 more) | Broken (classical) | Fix immediately |
+| RSASSA-PKCS1-v1_5 with SHA-1 | VPN and network encryption / Authentication | pruebas/fixtures/sistema-demo/legado/ssh/sshd_config:4 | Broken (classical) | Fix immediately |
+| SSL 3.0 | Application code / Confidentiality | pruebas/fixtures/sistema-demo/srv/app/legado.c:6 | Broken (classical) | Fix immediately |
+| TLS in code (cliente.ts) | Application code / Authentication | pruebas/fixtures/sistema-demo/srv/app/cliente.ts:7 | Broken (classical) | Fix immediately |
+| TLS in code (legado.c) | Application code / Authentication | pruebas/fixtures/sistema-demo/srv/app/legado.c:7 | Broken (classical) | Fix immediately |
+| TLS in code (pagos.py) | Application code / Authentication | pruebas/fixtures/sistema-demo/srv/app/pagos.py:13 | Broken (classical) | Fix immediately |
+| Triple DES (CBC) | VPN and network encryption / Confidentiality | pruebas/fixtures/sistema-demo/legado/ssh/sshd_config:2 (and 4 more) | Broken (classical) | Fix immediately |
+| strongSwan (ipsec.conf) | VPN and network encryption / Confidentiality | pruebas/fixtures/sistema-demo/legado/vpn/ipsec.conf | Broken (classical) | Fix immediately |
+| TLS configuration (ssl.conf) | Web servers / Confidentiality | pruebas/fixtures/sistema-demo/etc/apache2/ssl.conf | Deprecated | Replace |
+| DSA | VPN and network encryption / Authentication | pruebas/fixtures/sistema-demo/legado/ssh/sshd_config:4 | Deprecated | Replace |
+| Finite-field Diffie-Hellman | VPN and network encryption / Confidentiality | pruebas/fixtures/sistema-demo/etc/swanctl/swanctl.conf:4 | Quantum-vulnerable | Migrate now |
+| ECDH sobre P-256 | Web servers / Confidentiality | pruebas/fixtures/sistema-demo/etc/haproxy/haproxy.cfg:6 (and 3 more) | Quantum-vulnerable | Migrate now |
+| ECDH sobre P-384 | VPN and network encryption / Confidentiality | pruebas/fixtures/sistema-demo/etc/swanctl/swanctl.conf:7 | Quantum-vulnerable | Migrate now |
+| HAProxy bind :8443 (haproxy.cfg) | Web servers / Confidentiality | pruebas/fixtures/sistema-demo/etc/haproxy/haproxy.cfg:10 | Deprecated | Replace |
+| HMAC-SHA-1 | VPN and network encryption / Integrity | pruebas/fixtures/sistema-demo/legado/ssh/sshd_config:3 (and 1 more) | Deprecated | Replace |
+| ECB mode of operation | Application code / Confidentiality | pruebas/fixtures/sistema-demo/srv/app/Firma.java:10 | Deprecated | Replace |
+| MySQL/MariaDB (my.cnf) | Web servers / Confidentiality | pruebas/fixtures/sistema-demo/legado/mysql/my.cnf:6 | Deprecated | Replace |
+| SHA-1 | Application code / Integrity | pruebas/fixtures/sistema-demo/srv/app/Cifrado.cs:5 (and 1 more) | Deprecated | Replace |
+| TLS 1.2 | Application code / Confidentiality | pruebas/fixtures/sistema-demo/srv/app/Cifrado.cs:8 | Quantum-vulnerable | Migrate now |
+| WireGuard (wg0.conf) | VPN and network encryption / Confidentiality | pruebas/fixtures/sistema-demo/etc/wireguard/wg0.conf | Quantum-vulnerable | Migrate now |
+| X25519 | Web servers / Confidentiality | pruebas/fixtures/sistema-demo/etc/haproxy/haproxy.cfg:6 (and 9 more) | Quantum-vulnerable | Migrate now |
+| Ed25519 | PKI and certificate authority management / Authentication | pruebas/fixtures/sistema-demo/etc/pki/ca.der (and 6 more) | Quantum-vulnerable | Migrate now |
+| Java (java.security) | Web servers / Confidentiality | pruebas/fixtures/sistema-demo/etc/java-21-openjdk/security/java.security:7 | Unknown | Verify manually |
+| MySQL/MariaDB (mysqld.cnf) | Web servers / Confidentiality | pruebas/fixtures/sistema-demo/etc/mysql/mysql.conf.d/mysqld.cnf:5 | Unknown | Verify manually |
+| RSA-2048 | PKI and certificate authority management / Authentication | pruebas/fixtures/sistema-demo/etc/haproxy/certs/api.pem:1 (and 6 more) | Quantum-vulnerable | Migrate now |
+| RSA-3072 | Application code / Authentication | pruebas/fixtures/sistema-demo/etc/mysql/server-cert.pem:1 (and 8 more) | Quantum-vulnerable | Migrate now |
+| RSASSA-PKCS1-v1_5 with SHA-256 | Application code / Authentication | pruebas/fixtures/sistema-demo/etc/haproxy/certs/api.pem:1 (and 2 more) | Quantum-vulnerable | Migrate now |
+| AES-128-CTR | VPN and network encryption / Confidentiality | pruebas/fixtures/sistema-demo/legado/ssh/sshd_config:2 | Weakened by Grover | Review parameters |
+| AES-128-GCM | VPN and network encryption / Confidentiality | pruebas/fixtures/sistema-demo/etc/ssh/sshd_config:4 | Weakened by Grover | Review parameters |
+| AES-128-XTS | Volume encryption / Confidentiality | pruebas/fixtures/sistema-demo/etc/crypttab:3 | Weakened by Grover | Review parameters |
+| Curva NIST P-256 | Web servers / Authentication | pruebas/fixtures/sistema-demo/etc/nginx/www.crt:1 (and 6 more) | Quantum-vulnerable | Plan and pilot |
+| Curva NIST P-384 | Web servers / Authentication | pruebas/fixtures/sistema-demo/legado/ec384-sec1.key:1 (and 2 more) | Quantum-vulnerable | Plan and pilot |
+| ECDSA with SHA-256 | Web servers / Authentication | pruebas/fixtures/sistema-demo/etc/nginx/www.crt:1 (and 2 more) | Quantum-vulnerable | Plan and pilot |
+| ECDSA with SHA-384 | Web servers / Authentication | pruebas/fixtures/sistema-demo/var/lib/pgsql/data/server.crt:1 | Quantum-vulnerable | Plan and pilot |
+| RSA | Unclassified / Authentication | pruebas/fixtures/sistema-demo/legado/app-pkcs1-cifrada.key:1 | Quantum-vulnerable | Monitor the ecosystem |
+| RSASSA-PKCS1-v1_5 with SHA-512 | VPN and network encryption / Authentication | pruebas/fixtures/sistema-demo/etc/ssh/sshd_config:6 | Quantum-vulnerable | Plan and pilot |
+| AES-256-CBC | VPN and network encryption / Confidentiality | pruebas/fixtures/sistema-demo/etc/swanctl/swanctl.conf:4 | Quantum-resistant | Compliant |
+| AES-256-GCM | VPN and network encryption / Confidentiality | pruebas/fixtures/sistema-demo/etc/openvpn/server.conf:9 (and 4 more) | Quantum-resistant | Compliant |
+| AES-256-XTS | Volume encryption / Confidentiality | pruebas/fixtures/sistema-demo/etc/crypttab:2 | Quantum-resistant | Compliant |
+| BLAKE2s | VPN and network encryption / Integrity | pruebas/fixtures/sistema-demo/etc/wireguard/wg0.conf | Quantum-resistant | Compliant |
+| ChaCha20-Poly1305 | VPN and network encryption / Confidentiality | pruebas/fixtures/sistema-demo/etc/openvpn/server.conf:9 (and 2 more) | Quantum-resistant | Compliant |
+| SSH configuration (sshd_config) | VPN and network encryption / Confidentiality | pruebas/fixtures/sistema-demo/etc/ssh/sshd_config | Post-quantum hybrid | Compliant |
+| TLS configuration (nginx.conf) | Web servers / Confidentiality | pruebas/fixtures/sistema-demo/etc/nginx/nginx.conf | Post-quantum hybrid | Compliant |
+| HAProxy bind :443 (haproxy.cfg) | Web servers / Confidentiality | pruebas/fixtures/sistema-demo/etc/haproxy/haproxy.cfg:6 | Post-quantum hybrid | Compliant |
+| HMAC-SHA-256 | VPN and network encryption / Integrity | pruebas/fixtures/sistema-demo/etc/ssh/sshd_config:5 (and 1 more) | Quantum-resistant | Compliant |
+| HMAC-SHA-384 | VPN and network encryption / Integrity | pruebas/fixtures/sistema-demo/etc/swanctl/swanctl.conf:4 | Quantum-resistant | Compliant |
+| HMAC-SHA-512 | VPN and network encryption / Integrity | pruebas/fixtures/sistema-demo/etc/ssh/sshd_config:5 | Quantum-resistant | Compliant |
+| ML-DSA-65 | Unclassified / Authentication | pruebas/fixtures/sistema-demo/srv/firma-mldsa65.pub.pem:1 | Quantum-resistant | Compliant |
+| ML-KEM-768 | VPN and network encryption / Confidentiality | pruebas/fixtures/sistema-demo/etc/swanctl/swanctl.conf:4 (and 5 more) | Quantum-resistant | Compliant |
+| OpenVPN (server.conf) | VPN and network encryption / Confidentiality | pruebas/fixtures/sistema-demo/etc/openvpn/server.conf | Post-quantum hybrid | Compliant |
+| PBES2 | Unclassified / Confidentiality | pruebas/fixtures/sistema-demo/srv/almacen.p12 | Quantum-resistant | Compliant |
+| Postfix SMTP (main.cf) | Web servers / Confidentiality | pruebas/fixtures/sistema-demo/etc/postfix/main.cf:5 | Post-quantum hybrid | Compliant |
+| PostgreSQL (postgresql.conf) | Web servers / Confidentiality | pruebas/fixtures/sistema-demo/var/lib/pgsql/data/postgresql.conf:2 | Post-quantum hybrid | Compliant |
+| SHA-256 | Application code / Integrity | pruebas/fixtures/sistema-demo/srv/app/Firma.java:7 (and 2 more) | Quantum-resistant | Compliant |
+| TLS 1.3 | Application code / Confidentiality | pruebas/fixtures/sistema-demo/srv/app/Cifrado.cs:8 (and 1 more) | Quantum-resistant | Compliant |
+| X25519MLKEM768 (hybrid) | Web servers / Confidentiality | pruebas/fixtures/sistema-demo/etc/haproxy/haproxy.cfg:6 (and 6 more) | Post-quantum hybrid | Compliant |
+| sntrup761x25519 (non-NIST hybrid) | VPN and network encryption / Confidentiality | pruebas/fixtures/sistema-demo/etc/ssh/sshd_config:3 | Post-quantum hybrid | Compliant |
+| strongSwan (swanctl.conf) | VPN and network encryption / Confidentiality | pruebas/fixtures/sistema-demo/etc/swanctl/swanctl.conf | Post-quantum hybrid | Compliant |
+
+## Keys and certificates · requirement 4.2.1.1, 35 items
+
+| Item | Use (capability / assurance) | Location | Viability (risk) | Planned response |
+|---|---|---|---|---|
+| Private key RSA-1024 | PKI and certificate authority management / Authentication | pruebas/fixtures/sistema-demo/legado/legado.key:1 | Broken (classical) | Fix immediately |
+| legado.ejemplo.mx | PKI and certificate authority management / Authentication | pruebas/fixtures/sistema-demo/legado/legado.crt:1 | Broken (classical) | Fix immediately |
+| CA Demo Suaya | PKI and certificate authority management / Authentication | pruebas/fixtures/sistema-demo/etc/pki/ca.der | Quantum-vulnerable | Migrate now |
+| Private key Ed25519 | PKI and certificate authority management / Authentication | pruebas/fixtures/sistema-demo/etc/pki/ca.key:1 | Quantum-vulnerable | Migrate now |
+| Private key RSA-2048 | PKI and certificate authority management / Authentication | pruebas/fixtures/sistema-demo/home/ana/.kube/config:11 | Quantum-vulnerable | Migrate now |
+| Private key encrypted (algorithm not visible) | Unclassified / Authentication | pruebas/fixtures/sistema-demo/srv/app-cifrada.key:1 | Unknown | Verify manually |
+| ana | PKI and certificate authority management / Authentication | pruebas/fixtures/sistema-demo/home/ana/.kube/config:10 | Quantum-vulnerable | Migrate now |
+| cert-manager key interno/intranet (RSA-2048) | Web servers / Authentication | pruebas/fixtures/sistema-demo/k8s/certificados.yaml:14 | Quantum-vulnerable | Plan and pilot |
+| cert-manager key tienda/tienda (Curva NIST P-256) | Web servers / Authentication | pruebas/fixtures/sistema-demo/k8s/certificados.yaml:1 | Quantum-vulnerable | Plan and pilot |
+| Volume key datos | Volume encryption / Confidentiality | pruebas/fixtures/sistema-demo/etc/crypttab:3 | Weakened by Grover | Review parameters |
+| Private key Curva NIST P-256 | Web servers / Authentication | pruebas/fixtures/sistema-demo/etc/postfix/correo.pem:1 | Quantum-vulnerable | Plan and pilot |
+| Private key Curva NIST P-256 | Web servers / Authentication | pruebas/fixtures/sistema-demo/k8s/secret-tienda.yaml:9 | Quantum-vulnerable | Plan and pilot |
+| Private key Curva NIST P-256 | Web servers / Authentication | pruebas/fixtures/sistema-demo/etc/nginx/www.key:1 | Quantum-vulnerable | Plan and pilot |
+| Private key Curva NIST P-384 | Unclassified / Authentication | pruebas/fixtures/sistema-demo/legado/ec384-sec1.key:1 | Quantum-vulnerable | Monitor the ecosystem |
+| Private key Curva NIST P-384 | Web servers / Authentication | pruebas/fixtures/sistema-demo/var/lib/pgsql/data/server.key:1 | Quantum-vulnerable | Plan and pilot |
+| Private key Ed25519 | VPN and network encryption / Authentication | pruebas/fixtures/sistema-demo/home/ana/.ssh/id_ed25519:1 | Quantum-vulnerable | Plan and pilot |
+| Private key RSA | Unclassified / Authentication | pruebas/fixtures/sistema-demo/legado/app-pkcs1-cifrada.key:1 | Quantum-vulnerable | Monitor the ecosystem |
+| Private key RSA-2048 | Web servers / Authentication | pruebas/fixtures/sistema-demo/etc/haproxy/certs/api.pem:20 | Quantum-vulnerable | Plan and pilot |
+| Private key RSA-3072 | Web servers / Authentication | pruebas/fixtures/sistema-demo/etc/mysql/server-key.pem:1 | Quantum-vulnerable | Plan and pilot |
+| Private key RSA-3072 | Unclassified / Authentication | pruebas/fixtures/sistema-demo/legado/app-pkcs1.key:1 | Quantum-vulnerable | Monitor the ecosystem |
+| Private key RSA-3072 | VPN and network encryption / Authentication | pruebas/fixtures/sistema-demo/home/ana/.ssh/id_rsa:1 | Quantum-vulnerable | Plan and pilot |
+| Private key RSA-3072 | Unclassified / Authentication | pruebas/fixtures/sistema-demo/srv/app.key:1 | Quantum-vulnerable | Monitor the ecosystem |
+| Private key WireGuard (X25519) | VPN and network encryption / Authentication | pruebas/fixtures/sistema-demo/etc/wireguard/wg0.conf:4 | Quantum-vulnerable | Plan and pilot |
+| Public key Ed25519 (ana@demo) | VPN and network encryption / Authentication | pruebas/fixtures/sistema-demo/home/ana/.ssh/authorized_keys:3 (and 2 more) | Quantum-vulnerable | Plan and pilot |
+| Public key RSA-3072 | Unclassified / Authentication | pruebas/fixtures/sistema-demo/srv/app.pub.pem:1 | Quantum-vulnerable | Monitor the ecosystem |
+| Public key RSA-3072 (ana-rsa@demo) | VPN and network encryption / Authentication | pruebas/fixtures/sistema-demo/home/ana/.ssh/authorized_keys:2 (and 1 more) | Quantum-vulnerable | Plan and pilot |
+| api.ejemplo.mx | Web servers / Authentication | pruebas/fixtures/sistema-demo/etc/haproxy/certs/api.pem:1 | Quantum-vulnerable | Plan and pilot |
+| correo.ejemplo.mx | Web servers / Authentication | pruebas/fixtures/sistema-demo/etc/postfix/correo.pem:6 | Quantum-vulnerable | Plan and pilot |
+| db.ejemplo.mx | Web servers / Authentication | pruebas/fixtures/sistema-demo/var/lib/pgsql/data/server.crt:1 | Quantum-vulnerable | Plan and pilot |
+| mysql.ejemplo.mx | Web servers / Authentication | pruebas/fixtures/sistema-demo/etc/mysql/server-cert.pem:1 | Quantum-vulnerable | Plan and pilot |
+| tienda.ejemplo.mx | Web servers / Authentication | pruebas/fixtures/sistema-demo/k8s/secret-tienda.yaml:8 | Quantum-vulnerable | Plan and pilot |
+| www.ejemplo.mx | Web servers / Authentication | pruebas/fixtures/sistema-demo/etc/nginx/www.crt:1 | Quantum-vulnerable | Plan and pilot |
+| Contenedor PKCS#12 | Unclassified / Authentication | pruebas/fixtures/sistema-demo/srv/almacen.p12 | Quantum-resistant | Compliant |
+| Volume key raiz | Volume encryption / Confidentiality | pruebas/fixtures/sistema-demo/etc/crypttab:2 | Quantum-resistant | Compliant |
+| Public key ML-DSA-65 | Unclassified / Authentication | pruebas/fixtures/sistema-demo/srv/firma-mldsa65.pub.pem:1 | Quantum-resistant | Compliant |
+
+## Response strategy
+
+- 20 fix immediately (insecure today)
+- 13 replace (deprecated)
+- 15 migrate now to post-quantum or hybrid cryptography
+- 24 plan and pilot the migration
+- 6 document and monitor

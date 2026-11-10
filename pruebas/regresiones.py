@@ -1,4 +1,4 @@
-"""Regresiones no destructivas. Gates de seguridad 1.5: todos los casos deben aprobar.
+"""Regresiones no destructivas. Gates de seguridad 1.5 (vigentes en 1.6): todos los casos deben aprobar.
 SUAYA_BIN y SUAYA_API permiten probar una futura compilación corregida.
 """
 import base64,hashlib,http.server,io,json,os,pathlib,socket,subprocess,tarfile,tempfile,threading,time,unittest,urllib.request,urllib.error

@@ -1,0 +1,30 @@
+# Ganchos de pre-commit para Suaya (https://pre-commit.com).
+#
+# Requieren el binario `suaya` instalado y en el PATH (language: system).
+# Uso en el .pre-commit-config.yaml de otro proyecto:
+#
+#   repos:
+#     - repo: https://<servidor>/<organizacion>/suaya
+#       rev: v1.7.0
+#       hooks:
+#         - id: suaya
+#
+# El CBOM se escribe dentro de .git para no ensuciar el árbol de trabajo.
+
+- id: suaya
+  name: Suaya (criptografía rota u obsoleta)
+  description: Rechaza el commit si sus archivos traen criptografía insegura hoy (prioridad crítica).
+  entry: suaya escanear --fallar-en 1 -o .git/suaya-cbom.json --
+  language: system
+  pass_filenames: true
+  require_serial: true
+  types: [file]
+
+- id: suaya-estricto
+  name: Suaya (también lo vulnerable a cómputo cuántico migrable hoy)
+  description: Rechaza el commit si hay hallazgos de prioridad crítica o alta.
+  entry: suaya escanear --fallar-en 2 -o .git/suaya-cbom.json --
+  language: system
+  pass_filenames: true
+  require_serial: true
+  types: [file]
