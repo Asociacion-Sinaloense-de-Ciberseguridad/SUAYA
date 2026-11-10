@@ -26,7 +26,7 @@ cargo build --release --locked -p suaya -p suaya-api
 ./target/release/suaya --version
 ```
 
-La compilación en Windows no se ha validado en esta entrega. Guía de uso completa: [manual 1.7](docs/manual-1.7.md) y [manual de macOS](docs/manual-macos.md).
+El paquete de Windows (x86_64) se compila en cada publicación; las pruebas automáticas se ejecutan en Linux y macOS, no en Windows. Guía de uso completa: [manual 1.7](docs/manual-1.7.md) y [manual de macOS](docs/manual-macos.md).
 
 ## Compilar y verificar
 
