@@ -82,6 +82,9 @@ jobs:
           exe=target/${{ matrix.objetivo }}/release/suaya
           [ -f "$exe.exe" ] && exe=$exe.exe
           cp "$exe" LICENSE NOTICE README.md "$nombre/"
+          # manifest-build.py consulta cargo metadata sin red y este resuelve las
+          # dependencias de todas las plataformas, no solo las ya compiladas.
+          cargo fetch --locked
           python3 scripts/manifest-build.py --output "$nombre/build-manifest.json"
           api=target/${{ matrix.objetivo }}/release/suaya-api
           [ -f "$api.exe" ] && api=$api.exe

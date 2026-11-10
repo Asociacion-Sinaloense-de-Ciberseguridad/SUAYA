@@ -1,5 +1,6 @@
 [package]
 name = "suaya-api"
+description = "API local de inventario criptográfico de Suaya, con autenticación, ownership y cuotas."
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
