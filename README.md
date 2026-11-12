@@ -10,7 +10,7 @@ La versión 1.7 amplía la cobertura (servicios declarados como datos, configura
 
 El repositorio requiere acceso de lectura mientras sea privado. Las versiones se identifican con etiquetas (`v1.7.0`, `v1.6.0`, `v1.5.0`); use la más reciente.
 
-**Binarios:** descargue el paquete de su plataforma desde la página de [publicaciones](https://github.com/Asociacion-Sinaloense-de-Ciberseguridad/SUAYA/releases), si la versión ya está publicada, y compruébelo con su `SHA256SUMS`. Mientras el repositorio sea privado, las publicaciones no llevan atestación de procedencia: GitHub solo la admite en repositorios públicos o con Enterprise Cloud.
+**Binarios:** descargue el paquete de su plataforma desde la página de [publicaciones](https://github.com/Asociacion-Sinaloense-de-Ciberseguridad/SUAYA/releases) y compruébelo con su `SHA256SUMS`. Las publicaciones hasta la 1.7.0 no llevan atestación de procedencia, porque se compilaron cuando el repositorio era privado; las siguientes sí la llevarán.
 
 Cada publicación incluye un instalador por sistema, que verifica la suma SHA-256 antes de instalar. Descargue en una misma carpeta el paquete, `SHA256SUMS` y el instalador:
 
