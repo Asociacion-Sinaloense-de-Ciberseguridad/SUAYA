@@ -8,7 +8,7 @@ La versión 1.7 amplía la cobertura (servicios declarados como datos, configura
 
 ## Instalación
 
-El repositorio requiere acceso de lectura mientras sea privado. Las versiones se identifican con etiquetas (`v1.7.0`, `v1.6.0`, `v1.5.0`); use la más reciente.
+El repositorio es público. Las versiones se identifican con etiquetas (`v1.7.0`, `v1.6.0`, `v1.5.0`); use la más reciente.
 
 **Binarios:** descargue el paquete de su plataforma desde la página de [publicaciones](https://github.com/Asociacion-Sinaloense-de-Ciberseguridad/SUAYA/releases) y compruébelo con su `SHA256SUMS`. Las publicaciones hasta la 1.7.0 no llevan atestación de procedencia, porque se compilaron cuando el repositorio era privado; las siguientes sí la llevarán.
 
