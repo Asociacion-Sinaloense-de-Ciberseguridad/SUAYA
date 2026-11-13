@@ -2,7 +2,7 @@
 
 ## Reportar una vulnerabilidad
 
-No abra un *issue* público. Use el reporte privado de vulnerabilidades de GitHub (pestaña **Security**, opción **Report a vulnerability**) o escriba a **[CORREO DE SEGURIDAD PENDIENTE]**.
+No abra un *issue* público. Use el reporte privado de vulnerabilidades de GitHub (pestaña **Security**, opción **Report a vulnerability**) o escriba a contacto@ciberseguridadsinaloa.org .
 
 Incluya, si es posible: versión de Suaya, sistema operativo, pasos para reproducir y el impacto que observa. No incluya llaves ni datos reales de una organización.
 
