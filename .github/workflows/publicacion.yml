@@ -100,7 +100,7 @@ jobs:
             echo "archivo=$nombre.tar.gz" >> "$GITHUB_OUTPUT"
           fi
       # GitHub solo admite atestaciones en repositorios públicos salvo con
-      # Enterprise Cloud; en un repositorio privado se omiten.
+      # Enterprise Cloud; si el repositorio vuelve a ser privado, se omiten.
       - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8
         if: ${{ !github.event.repository.private }}
         with:
