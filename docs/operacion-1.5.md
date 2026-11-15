@@ -1,5 +1,7 @@
 # Operación SUAYA 1.5
 
+> **Documento histórico de la versión 1.5.** Se conserva como antecedente; para la versión vigente consulte el [manual 1.7](manual-1.7.md) y el [README](../README.md).
+
 ## Registros OCI y compatibilidad
 
 TLS es obligatorio por defecto, incluso para loopback. Para desarrollo local usar `--registro-http-local`; solo admite IP loopback real o localhost resuelto a loopback. Se rechaza cualquier downgrade HTTPS a HTTP. No autorizar HTTP para un registro de producción.

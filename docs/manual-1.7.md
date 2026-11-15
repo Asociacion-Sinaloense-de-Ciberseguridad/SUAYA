@@ -2,7 +2,7 @@
 
 Suaya inventaría la criptografía de un sistema, la clasifica según su exposición a la computación cuántica y entrega un CBOM (Cryptographic Bill of Materials) CycloneDX 1.7, un reporte ejecutivo y, en esta versión, los pasos para corregir lo que encuentra. «Suaya» significa cuidar, proteger, en yoremnokki, la lengua yoreme mayo de Sinaloa.
 
-Este manual explica cómo usarla. La referencia detallada de cada escáner está en [docs/manual-cli.md](docs/manual-cli.md), las integraciones en [docs/integraciones.md](docs/integraciones.md) y lo que cambió en esta versión en el [registro de cambios](CHANGELOG.md).
+Este manual explica cómo usarla. La referencia detallada de cada escáner está en [docs/manual-cli.md](manual-cli.md), las integraciones en [docs/integraciones.md](integraciones.md) y lo que cambió en esta versión en el [registro de cambios](../CHANGELOG.md).
 
 ---
 
@@ -157,7 +157,7 @@ Lee por la API del clúster, solo con lecturas, los Secrets con certificados o l
 
 ## 8. Contexto de su organización (`--organizacion`)
 
-El inventario dice qué criptografía hay; el contexto dice qué importa más. Copie y adapte [docs/ejemplos/suaya-organizacion.toml](docs/ejemplos/suaya-organizacion.toml):
+El inventario dice qué criptografía hay; el contexto dice qué importa más. Copie y adapte [docs/ejemplos/suaya-organizacion.toml](ejemplos/suaya-organizacion.toml):
 
 ```toml
 [organizacion]
@@ -243,7 +243,7 @@ suaya tendencias escaneos/*.json --formato md        # evolución de muchos esca
 - **Prometheus**: `suaya diagnosticar ... --metricas /ruta/textfile/suaya.prom` para el recolector de node_exporter; métricas `suaya_diagnostico_hallazgos`, `..._poscuantico`, `..._certificado_dias_restantes`, `..._cadena_valida`, `..._saludo_segundos` y `..._alcanzable`.
 - **Ejecución periódica**: `scripts/automatizar.py` escanea y diagnostica sin intérprete de shell, con tiempo límite.
 
-Ejemplos completos en [docs/integraciones.md](docs/integraciones.md).
+Ejemplos completos en [docs/integraciones.md](integraciones.md).
 
 ---
 
@@ -282,7 +282,7 @@ bin/suaya-api --config /ruta/privada/suaya-data/config.json --database /ruta/pri
 - Escucha solo en `127.0.0.1:8787`. Para acceso remoto ponga delante un proxy TLS con sus propios controles.
 - El cliente **nunca** envía rutas ni URLs: escanea alias configurados por el operador y elige perfiles solo entre los incluidos.
 - **Panel**: abra `http://127.0.0.1:8787/panel`, pegue su token (se guarda solo en esa pestaña) y escanee, descargue reportes en cualquier formato, compare, vea tendencias y diagnostique servicios configurados.
-- Descripción OpenAPI 3.1 en `/api/v1/openapi.json`. Lista de rutas en el [README](README.md#api-local-con-persistencia).
+- Descripción OpenAPI 3.1 en `/api/v1/openapi.json`. Lista de rutas en el [README](../README.md#api-local-con-persistencia).
 
 ---
 
@@ -372,4 +372,4 @@ Todo el criterio de Suaya vive como datos en `conocimiento/`, no en el código:
 - Las recetas citan versiones y directivas vigentes al cierre de 1.7: contrástelas con la documentación de su producto.
 - La clasificación cambia cuando cambia el conocimiento (un estándar nuevo, un algoritmo que se debilita); cada CBOM registra con qué versión de la base se clasificó.
 
-Más detalle: [manual de la CLI](docs/manual-cli.md), [integraciones](docs/integraciones.md), [contrato de estabilidad](docs/estabilidad.md), [metodología](docs/metodologia.md), [modelo de amenazas](docs/modelo-de-amenazas.md) y [cierre 1.7](docs/cierre-1.7.md).
+Más detalle: [manual de la CLI](manual-cli.md), [integraciones](integraciones.md), [contrato de estabilidad](estabilidad.md), [metodología](metodologia.md), [modelo de amenazas](modelo-de-amenazas.md) y [cierre 1.7](cierre-1.7.md).
