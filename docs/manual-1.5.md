@@ -1,5 +1,7 @@
 # Manual de Suaya 1.5
 
+> **Documento histórico de la versión 1.5.** Se conserva como antecedente; para la versión vigente consulte el [manual 1.7](manual-1.7.md).
+
 Suaya analiza sistemas en busca de criptografía obsoleta o insegura, inventaria activos y los clasifica en cuatro ejes: riesgo, acción, prioridad y cumplimiento. Produce un CBOM CycloneDX 1.7 válido y un reporte ejecutivo en español.
 
 ## Requisitos

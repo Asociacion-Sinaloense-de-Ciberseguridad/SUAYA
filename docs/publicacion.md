@@ -21,10 +21,12 @@ sha256sum --check --ignore-missing SHA256SUMS
 Con la CLI de GitHub:
 
 ```bash
-gh attestation verify suaya-1.0.0-x86_64-unknown-linux-gnu.tar.gz --repo Asociacion-Sinaloense-de-Ciberseguridad/SUAYA
+gh attestation verify suaya-1.7.0-x86_64-unknown-linux-gnu.tar.gz --repo Asociacion-Sinaloense-de-Ciberseguridad/SUAYA
 ```
 
 La verificación falla si el archivo no se compiló en el flujo de publicación de ese repositorio.
+
+Las publicaciones 1.5.0, 1.6.0 y 1.7.0 no tienen atestación: se compilaron cuando el repositorio aún era privado, y GitHub solo las admite en repositorios públicos. Para esas versiones, verifique la integridad con `SHA256SUMS` o reproduzca la compilación. Las atestaciones estarán disponibles a partir de la siguiente publicación.
 
 ### 3. Firma híbrida (si se publicó)
 
@@ -42,7 +44,7 @@ Cualquiera puede recompilar una versión y obtener el mismo binario:
 
 ```bash
 git clone https://github.com/Asociacion-Sinaloense-de-Ciberseguridad/SUAYA && cd SUAYA
-git checkout v1.0.0
+git checkout v1.7.0
 ./scripts/compilacion-reproducible.sh
 ```
 
@@ -63,8 +65,8 @@ Solo quien mantiene el proyecto.
 4. Cree una etiqueta firmada y empújela:
 
    ```bash
-   git tag -s v1.0.0 -m "Suaya 1.0.0"
-   git push origin v1.0.0
+   git tag -s v1.7.0 -m "Suaya 1.7.0"
+   git push origin v1.7.0
    ```
 
 5. El flujo `.github/workflows/publicacion.yml` compila para Linux (x86_64 y aarch64), macOS (arm64) y Windows (x86_64), genera la página de manual, el autocompletado y los paquetes `.deb` y `.rpm`, atestigua cada archivo, calcula `SHA256SUMS`, lo firma si existe el secreto `SUAYA_LLAVE_FIRMA` y crea la publicación como **borrador**.

@@ -1,6 +1,6 @@
 # Suaya en macOS · versión 1.7
 
-Esta guía cubre la aplicación de escritorio y el uso de la línea de órdenes en macOS. El uso general de Suaya está en el [manual de uso](../Manual_SUAYA%20v1.7.md) y la referencia de cada escáner en el [manual de la CLI](manual-cli.md).
+Esta guía cubre la aplicación de escritorio y el uso de la línea de órdenes en macOS. El uso general de Suaya está en el [manual de uso](manual-1.7.md) y la referencia de cada escáner en el [manual de la CLI](manual-cli.md).
 
 ## Requisitos
 
@@ -76,7 +76,7 @@ Los servicios se entregan al motor después de `--`, de modo que nada de lo escr
 
 ## La línea de órdenes en macOS
 
-Todo lo descrito en el [manual de uso](../Manual_SUAYA%20v1.7.md) funciona igual. Algunos usos propios de macOS:
+Todo lo descrito en el [manual de uso](manual-1.7.md) funciona igual. Algunos usos propios de macOS:
 
 ```sh
 # Certificados del llavero, con reporte HTML
@@ -147,6 +147,6 @@ La firma ad hoc sirve para uso local. Para distribuir la app a otras personas ha
 
 ## Más información
 
-- [Manual de uso 1.7](../Manual_SUAYA%20v1.7.md) y [manual de la CLI](manual-cli.md)
+- [Manual de uso 1.7](manual-1.7.md) y [manual de la CLI](manual-cli.md)
 - [Integraciones](integraciones.md): GitHub, GitLab, pre-commit y Prometheus
 - [Contrato de estabilidad](estabilidad.md), [hoja de ruta](hoja-de-ruta.md) y [cierre 1.7](cierre-1.7.md)
